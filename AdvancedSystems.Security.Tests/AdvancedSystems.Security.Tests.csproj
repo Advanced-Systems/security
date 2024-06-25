@@ -18,6 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AdvancedSystems.Security.Abstractions\AdvancedSystems.Security.Abstractions.csproj" />
+    <ProjectReference Include="..\AdvancedSystems.Security\AdvancedSystems.Security.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
