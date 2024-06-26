@@ -9,8 +9,6 @@ namespace AdvancedSystems.Security.Tests.Cryptography;
 [TestFixture]
 public class HashTests
 {
-    #region Compute(string input)
-
     [TestCase("Hello, World!", "65a8e27d8879283831b664bd8b7f0ad4", Format.Hex)]
     [TestCase("Hello, World!", "ZajifYh5KDgxtmS9i38K1A==", Format.Base64)]
     [TestCase("The quick brown fox jumps over the lazy dog", "9e107d9d372bb6826bd81d3542a419d6", Format.Hex)]
@@ -19,9 +17,9 @@ public class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
-
+        byte[] buffer = encoding.GetBytes(input);
         // Act
-        byte[] hash = Hash.Compute(input, HashAlgorithmName.MD5, encoding);
+        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.MD5);
         string md5 = hash.ToString(format);
 
         Assert.That(md5, Is.EqualTo(expected));
@@ -36,9 +34,10 @@ public class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
+        byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(input, HashAlgorithmName.SHA1, encoding);
+        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA1);
         string sha1 = hash.ToString(format);
 
         // Assert
@@ -53,9 +52,10 @@ public class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
+        byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(input, HashAlgorithmName.SHA256, encoding);
+        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA256);
         string sha256 = hash.ToString(format);
 
         // Assert
@@ -70,9 +70,10 @@ public class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
+        byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(input, HashAlgorithmName.SHA384, encoding);
+        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA384);
         string sha384 = hash.ToString(format);
 
         // Assert
@@ -87,26 +88,13 @@ public class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
+        byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(input, HashAlgorithmName.SHA512, encoding);
+        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA512);
         string sha512 = hash.ToString(format);
 
         // Assert
         Assert.That(sha512, Is.EqualTo(expected));
     }
-
-    #endregion
-
-    #region Compute(object input)
-
-    // TODO
-
-    #endregion
-
-    #region Compute<T>(T input)
-
-    // TODO
-
-    #endregion
 }
