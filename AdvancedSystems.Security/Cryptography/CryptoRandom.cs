@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace AdvancedSystems.Security.Common;
+namespace AdvancedSystems.Security.Cryptography;
 
 public static class CryptoRandom
 {
