@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace AdvancedSystems.Security.Common;
+namespace AdvancedSystems.Security.Cryptography;
 
 public sealed class RSACryptoProvider
 {
