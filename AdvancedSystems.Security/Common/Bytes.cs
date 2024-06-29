@@ -73,7 +73,7 @@ public static class Bytes
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool AreEqual(byte[] lhs, byte[] rhs)
+    public static bool Equals(this byte[] lhs, byte[] rhs)
     {
         return new Span<byte>(lhs).SequenceEqual(rhs);
     }
