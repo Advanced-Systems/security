@@ -3,8 +3,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
-using AdvancedSystems.Security.Common;
-
 namespace AdvancedSystems.Security.Cryptography;
 
 /// <summary>
@@ -16,7 +14,7 @@ namespace AdvancedSystems.Security.Cryptography;
 public static class Hash
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static HashAlgorithm Create(HashAlgorithmName hashAlgorithmName)
+    public static HashAlgorithm Create(HashAlgorithmName hashAlgorithmName)
     {
         // Starting with net8, cryptographic factory methods accepting an algorithm
         // name are obsolet and to be replaced by the parameterless Create factory
