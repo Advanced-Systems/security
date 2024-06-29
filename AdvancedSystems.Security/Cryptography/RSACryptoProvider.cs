@@ -7,14 +7,12 @@ using AdvancedSystems.Security.Extensions;
 
 namespace AdvancedSystems.Security.Cryptography;
 
-public sealed class RSACryptoProvider : IDisposable
+public sealed class RSACryptoProvider
 {
     private static readonly HashAlgorithmName DEFAULT_HASH_ALGORITHM_NAME = HashAlgorithmName.SHA256;
     private static readonly RSAEncryptionPadding DEFAULT_RSA_ENCRYPTION_PADDING = RSAEncryptionPadding.OaepSHA256;
     private static readonly RSASignaturePadding DEFAULT_RSA_SIGNATURE_PADDING = RSASignaturePadding.Pss;
     private static readonly Encoding DEFAULT_ENCODING = Encoding.UTF8;
-
-    private bool _disposed = false;
 
     public RSACryptoProvider(X509Certificate2 certificate, HashAlgorithmName hashAlgorithm, RSAEncryptionPadding encryptionPadding, RSASignaturePadding signaturePadding, Encoding encoding)
     {
@@ -49,31 +47,6 @@ public sealed class RSACryptoProvider : IDisposable
     #endregion
 
     #region Public Methods
-
-    /// <summary>
-    ///     Release all resources used by the current <seealso cref="RSACryptoProvider"/> instance.
-    /// </summary>
-    public void Dispose()
-    {
-        this.Dispose(true);
-        GC.SuppressFinalize(this);
-    }
- 
-    /// <summary>
-    ///     Implements the cleanup logic, that is to be shared between the <seealso cref="Dispose()"/>
-    ///     method and the optional finalizer.
-    /// </summary>
-    /// <param name="disposing"></param>
-    void Dispose(bool disposing)
-    {
-        if (this._disposed) return;
-
-        if (disposing)
-        {
-            this.Certificate.Dispose();
-            this._disposed = true;
-        }
-    }
 
     public static bool IsValidMessage(string message, RSA publicKey, RSAEncryptionPadding? padding = null, Encoding? encoding = null)
     {
