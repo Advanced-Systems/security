@@ -3,11 +3,12 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
+using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Extensions;
 
 namespace AdvancedSystems.Security.Cryptography;
 
-public sealed class RSACryptoProvider
+public sealed class RSACryptoProvider : IRSACryptoProvider
 {
     private static readonly HashAlgorithmName DEFAULT_HASH_ALGORITHM_NAME = HashAlgorithmName.SHA256;
     private static readonly RSAEncryptionPadding DEFAULT_RSA_ENCRYPTION_PADDING = RSAEncryptionPadding.OaepSHA256;
@@ -17,7 +18,7 @@ public sealed class RSACryptoProvider
     public RSACryptoProvider(X509Certificate2 certificate, HashAlgorithmName hashAlgorithm, RSAEncryptionPadding encryptionPadding, RSASignaturePadding signaturePadding, Encoding encoding)
     {
         this.Certificate = certificate;
-        this.HashAlgorithmName= hashAlgorithm;
+        this.HashAlgorithmName = hashAlgorithm;
         this.EncryptionPadding = encryptionPadding;
         this.SignaturePadding = signaturePadding;
         this.Encoding = encoding;
@@ -34,7 +35,7 @@ public sealed class RSACryptoProvider
 
     #region Properties
 
-    public X509Certificate2 Certificate {  get; private set; }
+    public X509Certificate2 Certificate { get; private set; }
 
     public HashAlgorithmName HashAlgorithmName { get; set; }
 
@@ -48,9 +49,12 @@ public sealed class RSACryptoProvider
 
     #region Public Methods
 
-    public static bool IsValidMessage(string message, RSA publicKey, RSAEncryptionPadding? padding = null, Encoding? encoding = null)
+    public bool IsValidMessage(string message, RSAEncryptionPadding? padding = null, Encoding? encoding = null)
     {
-        encoding ??= RSACryptoProvider.DEFAULT_ENCODING;
+        using RSA? publicKey = this.Certificate.GetRSAPublicKey();
+        ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
+
+        encoding ??= this.Encoding;
         int messageSize = encoding.GetByteCount(message);
         decimal keySize = Math.Floor(publicKey.KeySize / 8M);
 
@@ -68,7 +72,7 @@ public sealed class RSACryptoProvider
 
     public string Encrypt(string message, Encoding? encoding = null)
     {
-        encoding ??= RSACryptoProvider.DEFAULT_ENCODING;
+        encoding ??= this.Encoding;
 
         using RSA? publicKey = this.Certificate.GetRSAPublicKey();
         ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
@@ -85,7 +89,7 @@ public sealed class RSACryptoProvider
             throw new CryptographicException($"Certificate with thumbprint '{this.Certificate.Thumbprint}' has no private key.");
         }
 
-        encoding ??= RSACryptoProvider.DEFAULT_ENCODING;
+        encoding ??= this.Encoding;
 
         using RSA? privateKey = this.Certificate.GetRSAPrivateKey();
         ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
@@ -105,7 +109,7 @@ public sealed class RSACryptoProvider
         using RSA? privateKey = this.Certificate.GetRSAPrivateKey();
         ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
 
-        encoding ??= RSACryptoProvider.DEFAULT_ENCODING;
+        encoding ??= this.Encoding;
         byte[] buffer = encoding.GetBytes(data);
 
         byte[] signature = privateKey.SignData(buffer, this.HashAlgorithmName, this.SignaturePadding);
@@ -117,7 +121,7 @@ public sealed class RSACryptoProvider
         using RSA? publicKey = this.Certificate.GetRSAPublicKey();
         ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
 
-        encoding ??= RSACryptoProvider.DEFAULT_ENCODING;
+        encoding ??= this.Encoding;
         byte[] buffer = encoding.GetBytes(data);
         byte[] signedBuffer = Convert.FromBase64String(signature);
 
