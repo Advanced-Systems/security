@@ -30,31 +30,6 @@ public static class Certificate
             .FirstOrDefault();
 
         return certificate
-            ?? throw new CertificateNotFoundException($"Could not find certificate with thumbprint '{thumbprint}' at '{storeLocation}' in '{storeName}'");
-    }
-
-    /// <summary>
-    ///     Attempts to retrieve an X509 certificate from the specified store using the provided thumbprint.
-    /// </summary>
-    /// <param name="storeName">The name of the certificate store to search in, such as <see cref="StoreName.My"/>.</param>
-    /// <param name="storeLocation">The location of the certificate store, such as <see cref="StoreLocation.CurrentUser"/> or <see cref="StoreLocation.LocalMachine"/>.</param>
-    /// <param name="thumbprint">The thumbprint of the certificate to locate.</param>
-    /// <param name="certificate">
-    ///     When this method returns, it contains the <see cref="X509Certificate2"/> object representing the certificate if found; otherwise,
-    ///     it is <c>null</c>.
-    /// </param>
-    /// <returns><c>true</c> if a certificate with the specified thumbprint is found; otherwise, <c>false</c>.</returns>
-    public static bool TryGetStoreCertificate(StoreName storeName, StoreLocation storeLocation, string thumbprint, out X509Certificate2? certificate)
-    {
-        try
-        {
-            certificate = GetStoreCertificate(storeName, storeLocation, thumbprint);
-            return true;
-        }
-        catch (CertificateNotFoundException)
-        {
-            certificate = null;
-            return false;
-        }
+            ?? throw new CertificateNotFoundException("No valid certificate matching the search criteria could be found in the store.");
     }
 }
