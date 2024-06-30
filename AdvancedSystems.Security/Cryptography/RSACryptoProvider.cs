@@ -3,12 +3,11 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Extensions;
 
 namespace AdvancedSystems.Security.Cryptography;
 
-public sealed class RSACryptoProvider : IRSACryptoProvider
+public sealed class RSACryptoProvider
 {
     private static readonly HashAlgorithmName DEFAULT_HASH_ALGORITHM_NAME = HashAlgorithmName.SHA256;
     private static readonly RSAEncryptionPadding DEFAULT_RSA_ENCRYPTION_PADDING = RSAEncryptionPadding.OaepSHA256;
@@ -49,7 +48,7 @@ public sealed class RSACryptoProvider : IRSACryptoProvider
 
     #region Public Methods
 
-    public bool IsValidMessage(string message, RSAEncryptionPadding? padding = null, Encoding? encoding = null)
+    public bool IsValidMessage(string message, RSAEncryptionPadding? padding, Encoding? encoding = null)
     {
         using RSA? publicKey = this.Certificate.GetRSAPublicKey();
         ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
@@ -99,7 +98,7 @@ public sealed class RSACryptoProvider : IRSACryptoProvider
         return encoding.GetString(source);
     }
 
-    public string Sign(string data, Encoding? encoding = null)
+    public string SignData(string data, Encoding? encoding = null)
     {
         if (data.IsNullOrEmpty())
         {
@@ -116,7 +115,7 @@ public sealed class RSACryptoProvider : IRSACryptoProvider
         return Convert.ToBase64String(signature);
     }
 
-    public bool Verify(string data, string signature, Encoding? encoding = null)
+    public bool VerifyData(string data, string signature, Encoding? encoding = null)
     {
         using RSA? publicKey = this.Certificate.GetRSAPublicKey();
         ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
