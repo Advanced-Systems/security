@@ -10,18 +10,26 @@ public static class CryptoServiceCollectionExtensions
 {
     public static IServiceCollection AddHashService(this IServiceCollection services)
     {
-        services.TryAdd(ServiceDescriptor.Singleton<IHashService, HashService>());
+        services.TryAdd(ServiceDescriptor.Scoped<IHashService, HashService>());
         return services;
     }
 
     public static IServiceCollection AddCertificateService(this IServiceCollection services)
     {
-        services.TryAdd(ServiceDescriptor.Singleton<ICertificateService, CertificateService>());
+        // TODO: Bind settings, and provide a ICertificateBuilder
+        services.AddOptions();
+        services.TryAdd(ServiceDescriptor.Scoped<ICertificateService, CertificateService>());
         return services;
     }
 
     public static IServiceCollection AddRSACryptoService(this IServiceCollection services)
     {
+        // Register services required by RSACryptoService
+        services.AddCertificateService();
+
+        // TODO: Bind settings, and provide a IRSACryptoBuilder
+        services.AddOptions();
+
         services.TryAdd(ServiceDescriptor.Singleton<IRSACryptoService, RSACryptoService>());
         return services;
     }
