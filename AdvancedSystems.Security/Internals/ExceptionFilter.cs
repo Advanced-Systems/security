@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AdvancedSystems.Security.Internal;
+namespace AdvancedSystems.Security.Internals;
 
 /// <summary>
 ///     Utility class for capturing additional structured data to enhance the debugging experience.

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
 
+using AdvancedSystems.Security.Internals;
+
 namespace AdvancedSystems.Security.Cryptography;
 
 public static class CryptoRandom
@@ -12,7 +14,7 @@ public static class CryptoRandom
     /// <returns></returns>
     public static Span<byte> GetBytes(int length)
     {
-        Span<byte> buffer = new byte[length];
+        Span<byte> buffer = Hazmat.GetUninitializedArray<byte>(length);
         RandomNumberGenerator.Fill(buffer);
         return buffer;
     }

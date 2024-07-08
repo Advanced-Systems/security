@@ -8,7 +8,7 @@ using AdvancedSystems.Security.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using static AdvancedSystems.Security.Internal.ExceptionFilter;
+using static AdvancedSystems.Security.Internals.ExceptionFilter;
 
 namespace AdvancedSystems.Security.Services;
 
