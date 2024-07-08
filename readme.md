@@ -8,3 +8,18 @@
 
 The `AdvancedSystems.Security` library provides classes and services for symmetric and
 asymmetric standard cryptographic algorithms based on the .NET cryptography system.
+
+## Development Environment
+
+This project uses [stryker](https://stryker-mutator.io/) for mutation testing, which is
+setup to be installed with
+
+```powershell
+dotnet tool restore
+```
+
+Run stryker locally:
+
+```powershell
+dotnet stryker
+```
