@@ -9,9 +9,9 @@ namespace AdvancedSystems.Security.Tests.Fixtures;
 
 public class HashServiceFixture
 {
-    public IHashService HashService { get; set; }
+    public Mock<ILogger<HashService>> Logger { get; private set; }
 
-    public Mock<ILogger<HashService>> Logger { get; set; }
+    public IHashService HashService { get; private set; }
 
     public HashServiceFixture()
     {

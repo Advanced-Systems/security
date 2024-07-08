@@ -25,14 +25,14 @@ public sealed class CertificateService : ICertificateService
 
     #region Public Methods
 
-    public X509Certificate2? GetStoreCertificate(StoreName storeName, StoreLocation storeLocation, string thumbprint)
+    public X509Certificate2? GetStoreCertificate(string thumbprint, StoreName storeName, StoreLocation storeLocation)
     {
         try
         {
             using var _ = this._logger.BeginScope("Searching for {thumbprint} in {storeName} at {storeLocation}", thumbprint, storeName, storeLocation);
             return Certificate.GetStoreCertificate(storeName, storeLocation, thumbprint);
         }
-        catch (CertificateNotFoundException exception) when (True(() => this._logger.LogError(exception, "Service failed to retrieve certificate.")))
+        catch (CertificateNotFoundException exception) when (True(() => this._logger.LogError(exception, "{Service} failed to retrieve certificate.", nameof(CertificateService))))
         {
             return null;
         }
@@ -41,7 +41,7 @@ public sealed class CertificateService : ICertificateService
     public X509Certificate2? GetConfiguredCertificate()
     {
         var config = this._options.Value;
-        return this.GetStoreCertificate(config.StoreName, config.StoreLocation, config.Thumbprint);
+        return this.GetStoreCertificate(config.Thumbprint, config.StoreName, config.StoreLocation);
     }
 
     #endregion

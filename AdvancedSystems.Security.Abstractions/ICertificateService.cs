@@ -6,7 +6,7 @@ namespace AdvancedSystems.Security.Abstractions
     {
         #region Methods
 
-        X509Certificate2? GetStoreCertificate(StoreName storeName, StoreLocation storeLocation, string thumbprint);
+        X509Certificate2? GetStoreCertificate(string thumbprint, StoreName storeName, StoreLocation storeLocation);
 
         X509Certificate2? GetConfiguredCertificate();
 

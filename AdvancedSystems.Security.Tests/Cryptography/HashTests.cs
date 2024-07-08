@@ -10,6 +10,8 @@ namespace AdvancedSystems.Security.Tests.Cryptography;
 
 public class HashTests
 {
+    #region Tests
+
     [Theory]
     [InlineData("Hello, World!", "65a8e27d8879283831b664bd8b7f0ad4", Format.Hex)]
     [InlineData("Hello, World!", "ZajifYh5KDgxtmS9i38K1A==", Format.Base64)]
@@ -104,4 +106,6 @@ public class HashTests
         // Assert
         Assert.Equal(expected, sha512);
     }
+
+    #endregion
 }
