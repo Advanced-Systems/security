@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
@@ -45,17 +44,5 @@ public static class Hash
     {
         using var hashAlgorithm = Hash.Create(hashAlgorithmName);
         return hashAlgorithm.ComputeHash(buffer);
-    }
-
-    /// <summary>
-    ///     Computes the hash value for the specified file.
-    /// </summary>
-    /// <param name="path">The path to the file to compute the hash code for.</param>
-    /// <param name="hashAlgorithmName">The hash algorithm implementation to use.</param>
-    /// <returns>The computed hash code.</returns>
-    public static byte[] Compute(string path, HashAlgorithmName hashAlgorithmName)
-    {
-        byte[] content = File.ReadAllBytes(path);
-        return Hash.Compute(content, hashAlgorithmName);
     }
 }
