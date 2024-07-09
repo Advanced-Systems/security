@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 
 using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.Cryptography;
-using AdvancedSystems.Security.Exceptions;
+using AdvancedSystems.Security.Abstractions.Exceptions;
+using AdvancedSystems.Security.Extensions;
 using AdvancedSystems.Security.Options;
 
 using Microsoft.Extensions.Logging;
@@ -16,11 +16,13 @@ public sealed class CertificateService : ICertificateService
 {
     private readonly ILogger<CertificateService> _logger;
     private readonly IOptions<CertificateOptions> _options;
+    private readonly ICertificateStore _certificateStore;
 
-    public CertificateService(ILogger<CertificateService> logger, IOptions<CertificateOptions> options)
+    public CertificateService(ILogger<CertificateService> logger, IOptions<CertificateOptions> options, ICertificateStore certificateStore)
     {
         this._logger = logger;
         this._options = options;
+        this._certificateStore = certificateStore;
     }
 
     #region Public Methods
@@ -30,7 +32,7 @@ public sealed class CertificateService : ICertificateService
         try
         {
             using var _ = this._logger.BeginScope("Searching for {thumbprint} in {storeName} at {storeLocation}", thumbprint, storeName, storeLocation);
-            return Certificate.GetStoreCertificate(storeName, storeLocation, thumbprint);
+            return this._certificateStore.GetCertificate(thumbprint);
         }
         catch (CertificateNotFoundException exception) when (True(() => this._logger.LogError(exception, "{Service} failed to retrieve certificate.", nameof(CertificateService))))
         {
