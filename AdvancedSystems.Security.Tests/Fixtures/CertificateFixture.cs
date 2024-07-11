@@ -16,6 +16,16 @@ namespace AdvancedSystems.Security.Tests.Fixtures;
 
 public class CertificateFixture
 {
+    public CertificateFixture()
+    {
+        this.Logger = new Mock<ILogger<CertificateService>>();
+        this.Options = new Mock<IOptions<CertificateOptions>>();
+        this.Store = new Mock<ICertificateStore>();
+        this.CertificateService = new CertificateService(this.Logger.Object, this.Options.Object, this.Store.Object);
+    }
+
+    #region Properties
+
     public Mock<ILogger<CertificateService>> Logger { get; private set; }
 
     public ICertificateService CertificateService { get; private set; }
@@ -24,13 +34,7 @@ public class CertificateFixture
 
     public Mock<ICertificateStore> Store { get; private set; }
 
-    public CertificateFixture()
-    {
-        this.Logger = new Mock<ILogger<CertificateService>>();
-        this.Options = new Mock<IOptions<CertificateOptions>>();
-        this.Store = new Mock<ICertificateStore>();
-        this.CertificateService = new CertificateService(this.Logger.Object, this.Options.Object, this.Store.Object);
-    }
+    #endregion
 
     #region Helper Methods
 

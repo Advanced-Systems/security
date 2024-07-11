@@ -9,13 +9,17 @@ namespace AdvancedSystems.Security.Tests.Fixtures;
 
 public class HashServiceFixture
 {
-    public Mock<ILogger<HashService>> Logger { get; private set; }
-
-    public IHashService HashService { get; private set; }
-
     public HashServiceFixture()
     {
         this.Logger = new Mock<ILogger<HashService>>();
         this.HashService = new HashService(this.Logger.Object);
     }
+
+    #region Properties
+
+    public Mock<ILogger<HashService>> Logger { get; private set; }
+
+    public IHashService HashService { get; private set; }
+
+    #endregion
 }

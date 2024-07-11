@@ -15,13 +15,13 @@ namespace AdvancedSystems.Security.Services;
 public sealed class CertificateService : ICertificateService
 {
     private readonly ILogger<CertificateService> _logger;
-    private readonly IOptions<CertificateOptions> _options;
+    private readonly IOptions<CertificateOptions> _certificateOptions;
     private readonly ICertificateStore _certificateStore;
 
-    public CertificateService(ILogger<CertificateService> logger, IOptions<CertificateOptions> options, ICertificateStore certificateStore)
+    public CertificateService(ILogger<CertificateService> logger, IOptions<CertificateOptions> certificateOptions, ICertificateStore certificateStore)
     {
         this._logger = logger;
-        this._options = options;
+        this._certificateOptions = certificateOptions;
         this._certificateStore = certificateStore;
     }
 
@@ -42,8 +42,8 @@ public sealed class CertificateService : ICertificateService
 
     public X509Certificate2? GetConfiguredCertificate()
     {
-        var config = this._options.Value;
-        return this.GetStoreCertificate(config.Thumbprint, config.StoreName, config.StoreLocation);
+        var options = this._certificateOptions.Value;
+        return this.GetStoreCertificate(options.Thumbprint, options.Store.Name, options.Store.Location);
     }
 
     #endregion
