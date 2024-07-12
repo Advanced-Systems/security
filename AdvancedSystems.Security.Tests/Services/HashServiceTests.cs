@@ -1,8 +1,15 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 
+using AdvancedSystems.Security.Abstractions;
+using AdvancedSystems.Security.DependencyInjection;
 using AdvancedSystems.Security.Tests.Fixtures;
 
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Moq;
@@ -19,6 +26,8 @@ public class HashServiceTests : IClassFixture<HashServiceFixture>
     {
         this._sut = fixture;
     }
+
+    #region Tests
 
     [Fact]
     public void TestMD5Hash()
@@ -107,4 +116,36 @@ public class HashServiceTests : IClassFixture<HashServiceFixture>
         // Assert
         Assert.Equal("07e547d9586f6a73f73fbac0435ed76951218fb7d0c8d788a309d785436bbb642e93a252a954f23912547d1e8a3b5ed6e1bfd7097821233fa0538f3db854fee6", sha512);
     }
+
+    [Fact]
+    public async Task TestAddHashService()
+    {
+        // Arrange
+        using var hostBuilder = await new HostBuilder()
+            .ConfigureWebHost(builder => builder
+                .UseTestServer()
+                .ConfigureServices(services =>
+                {
+                    services.AddHashService();
+                })
+                .Configure(app =>
+                {
+
+                }))
+                .StartAsync();
+
+        string input = "The quick brown fox jumps over the lazy dog";
+        byte[] buffer = Encoding.UTF8.GetBytes(input);
+
+        // Act
+        var hashService = hostBuilder.Services.GetService<IHashService>();
+        string? sha256 = hashService?.GetSHA256Hash(buffer);
+
+        // Assert
+        Assert.NotNull(hashService);
+        Assert.Equal("d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592", sha256);
+        await hostBuilder.StopAsync();
+    }
+
+    #endregion
 }

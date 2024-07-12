@@ -15,7 +15,7 @@ This project uses [stryker](https://stryker-mutator.io/) for mutation testing, w
 setup to be installed with
 
 ```powershell
-dotnet tool restore
+dotnet tool restore --configfile .\AdvancedSystems.Security\nuget.config
 ```
 
 Run stryker locally:

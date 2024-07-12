@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 
 using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.Cryptography;
-using AdvancedSystems.Security.Exceptions;
+using AdvancedSystems.Security.Abstractions.Exceptions;
+using AdvancedSystems.Security.Extensions;
 using AdvancedSystems.Security.Options;
 
 using Microsoft.Extensions.Logging;
@@ -15,24 +15,26 @@ namespace AdvancedSystems.Security.Services;
 public sealed class CertificateService : ICertificateService
 {
     private readonly ILogger<CertificateService> _logger;
-    private readonly IOptions<CertificateOptions> _options;
+    private readonly IOptions<CertificateOptions> _certificateOptions;
+    private readonly ICertificateStore _certificateStore;
 
-    public CertificateService(ILogger<CertificateService> logger, IOptions<CertificateOptions> options)
+    public CertificateService(ILogger<CertificateService> logger, IOptions<CertificateOptions> certificateOptions, ICertificateStore certificateStore)
     {
         this._logger = logger;
-        this._options = options;
+        this._certificateOptions = certificateOptions;
+        this._certificateStore = certificateStore;
     }
 
     #region Public Methods
 
-    public X509Certificate2? GetStoreCertificate(StoreName storeName, StoreLocation storeLocation, string thumbprint)
+    public X509Certificate2? GetStoreCertificate(string thumbprint, StoreName storeName, StoreLocation storeLocation)
     {
         try
         {
             using var _ = this._logger.BeginScope("Searching for {thumbprint} in {storeName} at {storeLocation}", thumbprint, storeName, storeLocation);
-            return Certificate.GetStoreCertificate(storeName, storeLocation, thumbprint);
+            return this._certificateStore.GetCertificate(thumbprint);
         }
-        catch (CertificateNotFoundException exception) when (True(() => this._logger.LogError(exception, "Service failed to retrieve certificate.")))
+        catch (CertificateNotFoundException exception) when (True(() => this._logger.LogError(exception, "{Service} failed to retrieve certificate.", nameof(CertificateService))))
         {
             return null;
         }
@@ -40,8 +42,8 @@ public sealed class CertificateService : ICertificateService
 
     public X509Certificate2? GetConfiguredCertificate()
     {
-        var config = this._options.Value;
-        return this.GetStoreCertificate(config.StoreName, config.StoreLocation, config.Thumbprint);
+        var options = this._certificateOptions.Value;
+        return this.GetStoreCertificate(options.Thumbprint, options.Store.Name, options.Store.Location);
     }
 
     #endregion

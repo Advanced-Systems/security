@@ -3,13 +3,13 @@ using System.Text;
 
 namespace AdvancedSystems.Security.Options;
 
-public record RSACryptoOptions
+public sealed class RSACryptoOptions
 {
-    public required HashAlgorithmName HashAlgorithmName { get; init; }
+    public required HashAlgorithmName HashAlgorithmName { get; set; }
 
-    public required RSAEncryptionPadding EncryptionPadding { get; init; }
+    public required RSAEncryptionPadding EncryptionPadding { get; set; }
 
-    public required RSASignaturePadding SignaturePadding { get; init; }
+    public required RSASignaturePadding SignaturePadding { get; set; }
 
-    public required Encoding Encoding { get; init; }
+    public required Encoding Encoding { get; set; }
 }

@@ -89,13 +89,10 @@ public sealed class RSACryptoService : IRSACryptoService
 
     public void Dispose(bool disposing)
     {
-        if (this._disposed) return;
+        if (this._disposed || !disposing) return;
 
-        if (disposing)
-        {
-            this._certificate.Dispose();
-            this._disposed = true;
-        }
+        this._certificate.Dispose();
+        this._disposed = true;
     }
 
     public bool IsValidMessage(string message, RSAEncryptionPadding? padding, Encoding? encoding = null)

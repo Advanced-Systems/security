@@ -1,16 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography.X509Certificates;
 
 namespace AdvancedSystems.Security.Options;
 
-public record CertificateOptions
+public sealed class CertificateOptions
 {
     [Key]
-    public required string Thumbprint { get; init; }
+    [Required(AllowEmptyStrings = false)]
+    public required string Thumbprint { get; set; }
 
-    [EnumDataType(typeof(StoreName))]
-    public required StoreName StoreName { get; init; }
-
-    [EnumDataType(typeof(StoreLocation))]
-    public required StoreLocation StoreLocation { get; init; }
+    [Required]
+    public required CertificateStoreOptions Store { get; set; }
 }

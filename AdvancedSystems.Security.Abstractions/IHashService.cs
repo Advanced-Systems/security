@@ -3,7 +3,7 @@
 namespace AdvancedSystems.Security.Abstractions
 {
     /// <summary>
-    ///     Defines a methods for computing hash codes.
+    ///     Defines a service for computing hash codes.
     /// </summary>
     public interface IHashService
     {
