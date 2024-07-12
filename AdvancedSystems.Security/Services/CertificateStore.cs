@@ -18,11 +18,6 @@ public sealed class CertificateStore : ICertificateStore
         this._store = new X509Store(storeName, storeLocation);
     }
 
-    public static implicit operator X509Store(CertificateStore storeService)
-    {
-        return new X509Store(storeService.Name!, storeService.Location);
-    }
-
     #region Properties
 
     public IntPtr StoreHandle
