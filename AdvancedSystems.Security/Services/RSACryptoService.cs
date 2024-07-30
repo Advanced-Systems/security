@@ -29,7 +29,7 @@ public sealed class RSACryptoService : IRSACryptoService
         this._options = options;
 
         this._certificate = this._certificateService.GetConfiguredCertificate()
-            ?? throw new ArgumentNullException(nameof(certificateService));
+            ?? throw new ArgumentNullException(nameof(this._certificate));
 
         var config = this._options.Value;
         this._provider = new RSACryptoProvider(this._certificate, config.HashAlgorithmName, config.EncryptionPadding, config.SignaturePadding, config.Encoding);
