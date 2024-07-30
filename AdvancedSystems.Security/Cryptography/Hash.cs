@@ -7,9 +7,6 @@ namespace AdvancedSystems.Security.Cryptography;
 /// <summary>
 ///     Implements cryptographic hash algorithms.
 /// </summary>
-/// <remarks>
-///     Use the <see cref="Bytes.AreEqual(byte[], byte[])"/> function for hash comparisons.
-/// </remarks>
 public static class Hash
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

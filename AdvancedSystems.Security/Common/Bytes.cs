@@ -49,7 +49,7 @@ public static class Bytes
     ///     This method exposes the internal state of <see cref="SecureString"/> through marshaling.
     ///     It is no longer recommended to use the <see cref="SecureString"/> for new development on .NET Core projects.
     /// </remarks>
-    /// <exception cref="ArgumentNullException">Raised if <paramref name="secureString"/> is <seealso cref="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Raised if <paramref name="secureString"/> is <c>null</c>.</exception>
     /// <seealso href="https://github.com/dotnet/platform-compat/blob/master/docs/DE0001.md"/>
     [Obsolete]
     public static byte[] GetBytes(this SecureString secureString, Encoding? encoding = null)
