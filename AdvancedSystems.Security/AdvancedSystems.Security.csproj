@@ -1,8 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
+      <TargetFramework>net8.0</TargetFramework>
+      <Version>0.0.0-alpha</Version>
+      <Description>This library provides classes and services for symmetric and asymmetric standard cryptographic algorithms based on the .NET cryptography system.</Description>
+      <PackageId>AdvancedSystems.Security</PackageId>
+      <RootNamespace>AdvancedSystems.Security</RootNamespace>
+      <Title>Advanced Systems Security Library</Title>
   </PropertyGroup>
 
   <ItemGroup>

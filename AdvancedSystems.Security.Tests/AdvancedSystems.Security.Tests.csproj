@@ -2,10 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-
-    <IsPackable>false</IsPackable>
+    <Description>Unit test project for AdvancedSystems.Security.</Description>
+    <PackageId>AdvancedSystems.Security.Tests</PackageId>
+    <RootNamespace>AdvancedSystems.Security.Tests</RootNamespace>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
