@@ -21,20 +21,29 @@ public class CertificateNotFoundException : Exception
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <seealso cref="CertificateNotFoundException"/> class with a specified error <paramref name="message"/>.
+    ///     Initializes a new instance of the <seealso cref="CertificateNotFoundException"/> class with
+    ///     a specified error <paramref name="message"/>.
     /// </summary>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
+    /// <param name="message">
+    ///     The error message that explains the reason for the exception.
+    /// </param>
     public CertificateNotFoundException(string message) : base(message)
     {
 
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <seealso cref="CertificateNotFoundException"/> class with a specified error
-    ///     <paramref name="message"/> a reference to the <paramref name="inner"/> exception that is the cause of this exception.
+    ///     Initializes a new instance of the <seealso cref="CertificateNotFoundException"/> class with a
+    ///     specified error <paramref name="message"/> a reference to the <paramref name="inner"/> exception
+    ///     that is the cause of this exception.
     /// </summary>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
-    /// <param name="inner">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+    /// <param name="message">
+    ///     The error message that explains the reason for the exception.
+    /// </param>
+    /// <param name="inner">
+    ///     The exception that is the cause of the current exception, or a null reference if no inner
+    ///     exception is specified.
+    /// </param>
     public CertificateNotFoundException(string message, Exception inner) : base(message, inner)
     {
 

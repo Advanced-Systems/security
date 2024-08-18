@@ -34,9 +34,15 @@ public static class Hash
     /// <summary>
     ///     Computes the hash value for the specified byte array.
     /// </summary>
-    /// <param name="buffer">The input to compute the hash code for.</param>
-    /// <param name="hashAlgorithmName">The hash algorithm implementation to use.</param>
-    /// <returns>The computed hash code.</returns>
+    /// <param name="buffer">
+    ///     The input to compute the hash code for.
+    /// </param>
+    /// <param name="hashAlgorithmName">
+    ///     The hash algorithm implementation to use.
+    /// </param>
+    /// <returns>
+    ///     The computed hash code.
+    /// </returns>
     public static byte[] Compute(byte[] buffer, HashAlgorithmName hashAlgorithmName)
     {
         using var hashAlgorithm = Hash.Create(hashAlgorithmName);
