@@ -58,4 +58,36 @@ public static class CryptoRandomProvider
     {
         return RandomNumberGenerator.GetInt32(minValue, maxValue);
     }
+
+    /// <summary>
+    ///     Performs an in-place shuffle of a span using cryptographically random number generation.
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The type of span.
+    /// </typeparam>
+    /// <param name="values">
+    ///     The span to shuffle.
+    /// </param>
+    public static void Shuffle<T>(Span<T> values)
+    {
+        RandomNumberGenerator.Shuffle(values);
+    }
+
+    /// <summary>
+    ///     Selects a random element from the provided span of values.
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The type of span.
+    /// </typeparam>
+    /// <param name="values">
+    ///     The span to select a random element from.
+    /// </param>
+    /// <returns>
+    ///     A randomly selected element from the span.
+    /// </returns>
+    public static T Choice<T>(Span<T> values)
+    {
+        int index = CryptoRandomProvider.GetInt32(0, values.Length);
+        return values[index];
+    }
 }
