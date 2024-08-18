@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using AdvancedSystems.Security.Cryptography;
 
@@ -17,7 +18,7 @@ public class CryptoRandomProviderTests
         int length = 64;
 
         // Act
-        var buffer = CryptoRandomProvider.GetBytes(length);
+        Span<byte> buffer = CryptoRandomProvider.GetBytes(length);
 
         // Assert
         Assert.Equal(length, buffer.Length);
@@ -57,7 +58,7 @@ public class CryptoRandomProviderTests
         }
 
         // Assert
-        Assert.All(randomNumbers, x => Assert.InRange(x, min, max));
+        Assert.All(randomNumbers, x => Assert.InRange(x, min, max - 1));
     }
 
     [Fact]
