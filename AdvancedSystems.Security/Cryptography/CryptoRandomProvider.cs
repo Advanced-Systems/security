@@ -5,7 +5,7 @@ using AdvancedSystems.Security.Internals;
 
 namespace AdvancedSystems.Security.Cryptography;
 
-public static class CryptoRandom
+public static class CryptoRandomProvider
 {
     /// <summary>
     ///     Creates an array of bytes filled with a cryptographically strong random sequence of values.
@@ -31,7 +31,7 @@ public static class CryptoRandom
     /// </returns>
     public static int GetInt32()
     {
-        Span<byte> buffer = CryptoRandom.GetBytes(4);
+        Span<byte> buffer = CryptoRandomProvider.GetBytes(4);
         int random = buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
         return random;
     }
