@@ -13,6 +13,16 @@ namespace AdvancedSystems.Security.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
+    #region CryptoRandom
+
+    public static IServiceCollection AddCryptoRandomService(this IServiceCollection services)
+    {
+        services.TryAdd(ServiceDescriptor.Scoped<ICryptoRandomService, CryptoRandomService>());
+        return services;
+    }
+
+    #endregion
+
     #region HashService
 
     public static IServiceCollection AddHashService(this IServiceCollection services)
