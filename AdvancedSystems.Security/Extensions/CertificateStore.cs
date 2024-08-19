@@ -15,11 +15,21 @@ public static class CertificateStore
     /// <summary>
     ///     Retrieves an X.509 certificate from the specified store using the provided thumbprint.
     /// </summary>
-    /// <typeparam name="T">The type of the certificate store, which must implement the <see cref="ICertificateStore"/> interface.</typeparam>
-    /// <param name="store">The certificate store from which to retrieve the certificate.</param>
-    /// <param name="thumbprint">The thumbprint of the certificate to locate.</param>
-    /// <returns>The <see cref="X509Certificate2"/> object if the certificate is found.</returns>
-    /// <exception cref="CertificateNotFoundException">Thrown when no certificate with the specified thumbprint is found in the store.</exception>
+    /// <typeparam name="T">
+    ///     The type of the certificate store, which must implement the <see cref="ICertificateStore"/> interface.
+    /// </typeparam>
+    /// <param name="store">
+    ///     The certificate store from which to retrieve the certificate.
+    /// </param>
+    /// <param name="thumbprint">
+    ///     The thumbprint of the certificate to locate.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="X509Certificate2"/> object if the certificate is found.
+    /// </returns>
+    /// <exception cref="CertificateNotFoundException">
+    ///     Thrown when no certificate with the specified thumbprint is found in the store.
+    /// </exception>
     public static X509Certificate2 GetCertificate<T>(this T store, string thumbprint) where T : ICertificateStore
     {
         store.Open(OpenFlags.ReadOnly);

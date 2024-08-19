@@ -5,10 +5,6 @@ using AdvancedSystems.Security.Abstractions;
 
 namespace AdvancedSystems.Security.Services;
 
-/// <summary>
-///     Implements X.509 store, which is a physical store where certificates are persisted and managed.
-///     This class cannot be inherited.
-/// </summary>
 public sealed class CertificateStore : ICertificateStore
 {
     private readonly X509Store _store;

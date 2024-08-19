@@ -15,11 +15,11 @@ using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Services;
 
-public class CertificateStore : IClassFixture<CertificateStoreFixture>
+public class CertificateStoreTests : IClassFixture<CertificateStoreFixture>
 {
     private readonly CertificateStoreFixture _sut;
 
-    public CertificateStore(CertificateStoreFixture fixture)
+    public CertificateStoreTests(CertificateStoreFixture fixture)
     {
         this._sut = fixture;
     }

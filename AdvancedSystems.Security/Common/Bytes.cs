@@ -42,14 +42,24 @@ public static class Bytes
     /// <summary>
     ///     Gets the bytes of a <see cref="SecureString"/> object.
     /// </summary>
-    /// <param name="secureString">Represents a text that should be kept confidential, such as a password.</param>
-    /// <param name="encoding">The character encoding used to convert all characters in the underlying <seealso cref="string"/> into a sequence of bytes.</param>
-    /// <returns>Returns the bytes of the current instance.</returns>
+    /// <param name="secureString">
+    ///     Represents a text that should be kept confidential, such as a password.
+    /// </param>
+    /// <param name="encoding">
+    ///     The character encoding used to convert all characters in the underlying <seealso cref="string"/>
+    ///     into a sequence of bytes.
+    /// </param>
+    /// <returns>
+    ///     Returns the bytes of the current instance.
+    ///  </returns>
     /// <remarks>
     ///     This method exposes the internal state of <see cref="SecureString"/> through marshaling.
-    ///     It is no longer recommended to use the <see cref="SecureString"/> for new development on .NET Core projects.
+    ///     It is no longer recommended to use the <see cref="SecureString"/> for new development
+    ///     on .NET Core projects.
     /// </remarks>
-    /// <exception cref="ArgumentNullException">Raised if <paramref name="secureString"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentNullException">
+    ///     Thrown when <paramref name="secureString"/> is <c>null</c>.
+    /// </exception>
     /// <seealso href="https://github.com/dotnet/platform-compat/blob/master/docs/DE0001.md"/>
     [Obsolete]
     public static byte[] GetBytes(this SecureString secureString, Encoding? encoding = null)
