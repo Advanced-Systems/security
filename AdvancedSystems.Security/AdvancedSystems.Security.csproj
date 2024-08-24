@@ -10,17 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AdvancedSystems.Core" Version="8.0.0-alpha.5" />
+    <PackageReference Include="AdvancedSystems.Core" Version="8.0.0-alpha.6" />
+    <PackageReference Include="AdvancedSystems.Security.Abstractions" Version="8.0.0-alpha.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\AdvancedSystems.Security.Abstractions\AdvancedSystems.Security.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

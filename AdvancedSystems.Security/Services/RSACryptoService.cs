@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace AdvancedSystems.Security.Services;
 
+/// <inheritdoc cref="IRSACryptoService" />
 public sealed class RSACryptoService : IRSACryptoService
 {
     private readonly ILogger<RSACryptoService> _logger;
@@ -37,6 +38,7 @@ public sealed class RSACryptoService : IRSACryptoService
 
     #region Properties
 
+    /// <inheritdoc />
     public X509Certificate2 Certificate
     {
         get
@@ -45,6 +47,7 @@ public sealed class RSACryptoService : IRSACryptoService
         }
     }
 
+    /// <inheritdoc />
     public HashAlgorithmName HashAlgorithmName
     {
         get
@@ -53,6 +56,7 @@ public sealed class RSACryptoService : IRSACryptoService
         }
     }
 
+    /// <inheritdoc />
     public RSAEncryptionPadding EncryptionPadding
     {
         get
@@ -61,6 +65,7 @@ public sealed class RSACryptoService : IRSACryptoService
         }
     }
 
+    /// <inheritdoc />
     public RSASignaturePadding SignaturePadding
     {
         get
@@ -69,6 +74,7 @@ public sealed class RSACryptoService : IRSACryptoService
         }
     }
 
+    /// <inheritdoc />
     public Encoding Encoding
     {
         get
@@ -79,7 +85,9 @@ public sealed class RSACryptoService : IRSACryptoService
 
     #endregion
 
-    #region Public Methods
+    #region Methods
+
+    /// <inheritdoc />
 
     public void Dispose()
     {
@@ -87,6 +95,7 @@ public sealed class RSACryptoService : IRSACryptoService
         GC.SuppressFinalize(this);
     }
 
+    /// <inheritdoc />
     public void Dispose(bool disposing)
     {
         if (this._disposed || !disposing) return;
@@ -95,26 +104,31 @@ public sealed class RSACryptoService : IRSACryptoService
         this._disposed = true;
     }
 
+    /// <inheritdoc />
     public bool IsValidMessage(string message, RSAEncryptionPadding? padding, Encoding? encoding = null)
     {
         return this._provider.IsValidMessage(message, padding, encoding);
     }
 
+    /// <inheritdoc />
     public string Encrypt(string message, Encoding? encoding = null)
     {
         return this._provider.Encrypt(message, encoding);
     }
 
+    /// <inheritdoc />
     public string Decrypt(string cipher, Encoding? encoding = null)
     {
         return this._provider.Decrypt(cipher, encoding);
     }
 
+    /// <inheritdoc />
     public string SignData(string data, Encoding? encoding = null)
     {
         return this._provider.SignData(data, encoding);
     }
 
+    /// <inheritdoc />
     public bool VerifyData(string data, string signature, Encoding? encoding = null)
     {
         return this._provider.VerifyData(data, signature, encoding);
