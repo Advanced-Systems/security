@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AdvancedSystems.Security.Services;
 
+/// <inheritdoc cref="IHashService" />
 public sealed class HashService : IHashService
 {
     private readonly ILogger<HashService> _logger;
@@ -17,6 +18,9 @@ public sealed class HashService : IHashService
         this._logger = logger;
     }
 
+    #region Methods
+
+    /// <inheritdoc />
     public string GetMD5Hash(byte[] buffer)
     {
         this._logger.LogWarning("Computing hash with a cryptographically insecure hash algorithm (MD5).");
@@ -25,6 +29,7 @@ public sealed class HashService : IHashService
         return md5.ToString(Format.Hex);
     }
 
+    /// <inheritdoc />
     public string GetSHA1Hash(byte[] buffer)
     {
         this._logger.LogWarning("Computing hash with a cryptographically insecure hash algorithm (SHA1.)");
@@ -33,21 +38,26 @@ public sealed class HashService : IHashService
         return sha1.ToString(Format.Hex);
     }
 
+    /// <inheritdoc />
     public string GetSHA256Hash(byte[] buffer)
     {
         byte[] sha256 = Hash.Compute(buffer, HashAlgorithmName.SHA256);
         return sha256.ToString(Format.Hex);
     }
 
+    /// <inheritdoc />
     public string GetSHA384Hash(byte[] buffer)
     {
         byte[] sha384 = Hash.Compute(buffer, HashAlgorithmName.SHA384);
         return sha384.ToString(Format.Hex);
     }
 
+    /// <inheritdoc />
     public string GetSHA512Hash(byte[] buffer)
     {
         byte[] sha512 = Hash.Compute(buffer, HashAlgorithmName.SHA512);
         return sha512.ToString(Format.Hex);
     }
+
+    #endregion
 }

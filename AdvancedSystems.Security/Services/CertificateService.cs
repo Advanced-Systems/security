@@ -12,6 +12,7 @@ using static AdvancedSystems.Core.Common.ExceptionFilter;
 
 namespace AdvancedSystems.Security.Services;
 
+/// <inheritdoc cref="ICertificateService"/>
 public sealed class CertificateService : ICertificateService
 {
     private readonly ILogger<CertificateService> _logger;
@@ -25,8 +26,9 @@ public sealed class CertificateService : ICertificateService
         this._certificateStore = certificateStore;
     }
 
-    #region Public Methods
+    #region Methods
 
+    /// <inheritdoc />
     public X509Certificate2? GetStoreCertificate(string thumbprint, StoreName storeName, StoreLocation storeLocation)
     {
         try
@@ -40,6 +42,7 @@ public sealed class CertificateService : ICertificateService
         }
     }
 
+    /// <inheritdoc />
     public X509Certificate2? GetConfiguredCertificate()
     {
         var options = this._certificateOptions.Value;

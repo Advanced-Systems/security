@@ -5,6 +5,7 @@ using AdvancedSystems.Security.Abstractions;
 
 namespace AdvancedSystems.Security.Services;
 
+/// <inheritdoc cref="ICertificateStore" />
 public sealed class CertificateStore : ICertificateStore
 {
     private readonly X509Store _store;
@@ -16,6 +17,7 @@ public sealed class CertificateStore : ICertificateStore
 
     #region Properties
 
+    /// <inheritdoc />
     public IntPtr StoreHandle
     {
         get
@@ -24,6 +26,7 @@ public sealed class CertificateStore : ICertificateStore
         }
     }
 
+    /// <inheritdoc />
     public StoreLocation Location
     {
         get
@@ -32,6 +35,7 @@ public sealed class CertificateStore : ICertificateStore
         }
     }
 
+    /// <inheritdoc />
     public string? Name
     {
         get
@@ -40,6 +44,7 @@ public sealed class CertificateStore : ICertificateStore
         }
     }
 
+    /// <inheritdoc />
     public X509Certificate2Collection Certificates
     {
         get
@@ -48,6 +53,7 @@ public sealed class CertificateStore : ICertificateStore
         }
     }
 
+    /// <inheritdoc />
     public bool IsOpen
     {
         get
@@ -60,36 +66,43 @@ public sealed class CertificateStore : ICertificateStore
 
     #region Methods
 
+    /// <inheritdoc />
     public void Open(OpenFlags flags)
     {
         this._store.Open(flags);
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         this._store?.Dispose();
     }
 
+    /// <inheritdoc />
     public void Close()
     {
         this._store?.Close();
     }
 
+    /// <inheritdoc />
     public void Add(X509Certificate2 certificate)
     {
         this._store.Add(certificate);
     }
 
+    /// <inheritdoc />
     public void AddRange(X509Certificate2Collection certificates)
     {
         this._store.AddRange(certificates);
     }
 
+    /// <inheritdoc />
     public void Remove(X509Certificate2 certificate)
     {
         this._store.Remove(certificate);
     }
 
+    /// <inheritdoc />
     public void RemoveRange(X509Certificate2Collection certificates)
     {
         this._store.RemoveRange(certificates);
