@@ -168,7 +168,7 @@ public class CertificateServiceTests : IClassFixture<CertificateFixture>
                 {
                     config.AddJsonFile("appsettings.json", optional: false);
                 })
-                .ConfigureServices((context, services )=>
+                .ConfigureServices((context, services) =>
                 {
                     services.AddCertificateService(context.Configuration);
                 })
