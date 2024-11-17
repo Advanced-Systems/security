@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 
-using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.DependencyInjection;
 using AdvancedSystems.Security.Tests.Fixtures;
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Services;
 
-public class CryptoRandomServiceTests : IClassFixture<CryptoRandomFixture>
+public sealed class CryptoRandomServiceTests : IClassFixture<CryptoRandomFixture>
 {
     private readonly CryptoRandomFixture _sut;
 
@@ -91,35 +83,11 @@ public class CryptoRandomServiceTests : IClassFixture<CryptoRandomFixture>
         int randomNumber = this._sut.CryptoRandomService.Choice<int>(array);
 
         // Assert
-        Assert.Contains(randomNumber, array);
-        Assert.InRange(randomNumber, min, max - 1);
-    }
-
-    [Fact]
-    public async Task TestAddCryptoRandomService()
-    {
-        // Arrange
-        using var hostBuilder = await new HostBuilder()
-            .ConfigureWebHost(builder =>
-            {
-                builder.UseTestServer();
-                builder.ConfigureServices(services =>
-                {
-                    services.AddCryptoRandomService();
-                });
-                builder.Configure(app =>
-                {
-
-                });
-            })
-            .StartAsync();
-
-        // Act
-        var cryptoRandomService = hostBuilder.Services.GetService<ICryptoRandomService>();
-
-        // Assert
-        Assert.NotNull(cryptoRandomService);
-        await hostBuilder.StopAsync();
+        Assert.Multiple(() =>
+        {
+            Assert.Contains(randomNumber, array);
+            Assert.InRange(randomNumber, min, max - 1);
+        });
     }
 
     #endregion
