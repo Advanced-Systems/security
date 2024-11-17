@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace AdvancedSystems.Security.DependencyInjection;
 
-public static class ServiceCollectionExtensions
+public static partial class ServiceCollectionExtensions
 {
     #region CryptoRandom
 
@@ -59,10 +59,10 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCertificateStore(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddCertificateStore(this IServiceCollection services, IConfigurationSection configurationSection)
     {
         services.AddOptions<CertificateStoreOptions>()
-            .Bind(configuration.GetRequiredSection(Sections.CERTIFICATE_STORE))
+            .Bind(configurationSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
@@ -90,14 +90,14 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCertificateService(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddCertificateService(this IServiceCollection services, IConfigurationSection configurationSection)
     {
         services.AddOptions<CertificateOptions>()
-            .Bind(configuration.GetRequiredSection(Sections.CERTIFICATE))
+            .Bind(configurationSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddCertificateStore(configuration);
+        services.AddCertificateStore(configurationSection.GetRequiredSection(Sections.STORE));
         services.AddCertificateService();
 
         return services;
@@ -116,7 +116,7 @@ public static class ServiceCollectionExtensions
         throw new NotImplementedException();
     }
 
-    public static IServiceCollection AddRSACryptoService(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddRSACryptoService(this IServiceCollection services, IConfigurationSection configurationSection)
     {
         throw new NotImplementedException();
     }

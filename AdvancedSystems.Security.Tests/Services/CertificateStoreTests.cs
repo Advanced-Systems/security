@@ -68,8 +68,7 @@ public class CertificateStoreTests : IClassFixture<CertificateStoreFixture>
             })
             .ConfigureServices((context, services) =>
             {
-
-                services.AddCertificateStore(context.Configuration);
+                services.AddCertificateStore(context.Configuration.GetSection($"{Sections.CERTIFICATE}:{Sections.STORE}"));
             })
             .Configure(app =>
             {

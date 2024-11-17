@@ -170,7 +170,7 @@ public class CertificateServiceTests : IClassFixture<CertificateFixture>
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddCertificateService(context.Configuration);
+                    services.AddCertificateService(context.Configuration.GetSection(Sections.CERTIFICATE));
                 })
             .Configure(app =>
             {
