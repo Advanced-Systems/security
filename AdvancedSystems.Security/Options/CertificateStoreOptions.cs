@@ -3,7 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace AdvancedSystems.Security.Options;
 
-public sealed class CertificateStoreOptions
+public sealed record CertificateStoreOptions
 {
     [Required]
     [EnumDataType(typeof(StoreName))]

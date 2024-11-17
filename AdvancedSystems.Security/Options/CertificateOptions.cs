@@ -2,7 +2,7 @@
 
 namespace AdvancedSystems.Security.Options;
 
-public sealed class CertificateOptions
+public sealed record CertificateOptions
 {
     [Key]
     [Required(AllowEmptyStrings = false)]
