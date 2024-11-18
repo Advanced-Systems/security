@@ -1,9 +1,13 @@
-﻿using AdvancedSystems.Security.Tests.Fixtures;
+﻿using AdvancedSystems.Security.Abstractions;
+using AdvancedSystems.Security.Tests.Fixtures;
 
 using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Services;
 
+/// <summary>
+///     Tests the public methods in <seealso cref="ICertificateStore"/>.
+/// </summary>
 public sealed class CertificateStoreTests : IClassFixture<CertificateStoreFixture>
 {
     private readonly CertificateStoreFixture _sut;

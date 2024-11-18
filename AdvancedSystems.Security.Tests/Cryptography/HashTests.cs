@@ -8,10 +8,25 @@ using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Cryptography;
 
-public class HashTests
+/// <summary>
+///     Tests the public methods in <seealso cref="Hash"/>.
+/// </summary>
+public sealed class HashTests
 {
     #region Tests
 
+    /// <summary>
+    ///     Tests that the computed <seealso cref="HashAlgorithmName.MD5"/> hash returns a well-formatted string.
+    /// </summary>
+    /// <param name="input">
+    ///     The input to compute the hash code for.
+    /// </param>
+    /// <param name="expected">
+    ///     The expected result.
+    /// </param>
+    /// <param name="format">
+    ///     The formatting to use.
+    /// </param>
     [Theory]
     [InlineData("Hello, World!", "65a8e27d8879283831b664bd8b7f0ad4", Format.Hex)]
     [InlineData("Hello, World!", "ZajifYh5KDgxtmS9i38K1A==", Format.Base64)]
@@ -31,6 +46,18 @@ public class HashTests
         Assert.Equal(expected, md5);
     }
 
+    /// <summary>
+    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA1"/> hash returns a well-formatted string.
+    /// </summary>
+    /// <param name="input">
+    ///     The input to compute the hash code for.
+    /// </param>
+    /// <param name="expected">
+    ///     The expected result.
+    /// </param>
+    /// <param name="format">
+    ///     The formatting to use.
+    /// </param>
     [Theory]
     [InlineData("Hello, World!", "0a0a9f2a6772942557ab5355d76af442f8f65e01", Format.Hex)]
     [InlineData("Hello, World!", "CgqfKmdylCVXq1NV12r0Qvj2XgE=", Format.Base64)]
@@ -50,6 +77,18 @@ public class HashTests
         Assert.Equal(expected, sha1);
     }
 
+    /// <summary>
+    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA256"/> hash returns a well-formatted string.
+    /// </summary>
+    /// <param name="input">
+    ///     The input to compute the hash code for.
+    /// </param>
+    /// <param name="expected">
+    ///     The expected result.
+    /// </param>
+    /// <param name="format">
+    ///     The formatting to use.
+    /// </param>
     [Theory]
     [InlineData("Hello, World!", "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f", Format.Hex)]
     [InlineData("Hello, World!", "3/1gIbsr1bCvZ2KQgJ7DpTGR3YHH9wpLKGiKNiGCmG8=", Format.Base64)]
@@ -69,6 +108,18 @@ public class HashTests
         Assert.Equal(expected, sha256);
     }
 
+    /// <summary>
+    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA384"/> hash returns a well-formatted string.
+    /// </summary>
+    /// <param name="input">
+    ///     The input to compute the hash code for.
+    /// </param>
+    /// <param name="expected">
+    ///     The expected result.
+    /// </param>
+    /// <param name="format">
+    ///     The formatting to use.
+    /// </param>
     [Theory]
     [InlineData("Hello, World!", "5485cc9b3365b4305dfb4e8337e0a598a574f8242bf17289e0dd6c20a3cd44a089de16ab4ab308f63e44b1170eb5f515", Format.Hex)]
     [InlineData("Hello, World!", "VIXMmzNltDBd+06DN+ClmKV0+CQr8XKJ4N1sIKPNRKCJ3harSrMI9j5EsRcOtfUV", Format.Base64)]
@@ -88,6 +139,18 @@ public class HashTests
         Assert.Equal(expected, sha384);
     }
 
+    /// <summary>
+    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA512"/> hash returns a well-formatted string.
+    /// </summary>
+    /// <param name="input">
+    ///     The input to compute the hash code for.
+    /// </param>
+    /// <param name="expected">
+    ///     The expected result.
+    /// </param>
+    /// <param name="format">
+    ///     The formatting to use.
+    /// </param>
     [Theory]
     [InlineData("Hello, World!", "374d794a95cdcfd8b35993185fef9ba368f160d8daf432d08ba9f1ed1e5abe6cc69291e0fa2fe0006a52570ef18c19def4e617c33ce52ef0a6e5fbe318cb0387", Format.Hex)]
     [InlineData("Hello, World!", "N015SpXNz9izWZMYX++bo2jxYNja9DLQi6nx7R5avmzGkpHg+i/gAGpSVw7xjBne9OYXwzzlLvCm5fvjGMsDhw==", Format.Base64)]

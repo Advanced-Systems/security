@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 
+using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Tests.Fixtures;
 
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,12 @@ using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Services;
 
+/// <summary>
+///     Tests the public methods in <seealso cref="IHashService"/>.
+/// </summary>
+/// <remarks>
+///     These methods are more exhaustively tested by the underlying provider class.
+/// </remarks>
 public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
 {
     private readonly HashServiceFixture _sut;
@@ -22,6 +29,10 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
 
     #region Tests
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetMD5Hash(byte[])"/> returns the expected hash,
+    ///     and that the log warning message is called.
+    /// </summary>
     [Fact]
     public void TestMD5Hash()
     {
@@ -45,6 +56,10 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
         );
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSHA1Hash(byte[])"/> returns the expected hash,
+    ///     and that the log warning message is called.
+    /// </summary>
     [Fact]
     public void TestSHA1Hash()
     {
@@ -68,6 +83,9 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
         );
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSHA256Hash(byte[])"/> returns the expected hash.
+    /// </summary>
     [Fact]
     public void TestSHA256Hash()
     {
@@ -82,6 +100,9 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
         Assert.Equal("d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592", sha256);
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSHA384Hash(byte[])"/> returns the expected hash.
+    /// </summary>
     [Fact]
     public void TestSHA384Hash()
     {
@@ -96,6 +117,9 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
         Assert.Equal("ca737f1014a48f4c0b6dd43cb177b0afd9e5169367544c494011e3317dbf9a509cb1e5dc1e85a941bbee3d7f2afbc9b1", sha384);
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSHA512Hash(byte[])"/> returns the expected hash.
+    /// </summary>
     [Fact]
     public void TestSHA512Hash()
     {

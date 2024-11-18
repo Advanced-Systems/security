@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Linq;
 
+using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Tests.Fixtures;
 
 using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Services;
 
+/// <summary>
+///     Tests the public methods in <seealso cref="ICryptoRandomService"/>.
+/// </summary>
+/// <remarks>
+///     These methods are more exhaustively tested by the underlying provider class.
+/// </remarks>
 public sealed class CryptoRandomServiceTests : IClassFixture<CryptoRandomFixture>
 {
     private readonly CryptoRandomFixture _sut;
@@ -18,6 +25,10 @@ public sealed class CryptoRandomServiceTests : IClassFixture<CryptoRandomFixture
 
     #region Tests
 
+    /// <summary>
+    ///     Tests that <seealso cref="ICryptoRandomService.GetBytes(int)"/> returns
+    ///     an array of elements of the correct size.
+    /// </summary>
     [Fact]
     public void TestGetBytes()
     {

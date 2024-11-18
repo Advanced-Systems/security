@@ -7,10 +7,17 @@ using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Cryptography;
 
-public class CryptoRandomProviderTests
+/// <summary>
+///     Tests the public methods in <seealso cref="CryptoRandomProvider"/>.
+/// </summary>
+public sealed class CryptoRandomProviderTests
 {
     #region Tests
 
+    /// <summary>
+    ///     Tests that <seealso cref="CryptoRandomProvider.GetBytes(int)"/> returns an
+    ///     array of non-zero bytes with the correct size.
+    /// </summary>
     [Fact]
     public void TestGetBytes()
     {
@@ -25,6 +32,9 @@ public class CryptoRandomProviderTests
         Assert.All(buffer.ToArray(), b => Assert.InRange(b, byte.MinValue, byte.MaxValue));
     }
 
+    /// <summary>
+    ///     Tests heuristically that <seealso cref="CryptoRandomProvider.GetInt32()"/> returns an integer.
+    /// </summary>
     [Fact]
     public void TestGetInt32()
     {
@@ -42,6 +52,9 @@ public class CryptoRandomProviderTests
         Assert.All(randomNumbers, x => Assert.InRange(x, int.MinValue, int.MaxValue));
     }
 
+    /// <summary>
+    ///     Tests heuristically that <seealso cref="CryptoRandomProvider.GetInt32(int, int)"/> returns an integer.
+    /// </summary>
     [Fact]
     public void TestGetInt32_MinMax()
     {
@@ -61,6 +74,10 @@ public class CryptoRandomProviderTests
         Assert.All(randomNumbers, x => Assert.InRange(x, min, max - 1));
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="CryptoRandomProvider.Shuffle{T}(Span{T})"/> changes the order
+    ///     of elements in an array.
+    /// </summary>
     [Fact]
     public void TestShuffle()
     {
@@ -75,6 +92,10 @@ public class CryptoRandomProviderTests
         Assert.NotEqual(array1, array2);
     }
 
+    /// <summary>
+    ///     Tests that elements returned by <seealso cref="CryptoRandomProvider.Choice{T}(Span{T})"/>
+    ///     are elements of the original collection.
+    /// </summary>
     [Fact]
     public void TestChoice()
     {

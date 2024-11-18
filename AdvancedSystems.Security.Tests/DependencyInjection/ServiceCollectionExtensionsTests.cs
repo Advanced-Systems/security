@@ -16,6 +16,9 @@ using Xunit;
 
 namespace AdvancedSystems.Security.Tests.DependencyInjection;
 
+/// <summary>
+///     Tests the public methods in <seealso cref="Security.DependencyInjection.ServiceCollectionExtensions"/>.
+/// </summary>
 public sealed class ServiceCollectionExtensionsTests
 {
     #region AddCertificateService Tests
