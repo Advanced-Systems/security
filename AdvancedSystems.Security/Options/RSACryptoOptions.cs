@@ -3,7 +3,7 @@ using System.Text;
 
 namespace AdvancedSystems.Security.Options;
 
-public sealed class RSACryptoOptions
+public sealed record RSACryptoOptions
 {
     public required HashAlgorithmName HashAlgorithmName { get; set; }
 

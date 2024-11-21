@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Text;
-using System.Threading.Tasks;
 
 using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.DependencyInjection;
 using AdvancedSystems.Security.Tests.Fixtures;
 
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Moq;
@@ -18,7 +12,13 @@ using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Services;
 
-public class HashServiceTests : IClassFixture<HashServiceFixture>
+/// <summary>
+///     Tests the public methods in <seealso cref="IHashService"/>.
+/// </summary>
+/// <remarks>
+///     These methods are more exhaustively tested by the underlying provider class.
+/// </remarks>
+public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
 {
     private readonly HashServiceFixture _sut;
 
@@ -29,6 +29,10 @@ public class HashServiceTests : IClassFixture<HashServiceFixture>
 
     #region Tests
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetMD5Hash(byte[])"/> returns the expected hash,
+    ///     and that the log warning message is called.
+    /// </summary>
     [Fact]
     public void TestMD5Hash()
     {
@@ -52,6 +56,10 @@ public class HashServiceTests : IClassFixture<HashServiceFixture>
         );
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSHA1Hash(byte[])"/> returns the expected hash,
+    ///     and that the log warning message is called.
+    /// </summary>
     [Fact]
     public void TestSHA1Hash()
     {
@@ -75,6 +83,9 @@ public class HashServiceTests : IClassFixture<HashServiceFixture>
         );
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSHA256Hash(byte[])"/> returns the expected hash.
+    /// </summary>
     [Fact]
     public void TestSHA256Hash()
     {
@@ -89,6 +100,9 @@ public class HashServiceTests : IClassFixture<HashServiceFixture>
         Assert.Equal("d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592", sha256);
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSHA384Hash(byte[])"/> returns the expected hash.
+    /// </summary>
     [Fact]
     public void TestSHA384Hash()
     {
@@ -103,6 +117,9 @@ public class HashServiceTests : IClassFixture<HashServiceFixture>
         Assert.Equal("ca737f1014a48f4c0b6dd43cb177b0afd9e5169367544c494011e3317dbf9a509cb1e5dc1e85a941bbee3d7f2afbc9b1", sha384);
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSHA512Hash(byte[])"/> returns the expected hash.
+    /// </summary>
     [Fact]
     public void TestSHA512Hash()
     {
@@ -115,36 +132,6 @@ public class HashServiceTests : IClassFixture<HashServiceFixture>
 
         // Assert
         Assert.Equal("07e547d9586f6a73f73fbac0435ed76951218fb7d0c8d788a309d785436bbb642e93a252a954f23912547d1e8a3b5ed6e1bfd7097821233fa0538f3db854fee6", sha512);
-    }
-
-    [Fact]
-    public async Task TestAddHashService()
-    {
-        // Arrange
-        using var hostBuilder = await new HostBuilder()
-            .ConfigureWebHost(builder => builder
-                .UseTestServer()
-                .ConfigureServices(services =>
-                {
-                    services.AddHashService();
-                })
-                .Configure(app =>
-                {
-
-                }))
-                .StartAsync();
-
-        string input = "The quick brown fox jumps over the lazy dog";
-        byte[] buffer = Encoding.UTF8.GetBytes(input);
-
-        // Act
-        var hashService = hostBuilder.Services.GetService<IHashService>();
-        string? sha256 = hashService?.GetSHA256Hash(buffer);
-
-        // Assert
-        Assert.NotNull(hashService);
-        Assert.Equal("d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592", sha256);
-        await hostBuilder.StopAsync();
     }
 
     #endregion

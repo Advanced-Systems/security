@@ -1,17 +1,9 @@
 ﻿using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
 using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.DependencyInjection;
 using AdvancedSystems.Security.Options;
 using AdvancedSystems.Security.Tests.Fixtures;
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 using Moq;
 
@@ -19,7 +11,10 @@ using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Services;
 
-public class CertificateServiceTests : IClassFixture<CertificateFixture>
+/// <summary>
+///     Tests the public methods in <seealso cref="ICertificateService"/>.
+/// </summary>
+public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
 {
     private readonly CertificateFixture _sut;
 
@@ -30,6 +25,10 @@ public class CertificateServiceTests : IClassFixture<CertificateFixture>
 
     #region Tests
 
+    /// <summary>
+    ///     Tests that <seealso cref="ICertificateService.GetStoreCertificate(string, StoreName, StoreLocation)"/>
+    ///     returns a mocked certificate from the certificate store.
+    /// </summary>
     [Fact]
     public void TestGetStoreCertificate()
     {
@@ -43,11 +42,19 @@ public class CertificateServiceTests : IClassFixture<CertificateFixture>
         var certificate = this._sut.CertificateService.GetStoreCertificate(thumbprint, StoreName.My, StoreLocation.CurrentUser);
 
         // Assert
-        Assert.NotNull(certificate);
-        Assert.Equal(thumbprint, certificate.Thumbprint);
+        Assert.Multiple(() =>
+        {
+            Assert.NotNull(certificate);
+            Assert.Equal(thumbprint, certificate.Thumbprint);
+        });
+
         this._sut.Store.Verify(service => service.Open(It.Is<OpenFlags>(flags => flags == OpenFlags.ReadOnly)));
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="ICertificateService.GetStoreCertificate(string, StoreName, StoreLocation)"/>
+    ///     returns <see langword="null"/> if a certificate could not be found in the certificate store.
+    /// </summary>
     [Fact]
     public void TestGetStoreCertificate_NotFound()
     {
@@ -65,6 +72,10 @@ public class CertificateServiceTests : IClassFixture<CertificateFixture>
         Assert.Null(certificate);
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="ICertificateService.GetConfiguredCertificate()"/>
+    ///     returns a mocked certificate from the certificate store.
+    /// </summary>
     [Fact]
     public void GetConfiguredCertificate()
     {
@@ -90,11 +101,19 @@ public class CertificateServiceTests : IClassFixture<CertificateFixture>
         var certificate = this._sut.CertificateService.GetConfiguredCertificate();
 
         // Assert
-        Assert.NotNull(certificate);
-        Assert.Equal(certificateOptions.Thumbprint, certificate.Thumbprint);
+        Assert.Multiple(() =>
+        {
+            Assert.NotNull(certificate);
+            Assert.Equal(certificateOptions.Thumbprint, certificate.Thumbprint);
+        });
+
         this._sut.Store.Verify(service => service.Open(It.Is<OpenFlags>(flags => flags == OpenFlags.ReadOnly)));
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="ICertificateService.GetConfiguredCertificate()"/>
+    ///     returns <see langword="null"/> if a certificate could not be found in the certificate store.
+    /// </summary>
     [Fact]
     public void GetConfiguredCertificate_NotFound()
     {
@@ -120,72 +139,6 @@ public class CertificateServiceTests : IClassFixture<CertificateFixture>
 
         // Assert
         Assert.Null(certificate);
-    }
-
-    [Fact]
-    public async Task TestAddCertificateService_FromOptions()
-    {
-        // Arrange
-        using var hostBuilder = await new HostBuilder()
-            .ConfigureWebHost(builder => builder
-                .UseTestServer()
-                .ConfigureServices(services =>
-                {
-                    services.AddCertificateService(options =>
-                    {
-                        options.Thumbprint = "123456789";
-                        options.Store = new CertificateStoreOptions
-                        {
-                            Location = StoreLocation.CurrentUser,
-                            Name = StoreName.My,
-                        };
-                    });
-                })
-            .Configure(app =>
-            {
-
-            }))
-            .StartAsync();
-
-        // Act
-        var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetConfiguredCertificate();
-
-        // Assert
-        Assert.NotNull(certificateService);
-        Assert.Null(certificate);
-        await hostBuilder.StopAsync();
-    }
-
-    [Fact]
-    public async Task TestAddCertificateService_FromAppSettings()
-    {
-        // Arrange
-        using var hostBuilder = await new HostBuilder()
-            .ConfigureWebHost(builder => builder
-                .UseTestServer()
-                .ConfigureAppConfiguration(config =>
-                {
-                    config.AddJsonFile("appsettings.json", optional: false);
-                })
-                .ConfigureServices((context, services) =>
-                {
-                    services.AddCertificateService(context.Configuration);
-                })
-            .Configure(app =>
-            {
-
-            }))
-            .StartAsync();
-
-        // Act
-        var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetConfiguredCertificate();
-
-        // Assert
-        Assert.NotNull(certificateService);
-        Assert.Null(certificate);
-        await hostBuilder.StopAsync();
     }
 
     #endregion
