@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 
 using AdvancedSystems.Core.DependencyInjection;
 using AdvancedSystems.Security.Abstractions;
@@ -54,18 +55,20 @@ public static partial class ServiceCollectionExtensions
 
     #region CertificateStore
 
+    private record CertificateOptionsCarrier(StoreName StoreName, StoreLocation StoreLocation);
+
     private static void AddCertificateStore<TOptions>(this IServiceCollection services) where TOptions : class
     {
         services.TryAdd(ServiceDescriptor.Singleton<ICertificateStore>(serviceProvider =>
         {
-            var options = serviceProvider.GetRequiredService<IOptions<TOptions>>().Value switch
+            CertificateOptionsCarrier options = serviceProvider.GetRequiredService<IOptions<TOptions>>().Value switch
             {
-                CertificateOptions certificateOptions => new { certificateOptions.Store.Name, certificateOptions.Store.Location },
-                CertificateStoreOptions storeOptions => new { storeOptions.Name, storeOptions.Location },
+                CertificateOptions certificateOptions => new(certificateOptions.Store?.Name ?? throw new ArgumentNullException(nameof(CertificateOptionsCarrier.StoreName)), certificateOptions.Store?.Location ?? throw new ArgumentNullException(nameof(CertificateOptionsCarrier.StoreLocation))),
+                CertificateStoreOptions storeOptions => new(storeOptions.Name, storeOptions.Location),
                 _ => throw new NotImplementedException()
             };
 
-            return new CertificateStore(options.Name, options.Location);
+            return new CertificateStore(options.StoreName, options.StoreLocation);
         }));
     }
 

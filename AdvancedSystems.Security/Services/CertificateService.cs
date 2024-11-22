@@ -46,6 +46,12 @@ public sealed class CertificateService : ICertificateService
     public X509Certificate2? GetConfiguredCertificate()
     {
         var options = this._certificateOptions.Value;
+
+        if (string.IsNullOrEmpty(options.Thumbprint) || options?.Store is null)
+        {
+            return null;
+        }
+
         return this.GetStoreCertificate(options.Thumbprint, options.Store.Name, options.Store.Location);
     }
 
