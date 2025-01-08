@@ -7,8 +7,6 @@ using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Abstractions.Exceptions;
 using AdvancedSystems.Security.Cryptography;
 
-using static System.Net.WebRequestMethods;
-
 namespace AdvancedSystems.Security.Extensions;
 
 /// <summary>
@@ -45,7 +43,7 @@ public static partial class CertificateExtensions
             .FirstOrDefault();
 
         return certificate
-            ?? throw new CertificateNotFoundException("No valid certificate matching the search criteria could be found in the store.");
+            ?? throw new CertificateNotFoundException($"""No valid certificate with thumbprint "{thumbprint}" could be found in the store.""");
     }
 
     /// <summary>

@@ -5,11 +5,13 @@ using AdvancedSystems.Core.DependencyInjection;
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Options;
 using AdvancedSystems.Security.Services;
+using AdvancedSystems.Security.Validators;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualBasic.FileIO;
 
 namespace AdvancedSystems.Security.DependencyInjection;
 
@@ -57,19 +59,15 @@ public static partial class ServiceCollectionExtensions
 
     private record CertificateOptionsCarrier(StoreName StoreName, StoreLocation StoreLocation);
 
-    private static void AddCertificateStore<TOptions>(this IServiceCollection services) where TOptions : class
+    private static IServiceCollection AddCertificateStore(this IServiceCollection services)
     {
         services.TryAdd(ServiceDescriptor.Singleton<ICertificateStore>(serviceProvider =>
         {
-            CertificateOptionsCarrier options = serviceProvider.GetRequiredService<IOptions<TOptions>>().Value switch
-            {
-                CertificateOptions certificateOptions => new(certificateOptions.Store?.Name ?? throw new ArgumentNullException(nameof(CertificateOptionsCarrier.StoreName)), certificateOptions.Store?.Location ?? throw new ArgumentNullException(nameof(CertificateOptionsCarrier.StoreLocation))),
-                CertificateStoreOptions storeOptions => new(storeOptions.Name, storeOptions.Location),
-                _ => throw new NotImplementedException()
-            };
-
-            return new CertificateStore(options.StoreName, options.StoreLocation);
+            var options = serviceProvider.GetRequiredService<IOptions<CertificateStoreOptions>>().Value;
+            return new CertificateStore(options.Name, options.Location);
         }));
+
+        return services;
     }
 
     /// <summary>
@@ -89,7 +87,7 @@ public static partial class ServiceCollectionExtensions
         services.AddOptions()
             .Configure(setupAction);
 
-        services.AddCertificateStore<CertificateStoreOptions>();
+        services.AddCertificateStore();
         return services;
     }
 
@@ -108,7 +106,7 @@ public static partial class ServiceCollectionExtensions
     public static IServiceCollection AddCertificateStore(this IServiceCollection services, IConfigurationSection configurationSection)
     {
         services.TryAddOptions<CertificateStoreOptions>(configurationSection);
-        services.AddCertificateStore<CertificateStoreOptions>();
+        services.AddCertificateStore();
         return services;
     }
 
@@ -116,9 +114,12 @@ public static partial class ServiceCollectionExtensions
 
     #region CertificateService
 
-    private static void AddCertificateService(this IServiceCollection services)
+    private static IServiceCollection AddCertificateService(this IServiceCollection services)
     {
         services.TryAdd(ServiceDescriptor.Scoped<ICertificateService, CertificateService>());
+        services.TryAdd(ServiceDescriptor.Singleton<IValidateOptions<CertificateOptions>, CertificateOptionsValidator>());
+
+        return services;
     }
 
     /// <summary>
@@ -138,7 +139,19 @@ public static partial class ServiceCollectionExtensions
         services.AddOptions()
             .Configure(setupAction);
 
-        services.AddCertificateStore<CertificateOptions>();
+        services.Configure<CertificateStoreOptions>(options =>
+        {
+            var certificateOptions = new CertificateOptions();
+            setupAction.Invoke(certificateOptions);
+
+            var store = certificateOptions.Store
+                ?? throw new ArgumentNullException(nameof(setupAction), $"{nameof(CertificateStoreOptions)} settings are undefined.");
+
+            options.Name = store.Name;
+            options.Location = store.Location;
+        });
+
+        services.AddCertificateStore();
         services.AddCertificateService();
 
         return services;

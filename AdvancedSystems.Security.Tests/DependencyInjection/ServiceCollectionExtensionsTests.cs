@@ -37,7 +37,7 @@ public sealed class ServiceCollectionExtensionsTests
                 {
                     services.AddCertificateService(options =>
                     {
-                        options.Thumbprint = "123456789";
+                        options.Thumbprint = "A24421E3B4149A12B219AA67CD263D419829BD53";
                         options.Store = new CertificateStoreOptions
                         {
                             Location = StoreLocation.CurrentUser,
@@ -59,7 +59,7 @@ public sealed class ServiceCollectionExtensionsTests
         Assert.Multiple(() =>
         {
             Assert.NotNull(certificateService);
-            Assert.Null(certificate);
+            Assert.NotNull(certificate);
         });
 
         await hostBuilder.StopAsync();
@@ -97,7 +97,7 @@ public sealed class ServiceCollectionExtensionsTests
         Assert.Multiple(() =>
         {
             Assert.NotNull(certificateService);
-            Assert.Null(certificate);
+            Assert.NotNull(certificate);
         });
 
         await hostBuilder.StopAsync();

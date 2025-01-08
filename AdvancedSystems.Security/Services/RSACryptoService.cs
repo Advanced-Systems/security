@@ -29,12 +29,13 @@ public sealed class RSACryptoService : IRSACryptoService
         this._certificateService = certificateService;
         this._options = options;
 
-        this._certificate = this._certificateService.GetConfiguredCertificate()
-            ?? throw new ArgumentNullException(nameof(this._certificate));
+        this._certificate = this._certificateService.GetConfiguredCertificate()!;
 
         var config = this._options.Value;
         this._provider = new RSACryptoProvider(this._certificate, config.HashAlgorithmName, config.EncryptionPadding, config.SignaturePadding, config.Encoding);
     }
+
+    #region Implementation
 
     #region Properties
 
@@ -133,6 +134,8 @@ public sealed class RSACryptoService : IRSACryptoService
     {
         return this._provider.VerifyData(data, signature, encoding);
     }
+
+    #endregion
 
     #endregion
 }
