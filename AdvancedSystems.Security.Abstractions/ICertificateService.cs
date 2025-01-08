@@ -25,21 +25,27 @@ public interface ICertificateService
     ///     The location of the certificate store, such as <see cref="StoreLocation.CurrentUser"/>
     ///     or <see cref="StoreLocation.LocalMachine"/>.
     /// </param>
+    /// <param name="validOnly">
+    ///     <see langword="true"/> to allow only valid certificates to be returned from the search; otherwise, <see langword="false"/>.
+    /// </param>
     /// <returns>
     ///     The <see cref="X509Certificate2"/> object if the certificate is found, else <c>null</c>.
     /// </returns>
     /// <exception cref="CertificateNotFoundException">
     ///     Thrown when no certificate with the specified thumbprint is found in the store.
     /// </exception>
-    X509Certificate2? GetStoreCertificate(string thumbprint, StoreName storeName, StoreLocation storeLocation);
+    X509Certificate2? GetStoreCertificate(string thumbprint, StoreName storeName, StoreLocation storeLocation, bool validOnly = true);
 
     /// <summary>
     ///      Retrieves an application-configured X.509 certificate.
     /// </summary>
+    /// <param name="validOnly">
+    ///     <see langword="true"/> to allow only valid certificates to be returned from the search; otherwise, <see langword="false"/>.
+    /// </param>
     /// <returns>
     ///     The <see cref="X509Certificate2"/> object if the certificate is found, else <c>null</c>.
     /// </returns>
-    X509Certificate2? GetConfiguredCertificate();
+    X509Certificate2? GetConfiguredCertificate(bool validOnly = true);
 
     #endregion
 }
