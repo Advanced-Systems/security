@@ -27,23 +27,26 @@ public static partial class CertificateExtensions
     /// <param name="thumbprint">
     ///     The thumbprint of the certificate to locate.
     /// </param>
+    /// <param name="validOnly">
+    ///     <see langword="true"/> to allow only valid certificates to be returned from the search; otherwise, <see langword="false"/>.
+    /// </param>
     /// <returns>
     ///     The <see cref="X509Certificate2"/> object if the certificate is found.
     /// </returns>
     /// <exception cref="CertificateNotFoundException">
     ///     Thrown when no certificate with the specified thumbprint is found in the store.
     /// </exception>
-    public static X509Certificate2 GetCertificate<T>(this T store, string thumbprint) where T : ICertificateStore
+    public static X509Certificate2 GetCertificate<T>(this T store, string thumbprint, bool validOnly = true) where T : ICertificateStore
     {
         store.Open(OpenFlags.ReadOnly);
 
         var certificate = store.Certificates
-            .Find(X509FindType.FindByThumbprint, thumbprint, validOnly: false)
+            .Find(X509FindType.FindByThumbprint, thumbprint, validOnly)
             .OfType<X509Certificate2>()
             .FirstOrDefault();
 
         return certificate
-            ?? throw new CertificateNotFoundException($"""No valid certificate with thumbprint "{thumbprint}" could be found in the store.""");
+            ?? throw new CertificateNotFoundException($"""No {(validOnly ? "valid " : string.Empty)}certificate with thumbprint "{thumbprint}" could be found in the store.""");
     }
 
     /// <summary>

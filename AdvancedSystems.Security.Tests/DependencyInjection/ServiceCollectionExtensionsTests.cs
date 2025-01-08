@@ -53,7 +53,7 @@ public sealed class ServiceCollectionExtensionsTests
 
         // Act
         var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetConfiguredCertificate();
+        var certificate = certificateService?.GetConfiguredCertificate(validOnly: false);
 
         // Assert
         Assert.Multiple(() =>
@@ -91,7 +91,7 @@ public sealed class ServiceCollectionExtensionsTests
 
         // Act
         var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetConfiguredCertificate();
+        var certificate = certificateService?.GetConfiguredCertificate(validOnly: false);
 
         // Assert
         Assert.Multiple(() =>

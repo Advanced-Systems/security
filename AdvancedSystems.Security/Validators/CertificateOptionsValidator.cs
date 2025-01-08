@@ -34,7 +34,7 @@ public sealed class CertificateOptionsValidator : IValidateOptions<CertificateOp
 
         try
         {
-            X509Certificate2 certificate = this._certificateStore.GetCertificate(options.Thumbprint);
+            X509Certificate2 certificate = this._certificateStore.GetCertificate(options.Thumbprint, validOnly: false);
         }
         catch (CertificateNotFoundException exception)
         {

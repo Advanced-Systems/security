@@ -26,7 +26,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
     #region Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService.GetStoreCertificate(string, StoreName, StoreLocation)"/>
+    ///     Tests that <seealso cref="ICertificateService.GetStoreCertificate(string, StoreName, StoreLocation, bool)"/>
     ///     returns a mocked certificate from the certificate store.
     /// </summary>
     [Fact]
@@ -39,7 +39,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
             .Returns(certificates);
 
         // Act
-        var certificate = this._sut.CertificateService.GetStoreCertificate(thumbprint, StoreName.My, StoreLocation.CurrentUser);
+        var certificate = this._sut.CertificateService.GetStoreCertificate(thumbprint, StoreName.My, StoreLocation.CurrentUser, validOnly: false);
 
         // Assert
         Assert.Multiple(() =>
@@ -52,7 +52,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService.GetStoreCertificate(string, StoreName, StoreLocation)"/>
+    ///     Tests that <seealso cref="ICertificateService.GetStoreCertificate(string, StoreName, StoreLocation, bool)"/>
     ///     returns <see langword="null"/> if a certificate could not be found in the certificate store.
     /// </summary>
     [Fact]
@@ -66,14 +66,14 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
             .Returns(new X509Certificate2Collection());
 
         // Act
-        var certificate = this._sut.CertificateService.GetStoreCertificate(thumbprint, storeName, storeLocation);
+        var certificate = this._sut.CertificateService.GetStoreCertificate(thumbprint, storeName, storeLocation, validOnly: false);
 
         // Assert
         Assert.Null(certificate);
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService.GetConfiguredCertificate()"/>
+    ///     Tests that <seealso cref="ICertificateService.GetConfiguredCertificate(bool)"/>
     ///     returns a mocked certificate from the certificate store.
     /// </summary>
     [Fact]
@@ -98,7 +98,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
             .Returns(certificates);
 
         // Act
-        var certificate = this._sut.CertificateService.GetConfiguredCertificate();
+        var certificate = this._sut.CertificateService.GetConfiguredCertificate(validOnly: false);
 
         // Assert
         Assert.Multiple(() =>
@@ -111,7 +111,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService.GetConfiguredCertificate()"/>
+    ///     Tests that <seealso cref="ICertificateService.GetConfiguredCertificate(bool)"/>
     ///     returns <see langword="null"/> if a certificate could not be found in the certificate store.
     /// </summary>
     [Fact]
@@ -135,7 +135,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
             .Returns(new X509Certificate2Collection());
 
         // Act
-        var certificate = this._sut.CertificateService.GetConfiguredCertificate();
+        var certificate = this._sut.CertificateService.GetConfiguredCertificate(validOnly: false);
 
         // Assert
         Assert.Null(certificate);
