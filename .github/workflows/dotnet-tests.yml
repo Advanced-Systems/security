@@ -34,7 +34,10 @@ jobs:
     - name: Import Test Certificate (Windows)
       if: runner.os == 'Windows'
       run: |
-        certutil -addstore -f "ROOT" test.cer
+        $AppSettings = Get-Content '.\AdvancedSystems.Security.Tests\appsettings.json' -Raw | ConvertFrom-Json
+        $StoreSettings = $AppSettings.Certificate.Store
+        Import-Certificate -FilePath .\test.cer -CertStoreLocation "Cert:\$($StoreSettings.Location)\$($StoreSettings.Name)"
+      shell: powershell
 
     - name: Import Test Certificate (Ubuntu)
       if: runner.os == 'Linux'
