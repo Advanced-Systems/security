@@ -31,5 +31,21 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
+    - name: Import Test Certificate (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        certutil -addstore -f "ROOT" test.cer
+
+    - name: Import Test Certificate (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        sudo cp test.cer /usr/local/share/ca-certificates
+        sudo update-ca-certificates
+
+    - name: Import Test Certificate (MacOS)
+      if: runner.os == 'macOS'
+      run: |
+        sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain test.cer
+
     - name: Test
       run: dotnet test --no-build --verbosity normal
