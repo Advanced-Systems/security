@@ -53,7 +53,10 @@ jobs:
     - name: Import Test Certificate (MacOS)
       if: runner.os == 'macOS'
       run: |
-        sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain test.cer
+        appSettings='./AdvancedSystems.Security.Tests/appsettings.json'
+        name=$(jq -r '.Certificate.Store.Name' $appSettings)
+        location=$(jq -r '.Certificate.Store.Location' $appSettings)
+        dotnet certificate-tool add -f ./test.cer --store-name $name --store-location $location
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
