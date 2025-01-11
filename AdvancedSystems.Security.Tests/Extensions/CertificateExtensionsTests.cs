@@ -6,14 +6,14 @@ using Xunit;
 namespace AdvancedSystems.Security.Tests.Extensions;
 
 /// <summary>
-///     Tests the public methods in <seealso cref="CertificateExtensions"/>.
+///     Tests the public methods in <seealso cref="CertificateStoreExtensions"/>.
 /// </summary>
 public sealed class CertificateExtensionsTests
 {
     #region Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="CertificateExtensions.TryParseDistinguishedName(string, out DistinguishedName?)"/>
+    ///     Tests that <seealso cref="CertificateStoreExtensions.TryParseDistinguishedName(string, out DistinguishedName?)"/>
     ///     extracts the RDNs from the DN correctly from the string.
     /// </summary>
     [Fact]
@@ -29,7 +29,7 @@ public sealed class CertificateExtensionsTests
         string distinguiedName = $"CN={commonName}, OU={organizationalUnit}, O={organization}, L={locality}, S={state}, C={country}";
 
         // Act
-        bool isDn = CertificateExtensions.TryParseDistinguishedName(distinguiedName, out DistinguishedName? dn);
+        bool isDn = CertificateStoreExtensions.TryParseDistinguishedName(distinguiedName, out DistinguishedName? dn);
 
         // Assert
         Assert.Multiple(() =>
@@ -46,7 +46,7 @@ public sealed class CertificateExtensionsTests
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="CertificateExtensions.TryParseDistinguishedName(string, out DistinguishedName?)"/>
+    ///     Tests that <seealso cref="CertificateStoreExtensions.TryParseDistinguishedName(string, out DistinguishedName?)"/>
     ///     when the DN is malformed.
     /// </summary>
     [Fact]
@@ -56,7 +56,7 @@ public sealed class CertificateExtensionsTests
         string distinguishedName = string.Empty;
 
         // Act
-        bool isDn = CertificateExtensions.TryParseDistinguishedName(distinguishedName, out DistinguishedName? dn);
+        bool isDn = CertificateStoreExtensions.TryParseDistinguishedName(distinguishedName, out DistinguishedName? dn);
 
         // Assert
         Assert.False(isDn);

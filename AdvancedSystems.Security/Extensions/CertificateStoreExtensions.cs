@@ -13,7 +13,7 @@ namespace AdvancedSystems.Security.Extensions;
 ///     Defines functions for interacting with X.509 certificates.
 /// </summary>
 /// <seealso href="https://datatracker.ietf.org/doc/rfc5280/"/>
-public static partial class CertificateExtensions
+public static partial class CertificateStoreExtensions
 {
     /// <summary>
     ///     Retrieves an X.509 certificate from the specified store using the provided thumbprint.
