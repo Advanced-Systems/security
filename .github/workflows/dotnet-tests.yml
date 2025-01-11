@@ -28,6 +28,9 @@ jobs:
     - name: Restore Dependencies
       run: dotnet restore
 
+    - name: Restore Dotnet Tools
+      run: dotnet tool restore
+
     - name: Build
       run: dotnet build --no-restore
 
@@ -42,8 +45,10 @@ jobs:
     - name: Import Test Certificate (Ubuntu)
       if: runner.os == 'Linux'
       run: |
-        sudo cp test.cer /usr/local/share/ca-certificates
-        sudo update-ca-certificates
+        appSettings='./AdvancedSystems.Security.Tests/appsettings.json'
+        name=$(jq -r '.Certificate.Store.Name' $appSettings)
+        location=$(jq -r '.Certificate.Store.Location' $appSettings)
+        dotnet certificate-tool add -f ./test.cer --store-name $name --store-location $location
 
     - name: Import Test Certificate (MacOS)
       if: runner.os == 'macOS'
