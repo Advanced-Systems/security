@@ -7,6 +7,7 @@ namespace AdvancedSystems.Security.Abstractions;
 /// <summary>
 ///      Defines a service for managing and retrieving X.509 certificates. 
 /// </summary>
+/// <seealso href="https://datatracker.ietf.org/doc/rfc5280/"/>
 public interface ICertificateService
 {
     #region Methods

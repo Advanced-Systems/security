@@ -24,12 +24,15 @@ public sealed class ServiceCollectionExtensionsTests
     #region AddCertificateService Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection from configuration options.
+    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection
+    ///     from configuration options.
     /// </summary>
     [Fact]
     public async Task TestAddCertificateService_FromOptions()
     {
         // Arrange
+        string thumbprint = "A24421E3B4149A12B219AA67CD263D419829BD53";
+
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
                 .UseTestServer()
@@ -37,7 +40,7 @@ public sealed class ServiceCollectionExtensionsTests
                 {
                     services.AddCertificateService(options =>
                     {
-                        options.Thumbprint = "A24421E3B4149A12B219AA67CD263D419829BD53";
+                        options.Thumbprint = thumbprint;
                         options.Store = new CertificateStoreOptions
                         {
                             Location = StoreLocation.CurrentUser,
@@ -53,7 +56,7 @@ public sealed class ServiceCollectionExtensionsTests
 
         // Act
         var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetConfiguredCertificate(validOnly: false);
+        var certificate = certificateService?.GetStoreCertificate(thumbprint, StoreName.My, StoreLocation.CurrentUser, validOnly: false);
 
         // Assert
         Assert.Multiple(() =>
@@ -66,12 +69,15 @@ public sealed class ServiceCollectionExtensionsTests
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection from configuration sections.
+    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection
+    ///     from configuration sections.
     /// </summary>
     [Fact]
     public async Task TestAddCertificateService_FromAppSettings()
     {
         // Arrange
+        string thumbprint = "A24421E3B4149A12B219AA67CD263D419829BD53";
+
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
                 .UseTestServer()
@@ -91,7 +97,7 @@ public sealed class ServiceCollectionExtensionsTests
 
         // Act
         var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetConfiguredCertificate(validOnly: false);
+        var certificate = certificateService?.GetStoreCertificate(thumbprint, StoreName.My, StoreLocation.CurrentUser, validOnly: false);
 
         // Assert
         Assert.Multiple(() =>

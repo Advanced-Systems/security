@@ -2,7 +2,6 @@
 
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Abstractions.Exceptions;
-using AdvancedSystems.Security.Extensions;
 using AdvancedSystems.Security.Options;
 
 using Microsoft.Extensions.Logging;
@@ -13,12 +12,12 @@ namespace AdvancedSystems.Security.Validators;
 public sealed class CertificateOptionsValidator : IValidateOptions<CertificateOptions>
 {
     private readonly ILogger<CertificateOptionsValidator> _logger;
-    private readonly ICertificateStore _certificateStore;
+    private readonly ICertificateService _certificateService;
 
-    public CertificateOptionsValidator(ILogger<CertificateOptionsValidator> logger, ICertificateStore certificateStore)
+    public CertificateOptionsValidator(ILogger<CertificateOptionsValidator> logger, ICertificateService certificateService)
     {
         this._logger = logger;
-        this._certificateStore = certificateStore;
+        this._certificateService = certificateService;
     }
 
     #region Implementation
@@ -34,7 +33,12 @@ public sealed class CertificateOptionsValidator : IValidateOptions<CertificateOp
 
         try
         {
-            X509Certificate2 certificate = this._certificateStore.GetCertificate(options.Thumbprint, validOnly: false);
+            X509Certificate2? certificate = this._certificateService.GetConfiguredCertificate(validOnly: false);
+
+            if (certificate is null)
+            {
+                return ValidateOptionsResult.Fail($"Configured certificate with thumbprint \"{options.Thumbprint}\" could not be found.");
+            }
         }
         catch (CertificateNotFoundException exception)
         {

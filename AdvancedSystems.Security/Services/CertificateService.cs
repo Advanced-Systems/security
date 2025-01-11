@@ -1,14 +1,12 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.Abstractions.Exceptions;
-using AdvancedSystems.Security.Extensions;
-using AdvancedSystems.Security.Options;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-
-using static AdvancedSystems.Core.Common.ExceptionFilter;
 
 namespace AdvancedSystems.Security.Services;
 
@@ -16,43 +14,87 @@ namespace AdvancedSystems.Security.Services;
 public sealed class CertificateService : ICertificateService
 {
     private readonly ILogger<CertificateService> _logger;
-    private readonly IOptions<CertificateOptions> _certificateOptions;
     private readonly ICertificateStore _certificateStore;
 
-    public CertificateService(ILogger<CertificateService> logger, IOptions<CertificateOptions> certificateOptions, ICertificateStore certificateStore)
+    public CertificateService(ILogger<CertificateService> logger, ICertificateStore certificateStore)
     {
         this._logger = logger;
-        this._certificateOptions = certificateOptions;
         this._certificateStore = certificateStore;
     }
 
     #region Methods
+
+    public void ImportCertificate()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<X509Certificate2> GetCertificate()
+    {
+        try
+        {
+            this._certificateStore.Open(OpenFlags.ReadOnly);
+
+            return this._certificateStore.Certificates.OfType<X509Certificate2>();
+        }
+        catch (ArgumentNullException)
+        {
+            return Enumerable.Empty<X509Certificate2>();
+        }
+        finally
+        {
+            this._certificateStore.Close();
+        }
+    }
 
     /// <inheritdoc />
     public X509Certificate2? GetStoreCertificate(string thumbprint, StoreName storeName, StoreLocation storeLocation, bool validOnly = true)
     {
         try
         {
-            using var _ = this._logger.BeginScope("Searching for {thumbprint} in {storeName} at {storeLocation}", thumbprint, storeName, storeLocation);
-            return this._certificateStore.GetCertificate(thumbprint, validOnly);
+            this._certificateStore.Open(OpenFlags.ReadOnly);
+
+            var certificate = this._certificateStore.Certificates
+                .Find(X509FindType.FindByThumbprint, thumbprint, validOnly)
+                .OfType<X509Certificate2>()
+                .FirstOrDefault();
+
+            return certificate;
         }
-        catch (CertificateNotFoundException exception) when (True(() => this._logger.LogError(exception, "{Service} failed to retrieve certificate.", nameof(CertificateService))))
+        finally
         {
-            return null;
+            this._certificateStore.Close();
         }
     }
 
     /// <inheritdoc />
     public X509Certificate2? GetConfiguredCertificate(bool validOnly = true)
     {
-        var options = this._certificateOptions.Value;
+        return null;
+    }
 
-        if (string.IsNullOrEmpty(options.Thumbprint) || options?.Store is null)
+    public bool RemoveCertificate(string thumbprint)
+    {
+        try
         {
-            return null;
-        }
+            this._certificateStore.Open(OpenFlags.ReadWrite);
 
-        return this.GetStoreCertificate(options.Thumbprint, options.Store.Name, options.Store.Location, validOnly);
+            X509Certificate2Collection? certificates = this._certificateStore.Certificates
+                .Find(X509FindType.FindByThumbprint, thumbprint, validOnly: false);
+
+            if (certificates is null) return false;
+
+            this._certificateStore.RemoveRange(certificates);
+            return true;
+        }
+        catch (CryptographicException)
+        {
+            return false;
+        }
+        finally
+        {
+            this._certificateStore.Close();
+        }
     }
 
     #endregion

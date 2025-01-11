@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
-using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.Abstractions.Exceptions;
 using AdvancedSystems.Security.Cryptography;
 
 namespace AdvancedSystems.Security.Extensions;
@@ -13,42 +10,8 @@ namespace AdvancedSystems.Security.Extensions;
 ///     Defines functions for interacting with X.509 certificates.
 /// </summary>
 /// <seealso href="https://datatracker.ietf.org/doc/rfc5280/"/>
-public static partial class CertificateStoreExtensions
+public static partial class CertificateExtensions
 {
-    /// <summary>
-    ///     Retrieves an X.509 certificate from the specified store using the provided thumbprint.
-    /// </summary>
-    /// <typeparam name="T">
-    ///     The type of the certificate store, which must implement the <see cref="ICertificateStore"/> interface.
-    /// </typeparam>
-    /// <param name="store">
-    ///     The certificate store from which to retrieve the certificate.
-    /// </param>
-    /// <param name="thumbprint">
-    ///     The thumbprint of the certificate to locate.
-    /// </param>
-    /// <param name="validOnly">
-    ///     <see langword="true"/> to allow only valid certificates to be returned from the search; otherwise, <see langword="false"/>.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="X509Certificate2"/> object if the certificate is found.
-    /// </returns>
-    /// <exception cref="CertificateNotFoundException">
-    ///     Thrown when no certificate with the specified thumbprint is found in the store.
-    /// </exception>
-    public static X509Certificate2 GetCertificate<T>(this T store, string thumbprint, bool validOnly = true) where T : ICertificateStore
-    {
-        store.Open(OpenFlags.ReadOnly);
-
-        var certificate = store.Certificates
-            .Find(X509FindType.FindByThumbprint, thumbprint, validOnly)
-            .OfType<X509Certificate2>()
-            .FirstOrDefault();
-
-        return certificate
-            ?? throw new CertificateNotFoundException($"""No {(validOnly ? "valid " : string.Empty)}certificate with thumbprint "{thumbprint}" could be found in the store.""");
-    }
-
     /// <summary>
     ///     Attempts to parse the specified distinguished name (DN) string into a <see cref="DistinguishedName"/> object.
     /// </summary>
