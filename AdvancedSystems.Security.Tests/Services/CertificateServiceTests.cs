@@ -1,11 +1,9 @@
-﻿using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Security.Cryptography.X509Certificates;
 
 using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.Options;
 using AdvancedSystems.Security.Tests.Fixtures;
 
-using Moq;
+using Microsoft.Extensions.DependencyInjection;
 
 using Xunit;
 
@@ -18,28 +16,27 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
 {
     private readonly CertificateFixture _sut;
 
-    public CertificateServiceTests(CertificateFixture fixture)
+    public CertificateServiceTests(CertificateFixture certificateFixture)
     {
-        this._sut = fixture;
+        this._sut = certificateFixture;
     }
 
     #region Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService.GetStoreCertificate(string, StoreName, StoreLocation, bool)"/>
-    ///     returns a mocked certificate from the certificate store.
+    ///     Tests that <seealso cref="ICertificateService.GetCertificate(string, string, bool)"/>
+    ///     returns a certificate from the certificate store.
     /// </summary>
     [Fact]
-    public void TestGetStoreCertificate()
+    public void TestGetCertificate_ByThumbprint()
     {
         // Arrange
-        var certificates = CertificateFixture.CreateCertificateCollection(3);
-        string thumbprint = certificates.Select(x => x.Thumbprint).First();
-        this._sut.Store.Setup(x => x.Certificates)
-            .Returns(certificates);
+        string storeService = this._sut.ConfiguredStoreService;
+        string thumbprint = "A24421E3B4149A12B219AA67CD263D419829BD53";
 
         // Act
-        var certificate = this._sut.CertificateService.GetStoreCertificate(thumbprint, StoreName.My, StoreLocation.CurrentUser, validOnly: false);
+        var certificateService = this._sut.Host?.Services.GetService<ICertificateService>();
+        X509Certificate2? certificate = certificateService?.GetCertificate(storeService, thumbprint, validOnly: false);
 
         // Assert
         Assert.Multiple(() =>
@@ -47,29 +44,6 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
             Assert.NotNull(certificate);
             Assert.Equal(thumbprint, certificate.Thumbprint);
         });
-
-        this._sut.Store.Verify(service => service.Open(It.Is<OpenFlags>(flags => flags == OpenFlags.ReadOnly)));
-    }
-
-    /// <summary>
-    ///     Tests that <seealso cref="ICertificateService.GetStoreCertificate(string, StoreName, StoreLocation, bool)"/>
-    ///     returns <see langword="null"/> if a certificate could not be found in the certificate store.
-    /// </summary>
-    [Fact]
-    public void TestGetStoreCertificate_NotFound()
-    {
-        // Arrange
-        string thumbprint = "123456789";
-        var storeName = StoreName.My;
-        var storeLocation = StoreLocation.CurrentUser;
-        this._sut.Store.Setup(x => x.Certificates)
-            .Returns(new X509Certificate2Collection());
-
-        // Act
-        var certificate = this._sut.CertificateService.GetStoreCertificate(thumbprint, storeName, storeLocation, validOnly: false);
-
-        // Assert
-        Assert.Null(certificate);
     }
 
     #endregion

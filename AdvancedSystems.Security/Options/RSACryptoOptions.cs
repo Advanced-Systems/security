@@ -17,4 +17,7 @@ public sealed record RSACryptoOptions
 
     [Required]
     public required Encoding Encoding { get; set; }
+
+    [Required]
+    public required string Thumbprint { get; set; }
 }

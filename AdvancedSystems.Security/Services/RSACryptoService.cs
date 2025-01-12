@@ -17,25 +17,29 @@ public sealed class RSACryptoService : IRSACryptoService
 {
     private readonly ILogger<RSACryptoService> _logger;
     private readonly ICertificateService _certificateService;
-    private readonly IOptions<RSACryptoOptions> _options;
+    private readonly RSACryptoOptions _rsaOptions;
 
     private bool _disposed = false;
     private readonly X509Certificate2 _certificate;
     private readonly RSACryptoProvider _provider;
 
-    public RSACryptoService(ILogger<RSACryptoService> logger, ICertificateService certificateService, IOptions<RSACryptoOptions> options)
+    public RSACryptoService(ILogger<RSACryptoService> logger, ICertificateService certificateService, IOptions<RSACryptoOptions> rsaOptions)
     {
         this._logger = logger;
         this._certificateService = certificateService;
-        this._options = options;
+        this._rsaOptions = rsaOptions.Value;
 
-        this._certificate = this._certificateService.GetConfiguredCertificate()!;
+        this._certificate = this._certificateService.GetCertificate("default", this._rsaOptions.Thumbprint, validOnly: true)
+            ?? throw new ArgumentNullException();
 
-        var config = this._options.Value;
-        this._provider = new RSACryptoProvider(this._certificate, config.HashAlgorithmName, config.EncryptionPadding, config.SignaturePadding, config.Encoding);
+        this._provider = new RSACryptoProvider(
+            this._certificate,
+            this._rsaOptions.HashAlgorithmName,
+            this._rsaOptions.EncryptionPadding,
+            this._rsaOptions.SignaturePadding,
+            this._rsaOptions.Encoding
+         );
     }
-
-    #region Implementation
 
     #region Properties
 
@@ -134,8 +138,6 @@ public sealed class RSACryptoService : IRSACryptoService
     {
         return this._provider.VerifyData(data, signature, encoding);
     }
-
-    #endregion
 
     #endregion
 }

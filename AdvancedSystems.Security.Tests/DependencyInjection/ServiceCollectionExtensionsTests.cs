@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.DependencyInjection;
-using AdvancedSystems.Security.Options;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -24,13 +23,13 @@ public sealed class ServiceCollectionExtensionsTests
     #region AddCertificateService Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection
-    ///     from configuration options.
+    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection.
     /// </summary>
     [Fact]
     public async Task TestAddCertificateService_FromOptions()
     {
         // Arrange
+        string storeService = "my/CurrentUser";
         string thumbprint = "A24421E3B4149A12B219AA67CD263D419829BD53";
 
         using var hostBuilder = await new HostBuilder()
@@ -38,15 +37,13 @@ public sealed class ServiceCollectionExtensionsTests
                 .UseTestServer()
                 .ConfigureServices(services =>
                 {
-                    services.AddCertificateService(options =>
+                    services.AddCertificateStore(storeService, options =>
                     {
-                        options.Thumbprint = thumbprint;
-                        options.Store = new CertificateStoreOptions
-                        {
-                            Location = StoreLocation.CurrentUser,
-                            Name = StoreName.My,
-                        };
+                        options.Location = StoreLocation.CurrentUser;
+                        options.Name = StoreName.My;
                     });
+
+                    services.AddCertificateService();
                 })
             .Configure(app =>
             {
@@ -56,48 +53,7 @@ public sealed class ServiceCollectionExtensionsTests
 
         // Act
         var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetStoreCertificate(thumbprint, StoreName.My, StoreLocation.CurrentUser, validOnly: false);
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.NotNull(certificateService);
-            Assert.NotNull(certificate);
-        });
-
-        await hostBuilder.StopAsync();
-    }
-
-    /// <summary>
-    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection
-    ///     from configuration sections.
-    /// </summary>
-    [Fact]
-    public async Task TestAddCertificateService_FromAppSettings()
-    {
-        // Arrange
-        string thumbprint = "A24421E3B4149A12B219AA67CD263D419829BD53";
-
-        using var hostBuilder = await new HostBuilder()
-            .ConfigureWebHost(builder => builder
-                .UseTestServer()
-                .ConfigureAppConfiguration(config =>
-                {
-                    config.AddJsonFile("appsettings.json", optional: false);
-                })
-                .ConfigureServices((context, services) =>
-                {
-                    services.AddCertificateService(context.Configuration.GetSection(Sections.CERTIFICATE));
-                })
-            .Configure(app =>
-            {
-
-            }))
-            .StartAsync();
-
-        // Act
-        var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetStoreCertificate(thumbprint, StoreName.My, StoreLocation.CurrentUser, validOnly: false);
+        var certificate = certificateService?.GetCertificate(storeService, thumbprint, validOnly: false);
 
         // Assert
         Assert.Multiple(() =>
@@ -120,12 +76,14 @@ public sealed class ServiceCollectionExtensionsTests
     public async Task TestAddCertificateStore_FromOptions()
     {
         // Arrange
+        string storeService = "my/CurrentUser";
+
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
             .UseTestServer()
             .ConfigureServices(services =>
             {
-                services.AddCertificateStore(options =>
+                services.AddCertificateStore(storeService, options =>
                 {
                     options.Name = StoreName.My;
                     options.Location = StoreLocation.CurrentUser;
@@ -138,7 +96,7 @@ public sealed class ServiceCollectionExtensionsTests
             .StartAsync();
 
         // Act
-        var certificateStore = hostBuilder.Services.GetService<ICertificateStore>();
+        var certificateStore = hostBuilder.Services.GetKeyedService<ICertificateStore>(storeService);
 
         // Assert
         Assert.NotNull(certificateStore);
@@ -152,6 +110,8 @@ public sealed class ServiceCollectionExtensionsTests
     public async Task TestAddCertificateStore_FromAppSettings()
     {
         // Arrange
+        string storeService = "my/CurrentUser";
+
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
             .UseTestServer()
@@ -161,7 +121,8 @@ public sealed class ServiceCollectionExtensionsTests
             })
             .ConfigureServices((context, services) =>
             {
-                services.AddCertificateStore(context.Configuration.GetSection($"{Sections.CERTIFICATE}:{Sections.STORE}"));
+                var storeSettings = context.Configuration.GetSection(Sections.CERTIFICATE_STORE);
+                services.AddCertificateStore(storeService, storeSettings);
             })
             .Configure(app =>
             {
@@ -170,7 +131,7 @@ public sealed class ServiceCollectionExtensionsTests
             .StartAsync();
 
         // Act
-        var certificateStore = hostBuilder.Services.GetService<ICertificateStore>();
+        var certificateStore = hostBuilder.Services.GetKeyedService<ICertificateStore>(storeService);
 
         // Assert
         Assert.NotNull(certificateStore);
