@@ -8,6 +8,7 @@ namespace AdvancedSystems.Security.Abstractions;
 /// <summary>
 ///     Represents an X.509 store, which is a physical store where certificates are persisted and managed.
 /// </summary>
+/// <seealso cref="ICertificateService"/>
 public interface ICertificateStore : IDisposable
 {
     #region Properties
