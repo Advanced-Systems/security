@@ -32,7 +32,11 @@ jobs:
       run: dotnet tool restore
 
     - name: Run Build
-      run: dotnet build --no-restore
+      run: >
+        dotnet build ./AdvancedSystems.Security
+        --configuration Release
+        --no-restore
+        /warnAsError
 
     - name: Import AdvancedSystems Certificate Authority
       run: >
@@ -67,4 +71,7 @@ jobs:
         dotnet certificate-tool add --file ./development/AdvancedSystems-Password.pem --store-name $name --store-location $location
 
     - name: Run Unit Tests
-      run: dotnet test --no-build --verbosity normal
+      run: >
+        dotnet test ./AdvancedSystems.Security.Tests
+        --configuration Release
+        --verbosity normal

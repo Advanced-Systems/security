@@ -1,6 +1,6 @@
 # About
 
-This folder contains self-signed test certificates that were created for testing
+This folder contains self-signed test certificates that were created for development
 purposes only.
 
 ## Certificates
