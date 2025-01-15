@@ -31,33 +31,40 @@ jobs:
     - name: Restore Dotnet Tools
       run: dotnet tool restore
 
-    - name: Build
+    - name: Run Build
       run: dotnet build --no-restore
 
-    - name: Import Test Certificate (Windows)
+    - name: Import AdvancedSystems Certificate Authority
+      run: >
+        dotnet certificate-tool add --file ./development/AdvancedSystems-CA.pfx
+        --store-name My
+        --store-location CurrentUser
+        --password '${{ secrets.ADV_CA_SECRET }}'
+
+    - name: Import Password Certificate (Windows)
       if: runner.os == 'Windows'
       run: |
         $AppSettings = Get-Content '.\AdvancedSystems.Security.Tests\appsettings.json' -Raw | ConvertFrom-Json
         $Name = $AppSettings.CertificateStore.Name
         $Location = $AppSettings.CertificateStore.Location
-        Import-Certificate -FilePath .\test.cer -CertStoreLocation "Cert:\$Location\$Name"
+        Import-Certificate -FilePath .\development\AdvancedSystems-Password.pem -CertStoreLocation "Cert:\$Location\$Name"
       shell: powershell
 
-    - name: Import Test Certificate (Ubuntu)
+    - name: Import Password Certificate (Ubuntu)
       if: runner.os == 'Linux'
       run: |
         appSettings='./AdvancedSystems.Security.Tests/appsettings.json'
         name=$(jq -r '.CertificateStore.Name' $appSettings)
         location=$(jq -r '.CertificateStore.Location' $appSettings)
-        dotnet certificate-tool add -f ./test.cer --store-name $name --store-location $location
+        dotnet certificate-tool add --file ./development/AdvancedSystems-Password.pem --store-name $name --store-location $location
 
-    - name: Import Test Certificate (MacOS)
+    - name: Import Password Certificate (MacOS)
       if: runner.os == 'macOS'
       run: |
         appSettings='./AdvancedSystems.Security.Tests/appsettings.json'
         name=$(jq -r '.CertificateStore.Name' $appSettings)
         location=$(jq -r '.CertificateStore.Location' $appSettings)
-        dotnet certificate-tool add -f ./test.cer --store-name $name --store-location $location
+        dotnet certificate-tool add --file ./development/AdvancedSystems-Password.pem --store-name $name --store-location $location
 
-    - name: Test
+    - name: Run Unit Tests
       run: dotnet test --no-build --verbosity normal

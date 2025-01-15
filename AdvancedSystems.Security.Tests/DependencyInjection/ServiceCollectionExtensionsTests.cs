@@ -30,7 +30,7 @@ public sealed class ServiceCollectionExtensionsTests
     {
         // Arrange
         string storeService = "my/CurrentUser";
-        string thumbprint = "A24421E3B4149A12B219AA67CD263D419829BD53";
+        string thumbprint = "2BFC1C18AC1A99E4284D07F1D2F0312C8EAB33FC";
 
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder

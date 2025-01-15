@@ -57,7 +57,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
     {
         // Arrange
         string storeService = this._sut.ConfiguredStoreService;
-        string thumbprint = "A24421E3B4149A12B219AA67CD263D419829BD53";
+        string thumbprint = "2BFC1C18AC1A99E4284D07F1D2F0312C8EAB33FC";
 
         // Act
         var certificateService = this._sut.Host?.Services.GetService<ICertificateService>();
