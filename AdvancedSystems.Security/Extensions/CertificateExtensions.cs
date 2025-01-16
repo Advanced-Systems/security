@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 using AdvancedSystems.Security.Cryptography;
@@ -102,7 +103,7 @@ public static partial class CertificateExtensions
     ///     </list>
     /// </remarks>
     /// <seealso href="https://datatracker.ietf.org/doc/html/rfc4514"/>
-    public static bool TryParseDistinguishedName(string distinguishedName, out DistinguishedName? result)
+    public static bool TryParseDistinguishedName(string distinguishedName, [NotNullWhen(true)] out DistinguishedName? result)
     {
         var rdns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var dn = new X500DistinguishedName(distinguishedName);
