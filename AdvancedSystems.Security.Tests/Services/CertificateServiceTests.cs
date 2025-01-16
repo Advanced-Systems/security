@@ -1,11 +1,14 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Tests.Fixtures;
+using AdvancedSystems.Security.Tests.Helpers;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Xunit;
@@ -25,6 +28,32 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
     }
 
     #region Tests
+
+    [SkippableFact]
+    public void TestTryImportPfxCertificate()
+    {
+        // Arrange
+        string storeService = this._sut.ConfiguredStoreService;
+        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "development", "AdvancedSystems-CA.pfx");
+
+        var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<CertificateServiceTests>()
+            .Build();
+
+        string? password = configuration[UserSecrets.CERTIFICATE_PASSWORD];
+        Skip.If(string.IsNullOrEmpty(password));
+
+        // Act
+        ICertificateService? certificateService = this._sut.Host?.Services.GetService<ICertificateService>();
+        bool? isImported = certificateService?.TryImportPfxCertificate(storeService, path, password, out _);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.NotNull(certificateService);
+            Assert.True(isImported.HasValue);
+        });
+    }
 
     /// <summary>
     ///     Tests that <seealso cref="ICertificateService.GetCertificate(string)"/>

@@ -70,6 +70,10 @@ jobs:
         location=$(jq -r '.CertificateStore.Location' $appSettings)
         dotnet certificate-tool add --file ./development/AdvancedSystems-Password.pem --store-name $name --store-location $location
 
+    - name: Configure DotNet User Secrets
+      run: |
+        dotnet user-secrets set CertificatePassword '${{ secrets.ADV_CA_SECRET }}' --project ./AdvancedSystems.Security.Tests
+
     - name: Run Unit Tests
       run: >
         dotnet test ./AdvancedSystems.Security.Tests

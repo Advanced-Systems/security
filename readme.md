@@ -31,6 +31,13 @@ for debugging .NET assemblies.
 
 ## Development Environment
 
+Configure local user secrets for the test suite (optional):
+
+```powershell
+$Password = Read-Host -Prompt "AdvancedSystems-CA.pfx Password"
+dotnet user-secrets set CertificatePassword $Password --project ./AdvancedSystems.Tests
+```
+
 Run test suite:
 
 ```powershell
