@@ -29,6 +29,28 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
 
     #region Tests
 
+    [Fact(Skip = "TODO")]
+    public void TestTryImportPemCertificate_PKCS8_Header()
+    {
+
+    }
+
+    [Fact(Skip = "TODO")]
+    public void TestTryImportPemCertificate_Encrypted_PKCS8_Header()
+    {
+
+    }
+
+    [Fact(Skip = "TODO")]
+    public void TestTryImportPemCertificate_RSA_Header()
+    {
+
+    }
+
+    /// <summary>
+    ///     Tests that <seealso cref="ICertificateService.TryImportPfxCertificate(string, string, string, out X509Certificate2?)"/>
+    ///     successfully imports a password-protected PFX certificate.
+    /// </summary>
     [SkippableFact]
     public void TestTryImportPfxCertificate()
     {
@@ -41,7 +63,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
             .Build();
 
         string? password = configuration[UserSecrets.CERTIFICATE_PASSWORD];
-        Skip.If(string.IsNullOrEmpty(password));
+        Skip.If(string.IsNullOrEmpty(password), "A dotnet user-secrets is not configured for this test.");
 
         // Act
         ICertificateService? certificateService = this._sut.Host?.Services.GetService<ICertificateService>();
