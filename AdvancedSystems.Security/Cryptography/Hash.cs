@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
+using AdvancedSystems.Security.Abstractions;
+
 namespace AdvancedSystems.Security.Cryptography;
 
 /// <summary>
@@ -53,7 +55,6 @@ public static class Hash
     public static byte[] Compute(byte[] buffer, HashAlgorithmName hashAlgorithmName)
     {
         using var hashAlgorithm = Hash.Create(hashAlgorithmName);
-
         return hashAlgorithm.ComputeHash(buffer);
     }
 
@@ -79,13 +80,13 @@ public static class Hash
     ///             <seealso cref="HashAlgorithmName.SHA1"/>
     ///         </item>
     ///         <item>
-    ///             <seealso cref="HashAlgorithmName.SHA3_256"/>
+    ///             <seealso cref="HashAlgorithmName.SHA256"/>
     ///         </item>
     ///         <item>
-    ///             <seealso cref="HashAlgorithmName.SHA3_384"/>
+    ///             <seealso cref="HashAlgorithmName.SHA384"/>
     ///         </item>
     ///         <item>
-    ///             <seealso cref="HashAlgorithmName.SHA3_512"/>
+    ///             <seealso cref="HashAlgorithmName.SHA512"/>
     ///         </item>
     ///     </list>
     /// </param>
@@ -96,19 +97,7 @@ public static class Hash
     ///     <see langword="true"/> if the operation succeeds; otherwise, <see langword="false"/>.
     /// </returns>
     /// <remarks>
-    ///     Notes on usage:
-    ///     <list type="bullet">
-    ///         <item>
-    ///             The <paramref name="salt"/> has to be stored alongside the password hash and
-    ///             <paramref name="iterations"/> count.
-    ///         </item>
-    ///         <item>
-    ///             A higher <paramref name="iterations"/> count results in more computational
-    ///             overhead, thus slowing down this function invocation considerably. This behavior
-    ///             is intentional to mitigate brute-force attacks on leaked databases.
-    ///         </item>
-    ///     </list>
-    ///     See also: <seealso href="https://datatracker.ietf.org/doc/html/rfc2898"/>.
+    ///     <inheritdoc cref="IHashService.GetSecureSHA1Hash(byte[], byte[], int)" path="/remarks"/>
     /// </remarks>
     public static bool TryComputeSecure(byte[] password, byte[] salt, int hashSize, int iterations, HashAlgorithmName hashAlgorithmName, [NotNullWhen(true)] out byte[] pbkdf2)
     {

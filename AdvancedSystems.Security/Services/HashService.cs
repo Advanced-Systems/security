@@ -60,5 +60,41 @@ public sealed class HashService : IHashService
         return sha512.ToString(Format.Hex);
     }
 
+    /// <inheritdoc />
+    public string GetSecureSHA1Hash(byte[] buffer, byte[] salt, int iterations = 1000)
+    {
+        var hashAlgorithmName = HashAlgorithmName.SHA1;
+        using var hashAlgorithm = Hash.Create(hashAlgorithmName);
+        bool isSuccessful = Hash.TryComputeSecure(buffer, salt, hashAlgorithm.HashSize, iterations, hashAlgorithmName, out byte[] sha1);
+        return isSuccessful ? sha1.ToString(Format.Hex) : string.Empty;
+    }
+
+    /// <inheritdoc />
+    public string GetSecureSHA256Hash(byte[] buffer, byte[] salt, int iterations = 1000)
+    {
+        var hashAlgorithmName = HashAlgorithmName.SHA256;
+        using var hashAlgorithm = Hash.Create(hashAlgorithmName);
+        bool isSuccessful = Hash.TryComputeSecure(buffer, salt, hashAlgorithm.HashSize, iterations, hashAlgorithmName, out byte[] sha256);
+        return isSuccessful ? sha256.ToString(Format.Hex) : string.Empty;
+    }
+
+    /// <inheritdoc />
+    public string GetSecureSHA384Hash(byte[] buffer, byte[] salt, int iterations = 1000)
+    {
+        var hashAlgorithmName = HashAlgorithmName.SHA384;
+        using var hashAlgorithm = Hash.Create(hashAlgorithmName);
+        bool isSuccessful = Hash.TryComputeSecure(buffer, salt, hashAlgorithm.HashSize, iterations, hashAlgorithmName, out byte[] sha384);
+        return isSuccessful ? sha384.ToString(Format.Hex) : string.Empty;
+    }
+
+    /// <inheritdoc />
+    public string GetSecureSHA512Hash(byte[] buffer, byte[] salt, int iterations = 1000)
+    {
+        var hashAlgorithmName = HashAlgorithmName.SHA512;
+        using var hashAlgorithm = Hash.Create(hashAlgorithmName);
+        bool isSuccessful = Hash.TryComputeSecure(buffer, salt, hashAlgorithm.HashSize, iterations, hashAlgorithmName, out byte[] sha512);
+        return isSuccessful ? sha512.ToString(Format.Hex) : string.Empty;
+    }
+
     #endregion
 }
