@@ -41,7 +41,7 @@ dotnet user-secrets set CertificatePassword $Password --project ./AdvancedSystem
 Run test suite:
 
 ```powershell
-dotnet test .\AdvancedSystems.Core.Tests\ --no-logo
+dotnet test ./AdvancedSystems.Core.Tests --configuration Release
 ```
 
 In addition to unit testing, this project also uses stryker for mutation testing, which is setup to be installed with
@@ -59,5 +59,5 @@ dotnet stryker
 Build and serve documentation locally (`http://localhost:8080`):
 
 ```powershell
-docfx .\docs\docfx.json --serve
+docfx ./docs/docfx.json --serve
 ```
