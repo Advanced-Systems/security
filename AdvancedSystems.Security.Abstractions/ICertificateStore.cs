@@ -2,6 +2,7 @@
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Permissions;
 
 namespace AdvancedSystems.Security.Abstractions;
 
@@ -82,7 +83,7 @@ public interface ICertificateStore : IDisposable
     ///     The certificate to add.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="certificate"/> is <c>null</c>.
+    ///     Thrown when <paramref name="certificate"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="CryptographicException">
     ///     Thrown when the certificate could not be added to the store.
@@ -96,7 +97,7 @@ public interface ICertificateStore : IDisposable
     ///     The collection of certificates to add.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="certificates"/> is <c>null</c>.
+    ///     Thrown when <paramref name="certificates"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="SecurityException">
     ///     Thrown when the caller does not have the required permission.
@@ -114,7 +115,7 @@ public interface ICertificateStore : IDisposable
     ///     The certificate to remove.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="certificate"/> is <c>null</c>.
+    ///     Thrown when <paramref name="certificate"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="SecurityException">
     ///     Thrown when the caller does not have the required permission.
@@ -128,7 +129,7 @@ public interface ICertificateStore : IDisposable
     ///     A range of certificates to remove.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="certificates"/> is <c>null</c>.
+    ///     Thrown when <paramref name="certificates"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="SecurityException">
     ///     Thrown when the caller does not have the required permission.
