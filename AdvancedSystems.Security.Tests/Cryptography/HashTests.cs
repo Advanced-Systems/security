@@ -3,6 +3,7 @@ using System.Text;
 
 using AdvancedSystems.Security.Common;
 using AdvancedSystems.Security.Cryptography;
+using AdvancedSystems.Security.Extensions;
 
 using Xunit;
 

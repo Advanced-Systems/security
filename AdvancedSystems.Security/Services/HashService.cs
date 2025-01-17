@@ -3,6 +3,7 @@
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Common;
 using AdvancedSystems.Security.Cryptography;
+using AdvancedSystems.Security.Extensions;
 
 using Microsoft.Extensions.Logging;
 
