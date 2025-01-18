@@ -33,7 +33,7 @@ public sealed class HashService : IHashService
     /// <inheritdoc />
     public string GetSHA1Hash(byte[] buffer)
     {
-        this._logger.LogWarning("Computing hash with a cryptographically insecure hash algorithm (SHA1.)");
+        this._logger.LogWarning("Computing hash with a cryptographically insecure hash algorithm (SHA1).");
 
         byte[] sha1 = Hash.Compute(buffer, HashAlgorithmName.SHA1);
         return sha1.ToString(Format.Hex);

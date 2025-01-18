@@ -171,5 +171,113 @@ public sealed class HashTests
         Assert.Equal(expected, sha512);
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="Hash.TryComputeSecure(byte[], byte[], int, int, HashAlgorithmName, out byte[])"/>
+    ///     computes the hash successfully and returns the hash with the expected size using the SHA1 algorithm.
+    /// </summary>
+    [Fact]
+    public void TestTryGetSecureSHA1()
+    {
+        // Arrange
+        int iterations = 100_000;
+        const int SALT_SIZE = 64;
+        const int HASH_SIZE = 128;
+
+        byte[] password = Encoding.UTF8.GetBytes("secret");
+        byte[] salt = CryptoRandomProvider.GetBytes(SALT_SIZE).ToArray();
+
+        // Act
+        bool isSuccessful = Hash.TryComputeSecure(password, salt, HASH_SIZE, iterations, HashAlgorithmName.SHA1, out byte[] sha1);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.True(isSuccessful);
+            Assert.Equal(SALT_SIZE, salt.Length);
+            Assert.Equal(HASH_SIZE, sha1.Length);
+        });
+    }
+
+    /// <summary>
+    ///     Tests that <seealso cref="Hash.TryComputeSecure(byte[], byte[], int, int, HashAlgorithmName, out byte[])"/>
+    ///     computes the hash successfully and returns the hash with the expected size using the SHA256 algorithm.
+    /// </summary>
+    [Fact]
+    public void TestTryGetSecureSHA256()
+    {
+        // Arrange
+        int iterations = 100_000;
+        const int SALT_SIZE = 64;
+        const int HASH_SIZE = 128;
+
+        byte[] password = Encoding.UTF8.GetBytes("secret");
+        byte[] salt = CryptoRandomProvider.GetBytes(SALT_SIZE).ToArray();
+
+        // Act
+        bool isSuccessful = Hash.TryComputeSecure(password, salt, HASH_SIZE, iterations, HashAlgorithmName.SHA256, out byte[] sha256);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.True(isSuccessful);
+            Assert.Equal(SALT_SIZE, salt.Length);
+            Assert.Equal(HASH_SIZE, sha256.Length);
+        });
+    }
+
+    /// <summary>
+    ///     Tests that <seealso cref="Hash.TryComputeSecure(byte[], byte[], int, int, HashAlgorithmName, out byte[])"/>
+    ///     computes the hash successfully and returns the hash with the expected size using the SHA384 algorithm.
+    /// </summary>
+    [Fact]
+    public void TestTryGetSecureSHA384()
+    {
+        // Arrange
+        int iterations = 100_000;
+        const int SALT_SIZE = 64;
+        const int HASH_SIZE = 128;
+
+        byte[] password = Encoding.UTF8.GetBytes("secret");
+        byte[] salt = CryptoRandomProvider.GetBytes(SALT_SIZE).ToArray();
+
+        // Act
+        bool isSuccessful = Hash.TryComputeSecure(password, salt, HASH_SIZE, iterations, HashAlgorithmName.SHA384, out byte[] sha384);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.True(isSuccessful);
+            Assert.Equal(SALT_SIZE, salt.Length);
+            Assert.Equal(HASH_SIZE, sha384.Length);
+        });
+    }
+
+    /// <summary>
+    ///     Tests that <seealso cref="Hash.TryComputeSecure(byte[], byte[], int, int, HashAlgorithmName, out byte[])"/>
+    ///     computes the hash successfully and returns the hash with the expected size using the SHA512 algorithm.
+    /// </summary>
+    [Fact]
+    public void TestTryGetSecureSHA512()
+    {
+        // Arrange
+        int iterations = 100_000;
+        const int SALT_SIZE = 64;
+        const int HASH_SIZE = 128;
+
+        byte[] password = Encoding.UTF8.GetBytes("secret");
+        byte[] salt = CryptoRandomProvider.GetBytes(SALT_SIZE).ToArray();
+
+        // Act
+        bool isSuccessful = Hash.TryComputeSecure(password, salt, HASH_SIZE, iterations, HashAlgorithmName.SHA512, out byte[] sha512);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.True(isSuccessful);
+            Assert.Equal(SALT_SIZE, salt.Length);
+            Assert.Equal(HASH_SIZE, sha512.Length);
+        });
+    }
+
     #endregion
 }

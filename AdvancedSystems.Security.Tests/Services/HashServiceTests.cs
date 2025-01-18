@@ -2,6 +2,7 @@
 using System.Text;
 
 using AdvancedSystems.Security.Abstractions;
+using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Tests.Fixtures;
 
 using Microsoft.Extensions.Logging;
@@ -39,6 +40,7 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
         // Arrange
         string input = "The quick brown fox jumps over the lazy dog";
         byte[] buffer = Encoding.UTF8.GetBytes(input);
+        this._sut.Logger.Invocations.Clear();
 
         // Act
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -66,6 +68,7 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
         // Arrange
         string input = "The quick brown fox jumps over the lazy dog";
         byte[] buffer = Encoding.UTF8.GetBytes(input);
+        this._sut.Logger.Invocations.Clear();
 
         // Act
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -132,6 +135,102 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
 
         // Assert
         Assert.Equal("07e547d9586f6a73f73fbac0435ed76951218fb7d0c8d788a309d785436bbb642e93a252a954f23912547d1e8a3b5ed6e1bfd7097821233fa0538f3db854fee6", sha512);
+    }
+
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSecureSHA1Hash(byte[], byte[], int)"/> returns the hash
+    ///     with the expected length.
+    /// </summary>
+    [Fact]
+    public void TestGetSecureSHA1Hash()
+    {
+        // Arrange
+        int sha1Size = 160;
+        int expectedLength = sha1Size * 2;
+        byte[] password = Encoding.UTF8.GetBytes("secret");
+        byte[] salt = CryptoRandomProvider.GetBytes(32).ToArray();
+
+        // Act
+        string sha1 = this._sut.HashService.GetSecureSHA1Hash(password, salt);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.NotEmpty(sha1);
+            Assert.Equal(expectedLength, sha1.Length);
+        });
+    }
+
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSecureSHA256Hash(byte[], byte[], int)"/> returns the hash
+    ///     with the expected length.
+    /// </summary>
+    [Fact]
+    public void GetSecureSHA256Hash()
+    {
+        // Arrange
+        int sha256Size = 256;
+        int expectedLength = sha256Size * 2;
+        byte[] password = Encoding.UTF8.GetBytes("secret");
+        byte[] salt = CryptoRandomProvider.GetBytes(32).ToArray();
+
+        // Act
+        string sha256 = this._sut.HashService.GetSecureSHA256Hash(password, salt);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.NotEmpty(sha256);
+            Assert.Equal(expectedLength, sha256.Length);
+        });
+    }
+
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSecureSHA384Hash(byte[], byte[], int)"/> returns the hash
+    ///     with the expected length.
+    /// </summary>
+    [Fact]
+    public void GetSecureSHA384Hash()
+    {
+        // Arrange
+        int sha384Size = 256;
+        int expectedLength = sha384Size * 2;
+        byte[] password = Encoding.UTF8.GetBytes("secret");
+        byte[] salt = CryptoRandomProvider.GetBytes(32).ToArray();
+
+        // Act
+        string sha384 = this._sut.HashService.GetSecureSHA256Hash(password, salt);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.NotEmpty(sha384);
+            Assert.Equal(expectedLength, sha384.Length);
+        });
+    }
+
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService.GetSecureSHA512Hash(byte[], byte[], int)"/> returns the hash
+    ///     with the expected length.
+    /// </summary>
+    [Fact]
+    public void GetSecureSHA512Hash()
+    {
+        // Arrange
+        int sha512Size = 256;
+        int expectedLength = sha512Size * 2;
+        byte[] password = Encoding.UTF8.GetBytes("secret");
+        byte[] salt = CryptoRandomProvider.GetBytes(32).ToArray();
+
+        // Act
+        string sha512 = this._sut.HashService.GetSecureSHA256Hash(password, salt);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.NotEmpty(sha512);
+            Assert.Equal(expectedLength, sha512.Length);
+        });
     }
 
     #endregion

@@ -2,7 +2,6 @@
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Permissions;
 
 namespace AdvancedSystems.Security.Abstractions;
 
