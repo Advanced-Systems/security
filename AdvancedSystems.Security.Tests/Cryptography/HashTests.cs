@@ -1,7 +1,6 @@
-﻿using System.Security.Cryptography;
-using System.Text;
+﻿using System.Text;
 
-using AdvancedSystems.Security.Common;
+using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Extensions;
 
@@ -10,14 +9,14 @@ using Xunit;
 namespace AdvancedSystems.Security.Tests.Cryptography;
 
 /// <summary>
-///     Tests the public methods in <seealso cref="Hash"/>.
+///     Tests the public methods in <seealso cref="HashProvider"/>.
 /// </summary>
 public sealed class HashTests
 {
     #region Tests
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.MD5"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.MD5"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -33,14 +32,14 @@ public sealed class HashTests
     [InlineData("Hello, World!", "ZajifYh5KDgxtmS9i38K1A==", Format.Base64)]
     [InlineData("The quick brown fox jumps over the lazy dog", "9e107d9d372bb6826bd81d3542a419d6", Format.Hex)]
     [InlineData("The quick brown fox jumps over the lazy dog", "nhB9nTcrtoJr2B01QqQZ1g==", Format.Base64)]
-    public void TestMd5Hash(string input, string expected, Format format)
+    public void TestMD5Hash(string input, string expected, Format format)
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.MD5);
+        byte[] hash = HashProvider.Compute(buffer, HashFunction.MD5);
         string md5 = hash.ToString(format);
 
         // Assert
@@ -48,7 +47,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA1"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.SHA1"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -71,7 +70,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA1);
+        byte[] hash = HashProvider.Compute(buffer, HashFunction.SHA1);
         string sha1 = hash.ToString(format);
 
         // Assert
@@ -79,7 +78,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA256"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.SHA256"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -102,7 +101,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA256);
+        byte[] hash = HashProvider.Compute(buffer, HashFunction.SHA256);
         string sha256 = hash.ToString(format);
 
         // Assert
@@ -110,7 +109,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA384"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.SHA384"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -133,7 +132,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA384);
+        byte[] hash = HashProvider.Compute(buffer, HashFunction.SHA384);
         string sha384 = hash.ToString(format);
 
         // Assert
@@ -141,7 +140,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA512"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.SHA512"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -164,7 +163,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA512);
+        byte[] hash = HashProvider.Compute(buffer, HashFunction.SHA512);
         string sha512 = hash.ToString(format);
 
         // Assert
@@ -172,110 +171,76 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="Hash.TryComputeSecure(byte[], byte[], int, int, HashAlgorithmName, out byte[])"/>
-    ///     computes the hash successfully and returns the hash with the expected size using the SHA1 algorithm.
+    ///     Tests that <seealso cref="HashProvider.TryComputePBKDF2(byte[], byte[], int, int, HashFunction, out byte[])"/>
+    ///     computes the hash code successfully and returns the hash with the expected size using the
+    ///     <paramref name="hashFunction"/> algorithm.
     /// </summary>
-    [Fact]
-    public void TestTryGetSecureSHA1()
+    /// <param name="hashFunction">
+    ///     The specified hash function.
+    /// </param>
+    /// <param name="saltSize">
+    ///     The salt size to use.
+    /// </param>
+    [Theory]
+    [InlineData(HashFunction.SHA1, 128)]
+    [InlineData(HashFunction.SHA256, 128)]
+    [InlineData(HashFunction.SHA384, 128)]
+    [InlineData(HashFunction.SHA512, 128)]
+    public void TestTryComputePBKDF2(HashFunction hashFunction, int saltSize)
     {
         // Arrange
         int iterations = 100_000;
-        const int SALT_SIZE = 64;
-        const int HASH_SIZE = 128;
+        int hashSize = hashFunction.GetSize();
 
         byte[] password = Encoding.UTF8.GetBytes("secret");
-        byte[] salt = CryptoRandomProvider.GetBytes(SALT_SIZE).ToArray();
+        byte[] salt = CryptoRandomProvider.GetBytes(saltSize).ToArray();
 
         // Act
-        bool isSuccessful = Hash.TryComputeSecure(password, salt, HASH_SIZE, iterations, HashAlgorithmName.SHA1, out byte[] sha1);
+        bool isSuccessful = HashProvider.TryComputePBKDF2(password, salt, hashSize, iterations, hashFunction, out byte[] hash);
 
         // Assert
         Assert.Multiple(() =>
         {
             Assert.True(isSuccessful);
-            Assert.Equal(SALT_SIZE, salt.Length);
-            Assert.Equal(HASH_SIZE, sha1.Length);
+            Assert.Equal(saltSize, salt.Length);
+            Assert.Equal(hashSize, hash.Length);
         });
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="Hash.TryComputeSecure(byte[], byte[], int, int, HashAlgorithmName, out byte[])"/>
-    ///     computes the hash successfully and returns the hash with the expected size using the SHA256 algorithm.
+    ///     Tests that <seealso cref="HashProvider.TryComputePBKDF2(byte[], byte[], int, int, HashFunction, out byte[])"/>
+    ///     fails to compute the hash code on unsupported <paramref name="hashFunction"/> values and that the resulting
+    ///     hash is empty.
     /// </summary>
-    [Fact]
-    public void TestTryGetSecureSHA256()
+    /// <param name="hashFunction">
+    ///     The specified hash function.
+    /// </param>
+    /// <param name="saltSize">
+    ///     The salt size to use.
+    /// </param>
+    [Theory]
+    [InlineData(HashFunction.MD5, 128)]
+    [InlineData(HashFunction.SHA3_256, 128)]
+    [InlineData(HashFunction.SHA3_384, 128)]
+    [InlineData(HashFunction.SHA3_512, 128)]
+    public void TestTryComputePBKDF2_InvalidHashFunctions(HashFunction hashFunction, int saltSize)
     {
         // Arrange
         int iterations = 100_000;
-        const int SALT_SIZE = 64;
-        const int HASH_SIZE = 128;
+        int hashSize = hashFunction.GetSize();
 
         byte[] password = Encoding.UTF8.GetBytes("secret");
-        byte[] salt = CryptoRandomProvider.GetBytes(SALT_SIZE).ToArray();
+        byte[] salt = CryptoRandomProvider.GetBytes(saltSize).ToArray();
 
         // Act
-        bool isSuccessful = Hash.TryComputeSecure(password, salt, HASH_SIZE, iterations, HashAlgorithmName.SHA256, out byte[] sha256);
+        bool isSuccessful = HashProvider.TryComputePBKDF2(password, salt, hashSize, iterations, hashFunction, out byte[] hash);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.True(isSuccessful);
-            Assert.Equal(SALT_SIZE, salt.Length);
-            Assert.Equal(HASH_SIZE, sha256.Length);
-        });
-    }
-
-    /// <summary>
-    ///     Tests that <seealso cref="Hash.TryComputeSecure(byte[], byte[], int, int, HashAlgorithmName, out byte[])"/>
-    ///     computes the hash successfully and returns the hash with the expected size using the SHA384 algorithm.
-    /// </summary>
-    [Fact]
-    public void TestTryGetSecureSHA384()
-    {
-        // Arrange
-        int iterations = 100_000;
-        const int SALT_SIZE = 64;
-        const int HASH_SIZE = 128;
-
-        byte[] password = Encoding.UTF8.GetBytes("secret");
-        byte[] salt = CryptoRandomProvider.GetBytes(SALT_SIZE).ToArray();
-
-        // Act
-        bool isSuccessful = Hash.TryComputeSecure(password, salt, HASH_SIZE, iterations, HashAlgorithmName.SHA384, out byte[] sha384);
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.True(isSuccessful);
-            Assert.Equal(SALT_SIZE, salt.Length);
-            Assert.Equal(HASH_SIZE, sha384.Length);
-        });
-    }
-
-    /// <summary>
-    ///     Tests that <seealso cref="Hash.TryComputeSecure(byte[], byte[], int, int, HashAlgorithmName, out byte[])"/>
-    ///     computes the hash successfully and returns the hash with the expected size using the SHA512 algorithm.
-    /// </summary>
-    [Fact]
-    public void TestTryGetSecureSHA512()
-    {
-        // Arrange
-        int iterations = 100_000;
-        const int SALT_SIZE = 64;
-        const int HASH_SIZE = 128;
-
-        byte[] password = Encoding.UTF8.GetBytes("secret");
-        byte[] salt = CryptoRandomProvider.GetBytes(SALT_SIZE).ToArray();
-
-        // Act
-        bool isSuccessful = Hash.TryComputeSecure(password, salt, HASH_SIZE, iterations, HashAlgorithmName.SHA512, out byte[] sha512);
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.True(isSuccessful);
-            Assert.Equal(SALT_SIZE, salt.Length);
-            Assert.Equal(HASH_SIZE, sha512.Length);
+            Assert.False(isSuccessful);
+            Assert.Equal(saltSize, salt.Length);
+            Assert.Empty(hash);
         });
     }
 

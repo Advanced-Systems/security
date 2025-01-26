@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-using AdvancedSystems.Security.Common;
+using AdvancedSystems.Security.Cryptography;
 
 namespace AdvancedSystems.Security.Extensions;
 

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 using AdvancedSystems.Core.DependencyInjection;
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Options;
 using AdvancedSystems.Security.Services;
-using AdvancedSystems.Security.Validators;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +47,25 @@ public static partial class ServiceCollectionExtensions
     public static IServiceCollection AddHashService(this IServiceCollection services)
     {
         services.TryAdd(ServiceDescriptor.Scoped<IHashService, HashService>());
+        return services;
+    }
+
+    #endregion
+
+    #region HMACService
+
+    /// <summary>
+    ///     Adds the default implementation of <seealso cref="IHMACService"/> to <paramref name="services"/>.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
+    public static IServiceCollection AddHMACService(this IServiceCollection services)
+    {
+        services.TryAdd(ServiceDescriptor.Scoped<IHMACService, HMACService>());
         return services;
     }
 

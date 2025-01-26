@@ -3,222 +3,72 @@
 namespace AdvancedSystems.Security.Abstractions;
 
 /// <summary>
-///     Defines a service for computing hash codes.
+///     Represents a contract designed for computing hash algorithms.
 /// </summary>
 public interface IHashService
 {
     #region Methods
 
     /// <summary>
-    ///     Computes the MD5 hash value for the specified <paramref name="buffer"/>.
+    ///     Computes the hash value for the specified byte array.
     /// </summary>
     /// <param name="buffer">
     ///     The input to compute the hash code for.
     /// </param>
-    /// <returns>
-    ///     The hexadecimal <see langword="string"/> representation of the computed hash code.
-    /// </returns>
-    /// <remarks>
-    ///     <para>
-    ///         See also: <seealso href="https://datatracker.ietf.org/doc/rfc1321/"/>
-    ///     </para>
-    /// </remarks>
-    [Obsolete("MD5 is not a cryptographically secure hash algorithm.")]
-    string GetMD5Hash(byte[] buffer);
-
-    /// <summary>
-    ///     Computes the SHA1 hash value for the specified <paramref name="buffer"/>.
-    /// </summary>
-    /// <param name="buffer">
-    ///     The input to compute the hash code for.
+    /// <param name="hashFunction">
+    ///     The hash algorithm implementation to use.
     /// </param>
     /// <returns>
-    ///     The hexadecimal <see langword="string"/> representation of the computed hash code.
+    ///     The computed hash code.
     /// </returns>
     /// <remarks>
-    ///     <para>
-    ///         WARNING: Do <i>not</i> use this method to compute hashes for  confidential data
-    ///         (e.g., passwords). Instead, use
-    ///         <seealso cref="GetSecureSHA1Hash(byte[], byte[], int)"/>
-    ///         for secure hashing instead.
-    ///     </para>
-    ///     <para>
-    ///         See also: <seealso href="https://datatracker.ietf.org/doc/rfc1321/"/>
-    ///     </para>
+    ///     WARNING: Do <i>not</i> use this method to compute hashes for confidential data (e.g., passwords).
     /// </remarks>
-    /// <seealso href="https://datatracker.ietf.org/doc/rfc3174/"/>
-    [Obsolete("SHA1 is not a cryptographically secure hash algorithm.")]
-    string GetSHA1Hash(byte[] buffer);
+    /// <exception cref="NotImplementedException">
+    ///     Raised if the specified <paramref name="hashFunction"/> is not implemented.
+    /// </exception>
+    byte[] Compute(byte[] buffer, HashFunction hashFunction);
 
     /// <summary>
-    ///     Computes the SHA256 hash value for the specified <paramref name="buffer"/>.
+    ///     Attempts to compute a PBKDF2 (password-based key derivation function).
+    ///     This method is suitable for securely hashing passwords.
     /// </summary>
-    /// <param name="buffer">
-    ///     The input to compute the hash code for.
-    /// </param>
-    /// <returns>
-    ///     The hexadecimal <see langword="string"/> representation of the computed hash code.
-    /// </returns>
-    /// <remarks>
-    ///     <para>
-    ///         WARNING: Do <i>not</i> use this method to compute hashes for  confidential data
-    ///         (e.g., passwords). Instead, use
-    ///         <seealso cref="GetSecureSHA256Hash(byte[], byte[], int)"/>
-    ///         for secure hashing instead.
-    ///     </para>
-    ///     <para>
-    ///         See also: <seealso href="https://datatracker.ietf.org/doc/rfc4634/"/>
-    ///     </para>
-    /// </remarks>
-    string GetSHA256Hash(byte[] buffer);
-
-    /// <summary>
-    ///     Computes the SHA384 hash value for the specified <paramref name="buffer"/>.
-    /// </summary>
-    /// <param name="buffer">
-    ///     The input to compute the hash code for.
-    /// </param>
-    /// <returns>
-    ///     The hexadecimal <see langword="string"/> representation of the computed hash code.
-    /// </returns>
-    /// <remarks>
-    ///     <para>
-    ///         WARNING: Do <i>not</i> use this method to compute hashes for  confidential data
-    ///         (e.g., passwords). Instead, use
-    ///         <seealso cref="GetSecureSHA384Hash(byte[], byte[], int)"/>
-    ///         for secure hashing instead.
-    ///     </para>
-    ///     <para>
-    ///         See also: <seealso href="https://datatracker.ietf.org/doc/rfc6234/"/>
-    ///     </para>
-    /// </remarks>
-    string GetSHA384Hash(byte[] buffer);
-
-    /// <summary>
-    ///     Computes the SHA512 hash value for the specified <paramref name="buffer"/>.
-    /// </summary>
-    /// <param name="buffer">
-    ///     The input to compute the hash code for.
-    /// </param>
-    /// <returns>
-    ///     The hexadecimal <see langword="string"/> representation of the computed hash code.
-    /// </returns>
-    /// <remarks>
-    ///     <para>
-    ///         WARNING: Do <i>not</i> use this method to compute hashes for  confidential data
-    ///         (e.g., passwords). Instead, use
-    ///         <seealso cref="GetSecureSHA512Hash(byte[], byte[], int)"/>
-    ///         for secure hashing instead.
-    ///     </para>
-    ///     <para>
-    ///         See also: <seealso href="https://datatracker.ietf.org/doc/rfc4634/"/>
-    ///     </para>
-    /// </remarks>
-    string GetSHA512Hash(byte[] buffer);
-
-    /// <summary>
-    ///     Creates a cryptographically secure hash value for the specified <paramref name="buffer"/>
-    ///     as a PBKDF2 derived key using the SHA1 hash algorithm.
-    /// </summary>
-    /// <param name="buffer">
-    ///     The buffer used to derive the hash.
+    /// <param name="password">
+    ///     The password used to derive the hash.
     /// </param>
     /// <param name="salt">
     ///     The salt used to derive the hash.
     /// </param>
+    /// <param name="hashSize">
+    ///     The size of hash to derive.
+    /// </param>
     /// <param name="iterations">
     ///     The number of iterations for the operation.
     /// </param>
-    /// <returns>
-    ///     The hexadecimal <see langword="string"/> representation of the computed hash code
-    ///     if the computation succeeded; else <seealso cref="string.Empty"/>.
-    /// </returns>
-    /// <remarks>
-    ///     Notes on usage:
+    /// <param name="hashFunction">
+    ///     The hash algorithm to use to derive the hash. Supported algorithms are:
     ///     <list type="bullet">
     ///         <item>
-    ///             Create an array of bytes filled with cryptographically strong random sequence
-    ///             of values for the <paramref name="salt"/> parameter.
+    ///             <seealso cref="HashFunction.SHA1"/>
     ///         </item>
     ///         <item>
-    ///             The <paramref name="salt"/> has to be stored alongside the password hash and
-    ///             <paramref name="iterations"/> count.
+    ///             <seealso cref="HashFunction.SHA256"/>
     ///         </item>
     ///         <item>
-    ///             A higher <paramref name="iterations"/> count results in more computational
-    ///             overhead, thus slowing down this function invocation considerably. This behavior
-    ///             is intentional to mitigate brute-force attacks on leaked databases.
+    ///             <seealso cref="HashFunction.SHA384"/>
+    ///         </item>
+    ///         <item>
+    ///             <seealso cref="HashFunction.SHA512"/>
     ///         </item>
     ///     </list>
-    ///     See also: <seealso href="https://datatracker.ietf.org/doc/html/rfc2898"/>.
-    /// </remarks>
-    public string GetSecureSHA1Hash(byte[] buffer, byte[] salt, int iterations = 1000);
-
-    /// <summary>
-    ///     Creates a cryptographically secure hash value for the specified <paramref name="buffer"/>
-    ///     as a PBKDF2 derived key using the SHA256 hash algorithm.
-    /// </summary>
-    /// <param name="buffer">
-    ///     The buffer used to derive the hash.
     /// </param>
-    /// <param name="salt">
-    ///     The salt used to derive the hash.
-    /// </param>
-    /// <param name="iterations">
-    ///     The number of iterations for the operation.
+    /// <param name="pbkdf2">
+    ///     A byte array containing the created PBKDF2 derived hash.
     /// </param>
     /// <returns>
-    ///     The hexadecimal <see langword="string"/> representation of the computed hash code
-    ///     if the computation succeeded; else <seealso cref="string.Empty"/>.
+    ///     <see langword="true"/> if the operation succeeds; otherwise, <see langword="false"/>.
     /// </returns>
-    /// <remarks>
-    ///     <inheritdoc cref="GetSecureSHA1Hash(byte[], byte[], int)" path="/remarks"/>
-    /// </remarks>
-    public string GetSecureSHA256Hash(byte[] buffer, byte[] salt, int iterations = 1000);
-
-    /// <summary>
-    ///     Creates a cryptographically secure hash value for the specified <paramref name="buffer"/>
-    ///     as a PBKDF2 derived key using the SHA384 hash algorithm.
-    /// </summary>
-    /// <param name="buffer">
-    ///     The buffer used to derive the hash.
-    /// </param>
-    /// <param name="salt">
-    ///     The salt used to derive the hash.
-    /// </param>
-    /// <param name="iterations">
-    ///     The number of iterations for the operation.
-    /// </param>
-    /// <returns>
-    ///     The hexadecimal <see langword="string"/> representation of the computed hash code
-    ///     if the computation succeeded; else <seealso cref="string.Empty"/>.
-    /// </returns>
-    /// <remarks>
-    ///     <inheritdoc cref="GetSecureSHA1Hash(byte[], byte[], int)" path="/remarks"/>
-    /// </remarks>
-    public string GetSecureSHA384Hash(byte[] buffer, byte[] salt, int iterations = 1000);
-
-    /// <summary>
-    ///     Creates a cryptographically secure hash value for the specified <paramref name="buffer"/>
-    ///     as a PBKDF2 derived key using the SHA512 hash algorithm.
-    /// </summary>
-    /// <param name="buffer">
-    ///     The buffer used to derive the hash.
-    /// </param>
-    /// <param name="salt">
-    ///     The salt used to derive the hash.
-    /// </param>
-    /// <param name="iterations">
-    ///     The number of iterations for the operation.
-    /// </param>
-    /// <returns>
-    ///     The hexadecimal <see langword="string"/> representation of the computed hash code
-    ///     if the computation succeeded; else <seealso cref="string.Empty"/>.
-    /// </returns>
-    /// <remarks>
-    ///     <inheritdoc cref="GetSecureSHA1Hash(byte[], byte[], int)" path="/remarks"/>
-    /// </remarks>
-    public string GetSecureSHA512Hash(byte[] buffer, byte[] salt, int iterations = 1000);
+    bool TryComputePBKDF2(byte[] password, byte[] salt, int hashSize, int iterations, HashFunction hashFunction, out byte[] pbkdf2);
 
     #endregion
 }

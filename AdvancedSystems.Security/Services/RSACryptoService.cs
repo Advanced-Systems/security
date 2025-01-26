@@ -12,8 +12,10 @@ using Microsoft.Extensions.Options;
 
 namespace AdvancedSystems.Security.Services;
 
-/// <inheritdoc cref="IRSACryptoService" />
-public sealed class RSACryptoService : IRSACryptoService
+/// <summary>
+///     Represents a service for performing RSA-based asymmetric operations.
+/// </summary>
+public sealed class RSACryptoService
 {
     private readonly ILogger<RSACryptoService> _logger;
     private readonly ICertificateService _certificateService;
@@ -107,12 +109,6 @@ public sealed class RSACryptoService : IRSACryptoService
 
         this._certificate.Dispose();
         this._disposed = true;
-    }
-
-    /// <inheritdoc />
-    public bool IsValidMessage(string message, RSAEncryptionPadding? padding, Encoding? encoding = null)
-    {
-        return this._provider.IsValidMessage(message, padding, encoding);
     }
 
     /// <inheritdoc />

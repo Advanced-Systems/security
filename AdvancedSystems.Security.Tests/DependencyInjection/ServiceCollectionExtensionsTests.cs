@@ -3,7 +3,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using AdvancedSystems.Security.Abstractions;
+using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.DependencyInjection;
+using AdvancedSystems.Security.Extensions;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -20,48 +22,110 @@ namespace AdvancedSystems.Security.Tests.DependencyInjection;
 /// </summary>
 public sealed class ServiceCollectionExtensionsTests
 {
-    #region AddCertificateService Tests
+    #region AddCryptoRandomService Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection.
+    ///     Tests that <seealso cref="ICryptoRandomService"/> can be initialized through dependency injection.
     /// </summary>
     [Fact]
-    public async Task TestAddCertificateService_FromOptions()
+    public async Task TestAddCryptoRandomService()
     {
         // Arrange
-        string storeService = "my/CurrentUser";
-        string thumbprint = "2BFC1C18AC1A99E4284D07F1D2F0312C8EAB33FC";
+        using var hostBuilder = await new HostBuilder()
+            .ConfigureWebHost(builder =>
+            {
+                builder.UseTestServer();
+                builder.ConfigureServices(services =>
+                {
+                    services.AddCryptoRandomService();
+                });
+                builder.Configure(app =>
+                {
 
+                });
+            })
+            .StartAsync();
+
+        // Act
+        var cryptoRandomService = hostBuilder.Services.GetService<ICryptoRandomService>();
+
+        // Assert
+        Assert.NotNull(cryptoRandomService);
+        await hostBuilder.StopAsync();
+    }
+
+    #endregion
+
+    #region AddHashService Tests
+
+    /// <summary>
+    ///     Tests that <seealso cref="IHashService"/> can be initialized through dependency injection.
+    /// </summary>
+    [Fact]
+    public async Task TestAddHashService()
+    {
+        // Arrange
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
                 .UseTestServer()
                 .ConfigureServices(services =>
                 {
-                    services.AddCertificateStore(storeService, options =>
-                    {
-                        options.Location = StoreLocation.CurrentUser;
-                        options.Name = StoreName.My;
-                    });
-
-                    services.AddCertificateService();
+                    services.AddHashService();
                 })
-            .Configure(app =>
-            {
+                .Configure(app =>
+                {
 
-            }))
-            .StartAsync();
+                }))
+                .StartAsync();
+
+        string input = "The quick brown fox jumps over the lazy dog";
+        byte[] buffer = Encoding.UTF8.GetBytes(input);
 
         // Act
-        var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetCertificate(storeService, thumbprint, validOnly: false);
+        var hashService = hostBuilder.Services.GetService<IHashService>();
+        byte[]? sha256 = hashService?.Compute(buffer, HashFunction.SHA256);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.NotNull(certificateService);
-            Assert.NotNull(certificate);
+            Assert.NotNull(hashService);
+            Assert.Equal("d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592", sha256?.ToString(Format.Hex));
         });
 
+        await hostBuilder.StopAsync();
+    }
+
+    #endregion
+
+    #region AddHMACService Tests
+
+    /// <summary>
+    ///     Tests that <seealso cref="IHMACService"/> can be initialized through dependency injection.
+    /// </summary>
+    [Fact]
+    public async Task TestAddHMACService()
+    {
+        // Arrange
+        using var hostBuilder = await new HostBuilder()
+            .ConfigureWebHost(builder =>
+            {
+                builder.UseTestServer();
+                builder.ConfigureServices(services =>
+                {
+                    services.AddHMACService();
+                });
+                builder.Configure(app =>
+                {
+
+                });
+            })
+            .StartAsync();
+
+        // Act
+        var cryptoRandomService = hostBuilder.Services.GetService<IHMACService>();
+
+        // Assert
+        Assert.NotNull(cryptoRandomService);
         await hostBuilder.StopAsync();
     }
 
@@ -140,74 +204,46 @@ public sealed class ServiceCollectionExtensionsTests
 
     #endregion
 
-    #region AddCryptoRandomService Tests
+    #region AddCertificateService Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="ICryptoRandomService"/> can be initialized through dependency injection.
+    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection.
     /// </summary>
     [Fact]
-    public async Task TestAddCryptoRandomService()
+    public async Task TestAddCertificateService_FromOptions()
     {
         // Arrange
-        using var hostBuilder = await new HostBuilder()
-            .ConfigureWebHost(builder =>
-            {
-                builder.UseTestServer();
-                builder.ConfigureServices(services =>
-                {
-                    services.AddCryptoRandomService();
-                });
-                builder.Configure(app =>
-                {
+        string storeService = "my/CurrentUser";
+        string thumbprint = "2BFC1C18AC1A99E4284D07F1D2F0312C8EAB33FC";
 
-                });
-            })
-            .StartAsync();
-
-        // Act
-        var cryptoRandomService = hostBuilder.Services.GetService<ICryptoRandomService>();
-
-        // Assert
-        Assert.NotNull(cryptoRandomService);
-        await hostBuilder.StopAsync();
-    }
-
-    #endregion
-
-    #region AddHashService Tests
-
-    /// <summary>
-    ///     Tests that <seealso cref="IHashService"/> can be initialized through dependency injection.
-    /// </summary>
-    [Fact]
-    public async Task TestAddHashService()
-    {
-        // Arrange
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
                 .UseTestServer()
                 .ConfigureServices(services =>
                 {
-                    services.AddHashService();
+                    services.AddCertificateStore(storeService, options =>
+                    {
+                        options.Location = StoreLocation.CurrentUser;
+                        options.Name = StoreName.My;
+                    });
+
+                    services.AddCertificateService();
                 })
-                .Configure(app =>
-                {
+            .Configure(app =>
+            {
 
-                }))
-                .StartAsync();
-
-        string input = "The quick brown fox jumps over the lazy dog";
-        byte[] buffer = Encoding.UTF8.GetBytes(input);
+            }))
+            .StartAsync();
 
         // Act
-        var hashService = hostBuilder.Services.GetService<IHashService>();
-        string? sha256 = hashService?.GetSHA256Hash(buffer);
+        var certificateService = hostBuilder.Services.GetService<ICertificateService>();
+        var certificate = certificateService?.GetCertificate(storeService, thumbprint, validOnly: false);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.NotNull(hashService);
-            Assert.Equal("d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592", sha256);
+            Assert.NotNull(certificateService);
+            Assert.NotNull(certificate);
         });
 
         await hostBuilder.StopAsync();

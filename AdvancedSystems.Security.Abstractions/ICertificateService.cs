@@ -4,9 +4,11 @@ using System.Security.Cryptography.X509Certificates;
 namespace AdvancedSystems.Security.Abstractions;
 
 /// <summary>
-///      Defines a service for managing and retrieving X.509 certificates. 
+///      Defines a contract for managing and retrieving X.509 certificates. 
 /// </summary>
-/// <seealso href="https://datatracker.ietf.org/doc/rfc5280/"/>
+/// <remarks>
+///     See also: <seealso href="https://datatracker.ietf.org/doc/rfc5280/"/>.
+/// </remarks>
 /// <seealso cref="ICertificateStore"/>
 public interface ICertificateService
 {

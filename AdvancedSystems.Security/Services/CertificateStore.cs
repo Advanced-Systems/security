@@ -5,7 +5,9 @@ using AdvancedSystems.Security.Abstractions;
 
 namespace AdvancedSystems.Security.Services;
 
-/// <inheritdoc cref="ICertificateStore" />
+/// <summary>
+///     Represents a service for an X.509 store, which is a physical store where certificates are persisted and managed.
+/// </summary>
 public sealed class CertificateStore : ICertificateStore
 {
     private readonly X509Store _store;

@@ -6,6 +6,9 @@ using AdvancedSystems.Security.Internals;
 
 namespace AdvancedSystems.Security.Cryptography;
 
+/// <summary>
+///     Represents a class for performing cryptographically secure numerical operations.
+/// </summary>
 public static class CryptoRandomProvider
 {
     /// <inheritdoc cref="ICryptoRandomService.GetBytes(int)" />

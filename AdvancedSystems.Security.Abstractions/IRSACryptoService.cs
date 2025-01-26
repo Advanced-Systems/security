@@ -5,6 +5,9 @@ using System.Text;
 
 namespace AdvancedSystems.Security.Abstractions;
 
+/// <summary>
+///     Represents a contract for performing RSA-based asymmetric operations.
+/// </summary>
 public interface IRSACryptoService : IDisposable
 {
     #region Properties
@@ -23,15 +26,13 @@ public interface IRSACryptoService : IDisposable
 
     #region Methods
 
-    bool IsValidMessage(string message, RSAEncryptionPadding? padding, Encoding? encoding = null);
+    byte[] Encrypt(byte[] message);
 
-    string Encrypt(string message, Encoding? encoding = null);
+    byte[] Decrypt(byte[] cipher);
 
-    string Decrypt(string cipher, Encoding? encoding = null);
+    byte[] SignData(byte[] data);
 
-    string SignData(string data, Encoding? encoding = null);
-
-    bool VerifyData(string data, string signature, Encoding? encoding = null);
+    bool VerifyData(byte[] data, byte[] signature);
 
     #endregion
 }

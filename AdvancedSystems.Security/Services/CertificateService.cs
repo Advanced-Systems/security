@@ -13,7 +13,12 @@ using Microsoft.Extensions.Logging;
 
 namespace AdvancedSystems.Security.Services;
 
-/// <inheritdoc cref="ICertificateService"/>
+/// <summary>
+///      Defines a service for managing and retrieving X.509 certificates. 
+/// </summary>
+/// <remarks>
+///     <inheritdoc cref="ICertificateService" path="/remarks"/>
+/// </remarks>
 public sealed class CertificateService : ICertificateService
 {
     private readonly ILogger<CertificateService> _logger;
