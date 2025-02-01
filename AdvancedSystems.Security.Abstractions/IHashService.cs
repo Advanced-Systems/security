@@ -46,7 +46,16 @@ public interface IHashService
     ///     The number of iterations for the operation.
     /// </param>
     /// <param name="hashFunction">
-    ///     The hash algorithm to use to derive the hash. Supported algorithms are:
+    ///     The hash algorithm to use to derive the hash.
+    /// </param>
+    /// <param name="pbkdf2">
+    ///     A byte array containing the created PBKDF2 derived hash.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true"/> if the operation succeeds; otherwise, <see langword="false"/>.
+    /// </returns>
+    /// <remarks>
+    ///     Supported algorithms for the <paramref name="hashFunction"/> parameter are:
     ///     <list type="bullet">
     ///         <item>
     ///             <seealso cref="HashFunction.SHA1"/>
@@ -61,13 +70,8 @@ public interface IHashService
     ///             <seealso cref="HashFunction.SHA512"/>
     ///         </item>
     ///     </list>
-    /// </param>
-    /// <param name="pbkdf2">
-    ///     A byte array containing the created PBKDF2 derived hash.
-    /// </param>
-    /// <returns>
-    ///     <see langword="true"/> if the operation succeeds; otherwise, <see langword="false"/>.
-    /// </returns>
+    ///     Additionally, some platforms may support SHA3-equivalent hash functions.
+    /// </remarks>
     bool TryComputePBKDF2(byte[] password, byte[] salt, int hashSize, int iterations, HashFunction hashFunction, out byte[] pbkdf2);
 
     #endregion

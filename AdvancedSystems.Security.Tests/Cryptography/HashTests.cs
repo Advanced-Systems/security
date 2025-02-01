@@ -220,7 +220,6 @@ public sealed class HashTests
     ///     The salt size to use.
     /// </param>
     [Theory]
-    //[InlineData(HashFunction.MD5, 128)]
     [InlineData(HashFunction.SHA3_256, 128)]
     [InlineData(HashFunction.SHA3_384, 128)]
     [InlineData(HashFunction.SHA3_512, 128)]
