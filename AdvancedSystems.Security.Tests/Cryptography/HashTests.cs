@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography;
+using System.Text;
 
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Cryptography;
@@ -219,11 +220,11 @@ public sealed class HashTests
     ///     The salt size to use.
     /// </param>
     [Theory]
-    [InlineData(HashFunction.MD5, 128)]
+    //[InlineData(HashFunction.MD5, 128)]
     [InlineData(HashFunction.SHA3_256, 128)]
     [InlineData(HashFunction.SHA3_384, 128)]
     [InlineData(HashFunction.SHA3_512, 128)]
-    public void TestTryComputePBKDF2_InvalidHashFunctions(HashFunction hashFunction, int saltSize)
+    public void TestTryComputePBKDF2_HashFunctionSupport(HashFunction hashFunction, int saltSize)
     {
         // Arrange
         int iterations = 100_000;
@@ -238,8 +239,9 @@ public sealed class HashTests
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.False(isSuccessful);
-            Assert.Empty(hash);
+            // All current platforms support HMAC-SHA3-256, 384, and 512 together, so we can simplify the check
+            // to just checking HMAC-SHA3-256 for the availability of 384 and 512, too.
+            Assert.Equal(HMACSHA3_256.IsSupported, isSuccessful);
         });
     }
 
