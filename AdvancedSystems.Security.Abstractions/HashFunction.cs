@@ -1,5 +1,9 @@
 ﻿namespace AdvancedSystems.Security.Abstractions;
 
+/// <summary>
+///     Identifies a mathematical function that maps a string of arbitrary length
+///     (up to a pre-determined maximum size) to a fixed-length string.
+/// </summary>
 public enum HashFunction
 {
     MD5 = 0,

@@ -1,4 +1,6 @@
-﻿using AdvancedSystems.Security.Abstractions;
+﻿using System;
+
+using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Cryptography;
 
 namespace AdvancedSystems.Security.Services;
@@ -10,10 +12,10 @@ public sealed class HMACService : IHMACService
 {
     #region Methods
 
-    /// <inheritdoc cref="IHMACService.Compute(byte[], byte[], HashFunction)"/>
-    public byte[] Compute(byte[] buffer, byte[] key, HashFunction hashFunction)
+    /// <inheritdoc cref="IHMACService.Compute(HashFunction, ReadOnlySpan{byte}, ReadOnlySpan{byte})"/>
+    public byte[] Compute(HashFunction hashFunction, ReadOnlySpan<byte> key, ReadOnlySpan<byte> buffer)
     {
-        return HMACProvider.Compute(buffer, key, hashFunction);
+        return HMACProvider.Compute(hashFunction, key, buffer);
     }
 
     #endregion
