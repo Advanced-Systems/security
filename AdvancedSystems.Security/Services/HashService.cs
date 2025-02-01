@@ -23,7 +23,7 @@ public sealed class HashService : IHashService
     #region Methods
 
     /// <inheritdoc />
-    public byte[] Compute(byte[] buffer, HashFunction hashFunction)
+    public byte[] Compute(HashFunction hashFunction, byte[] buffer)
     {
         if (hashFunction is HashFunction.MD5 or HashFunction.SHA1)
         {
@@ -33,13 +33,13 @@ public sealed class HashService : IHashService
             );
         }
 
-        return HashProvider.Compute(buffer, hashFunction);
+        return HashProvider.Compute(hashFunction, buffer);
     }
 
     /// <inheritdoc />
-    public bool TryComputePBKDF2(byte[] password, byte[] salt, int hashSize, int iterations, HashFunction hashFunction, [NotNullWhen(true)] out byte[] pbkdf2)
+    public bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, [NotNullWhen(true)] out byte[] pbkdf2)
     {
-        return HashProvider.TryComputePBKDF2(password, salt, hashSize, iterations, hashFunction, out pbkdf2);
+        return HashProvider.TryComputePBKDF2(hashFunction, password, salt, hashSize, iterations, out pbkdf2);
     }
 
     #endregion

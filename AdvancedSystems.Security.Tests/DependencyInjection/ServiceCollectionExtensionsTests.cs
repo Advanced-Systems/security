@@ -83,7 +83,7 @@ public sealed class ServiceCollectionExtensionsTests
 
         // Act
         var hashService = hostBuilder.Services.GetService<IHashService>();
-        byte[]? sha256 = hashService?.Compute(buffer, HashFunction.SHA256);
+        byte[]? sha256 = hashService?.Compute(HashFunction.SHA256, buffer);
 
         // Assert
         Assert.Multiple(() =>

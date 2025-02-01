@@ -32,7 +32,7 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
     #region Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="IHashService.Compute(byte[], HashFunction)"/> returns the expected hash,
+    ///     Tests that <seealso cref="IHashService.Compute(HashFunction, byte[])"/> returns the expected hash,
     ///     and that the log warning message is called on <seealso cref="HashFunction.MD5"/> or <seealso cref="HashFunction.SHA1"/>.
     /// </summary>
     /// <param name="input"></param>
@@ -51,7 +51,7 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
         this._sut.Logger.Invocations.Clear();
 
         // Act
-        string actualHash = this._sut.HashService.Compute(buffer, hashFunction).ToString(Format.Hex);
+        string actualHash = this._sut.HashService.Compute(hashFunction, buffer).ToString(Format.Hex);
 
         // Assert
         Assert.Equal(expectedHash, actualHash);

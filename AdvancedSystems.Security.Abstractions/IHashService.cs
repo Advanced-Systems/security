@@ -12,11 +12,11 @@ public interface IHashService
     /// <summary>
     ///     Computes the hash value for the specified byte array.
     /// </summary>
-    /// <param name="buffer">
-    ///     The input to compute the hash code for.
-    /// </param>
     /// <param name="hashFunction">
     ///     The hash algorithm implementation to use.
+    /// </param>
+    /// <param name="buffer">
+    ///     The input to compute the hash code for.
     /// </param>
     /// <returns>
     ///     The computed hash code.
@@ -27,12 +27,15 @@ public interface IHashService
     /// <exception cref="NotImplementedException">
     ///     Raised if the specified <paramref name="hashFunction"/> is not implemented.
     /// </exception>
-    byte[] Compute(byte[] buffer, HashFunction hashFunction);
+    byte[] Compute(HashFunction hashFunction, byte[] buffer);
 
     /// <summary>
     ///     Attempts to compute a PBKDF2 (password-based key derivation function).
     ///     This method is suitable for securely hashing passwords.
     /// </summary>
+    /// <param name="hashFunction">
+    ///     The hash algorithm to use to derive the hash.
+    /// </param>
     /// <param name="password">
     ///     The password used to derive the hash.
     /// </param>
@@ -44,9 +47,6 @@ public interface IHashService
     /// </param>
     /// <param name="iterations">
     ///     The number of iterations for the operation.
-    /// </param>
-    /// <param name="hashFunction">
-    ///     The hash algorithm to use to derive the hash.
     /// </param>
     /// <param name="pbkdf2">
     ///     A byte array containing the created PBKDF2 derived hash.
@@ -72,7 +72,7 @@ public interface IHashService
     ///     </list>
     ///     Additionally, some platforms may support SHA3-equivalent hash functions.
     /// </remarks>
-    bool TryComputePBKDF2(byte[] password, byte[] salt, int hashSize, int iterations, HashFunction hashFunction, out byte[] pbkdf2);
+    bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, out byte[] pbkdf2);
 
     #endregion
 }

@@ -40,7 +40,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(buffer, HashFunction.MD5);
+        byte[] hash = HashProvider.Compute(HashFunction.MD5, buffer);
         string md5 = hash.ToString(format);
 
         // Assert
@@ -71,7 +71,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(buffer, HashFunction.SHA1);
+        byte[] hash = HashProvider.Compute(HashFunction.SHA1, buffer);
         string sha1 = hash.ToString(format);
 
         // Assert
@@ -102,7 +102,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(buffer, HashFunction.SHA256);
+        byte[] hash = HashProvider.Compute(HashFunction.SHA256, buffer);
         string sha256 = hash.ToString(format);
 
         // Assert
@@ -133,7 +133,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(buffer, HashFunction.SHA384);
+        byte[] hash = HashProvider.Compute(HashFunction.SHA384, buffer);
         string sha384 = hash.ToString(format);
 
         // Assert
@@ -164,7 +164,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(buffer, HashFunction.SHA512);
+        byte[] hash = HashProvider.Compute(HashFunction.SHA512, buffer);
         string sha512 = hash.ToString(format);
 
         // Assert
@@ -172,7 +172,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="HashProvider.TryComputePBKDF2(byte[], byte[], int, int, HashFunction, out byte[])"/>
+    ///     Tests that <seealso cref="HashProvider.TryComputePBKDF2(HashFunction, byte[], byte[], int, int, out byte[])"/>
     ///     computes the hash code successfully and returns the hash with the expected size using the
     ///     <paramref name="hashFunction"/> algorithm.
     /// </summary>
@@ -197,7 +197,7 @@ public sealed class HashTests
         byte[] salt = CryptoRandomProvider.GetBytes(saltSize).ToArray();
 
         // Act
-        bool isSuccessful = HashProvider.TryComputePBKDF2(password, salt, hashSize, iterations, hashFunction, out byte[] hash);
+        bool isSuccessful = HashProvider.TryComputePBKDF2(hashFunction, password, salt, hashSize, iterations, out byte[] hash);
 
         // Assert
         Assert.Multiple(() =>
@@ -209,7 +209,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="HashProvider.TryComputePBKDF2(byte[], byte[], int, int, HashFunction, out byte[])"/>
+    ///     Tests that <seealso cref="HashProvider.TryComputePBKDF2(HashFunction, byte[], byte[], int, int, out byte[])"/>
     ///     fails to compute the hash code on unsupported <paramref name="hashFunction"/> values and that the resulting
     ///     hash is empty.
     /// </summary>
@@ -233,7 +233,7 @@ public sealed class HashTests
         byte[] salt = CryptoRandomProvider.GetBytes(saltSize).ToArray();
 
         // Act
-        bool isSuccessful = HashProvider.TryComputePBKDF2(password, salt, hashSize, iterations, hashFunction, out byte[] hash);
+        bool isSuccessful = HashProvider.TryComputePBKDF2(hashFunction, password, salt, hashSize, iterations, out byte[] hash);
 
         // Assert
         Assert.Multiple(() =>
