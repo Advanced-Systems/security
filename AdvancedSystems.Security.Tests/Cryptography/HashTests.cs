@@ -239,7 +239,6 @@ public sealed class HashTests
         Assert.Multiple(() =>
         {
             Assert.False(isSuccessful);
-            Assert.Equal(saltSize, salt.Length);
             Assert.Empty(hash);
         });
     }

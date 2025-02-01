@@ -42,7 +42,7 @@ public static class CryptoRandomProvider
     /// <inheritdoc cref="ICryptoRandomService.Choice{T}(Span{T})" />
     public static T Choice<T>(Span<T> values)
     {
-        int index = CryptoRandomProvider.GetInt32(0, values.Length);
+        int index = CryptoRandomProvider.GetInt32(0, values.Length - 1);
         return values[index];
     }
 }
