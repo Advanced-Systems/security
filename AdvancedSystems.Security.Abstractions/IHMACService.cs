@@ -5,6 +5,7 @@ namespace AdvancedSystems.Security.Abstractions;
 /// <summary>
 ///     Represents a contract designed for computing Hash-Based Message Authentication Codes (HMAC).
 /// </summary>
+/// <seealso cref="IHashService"/>
 public interface IHMACService
 {
     #region Methods

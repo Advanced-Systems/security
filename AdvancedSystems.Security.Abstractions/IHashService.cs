@@ -5,6 +5,7 @@ namespace AdvancedSystems.Security.Abstractions;
 /// <summary>
 ///     Represents a contract designed for computing hash algorithms.
 /// </summary>
+/// <seealso cref="IHMACService"/>
 public interface IHashService
 {
     #region Methods
@@ -72,7 +73,7 @@ public interface IHashService
     ///     </list>
     ///     Additionally, some platforms may support SHA3-equivalent hash functions.
     /// </remarks>
-    bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, out byte[] pbkdf2);
+    bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, out byte[]? pbkdf2);
 
     #endregion
 }

@@ -30,7 +30,7 @@ public static class HashProvider
     }
 
     /// <inheritdoc cref="IHashService.TryComputePBKDF2(HashFunction, byte[], byte[], int, int, out byte[])"/>
-    public static bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, [NotNullWhen(true)] out byte[] pbkdf2)
+    public static bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, [NotNullWhen(true)] out byte[]? pbkdf2)
     {
         try
         {
@@ -39,7 +39,7 @@ public static class HashProvider
         }
         catch (Exception)
         {
-            pbkdf2 = [];
+            pbkdf2 = null;
             return false;
         }
     }
