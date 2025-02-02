@@ -29,22 +29,36 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
 
     #region Tests
 
-    [Fact(Skip = "TODO")]
-    public void TestTryImportPemCertificate_PKCS8_Header()
+    /// <summary>
+    ///     Tests that <seealso cref="ICertificateService.TryImportPemCertificate(string, string, string, string, out X509Certificate2?)"/>
+    ///     successfully imports a password-protected PEM certificate.
+    /// </summary>
+    [Fact]
+    public void TestTryImportPemCertificate_WithPassword()
     {
+        // Arrange
+        string storeService = this._sut.ConfiguredStoreService;
+        string publicKey = Path.Combine(Assets.ProjectRoot, "development", "AdvancedSystems-PasswordCertificate.pem");
+        string privateKey = Path.Combine(Assets.ProjectRoot, "development", "AdvancedSystems-PrivateKey.pk8");
 
-    }
+        var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<CertificateServiceTests>()
+            .Build();
 
-    [Fact(Skip = "TODO")]
-    public void TestTryImportPemCertificate_Encrypted_PKCS8_Header()
-    {
+        string? password = configuration[UserSecrets.CERTIFICATE_PASSWORD];
+        Skip.If(string.IsNullOrEmpty(password), "A dotnet user-secrets is not configured for this test.");
 
-    }
+        // Act
+        ICertificateService? certificateService = this._sut.Host?.Services.GetService<ICertificateService>();
+        bool? isImported = certificateService?.TryImportPemCertificate(storeService, publicKey, privateKey, password, out _);
 
-    [Fact(Skip = "TODO")]
-    public void TestTryImportPemCertificate_RSA_Header()
-    {
-
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.NotNull(certificateService);
+            Assert.True(isImported.HasValue);
+            Assert.True(isImported.Value);
+        });
     }
 
     /// <summary>
@@ -56,7 +70,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
     {
         // Arrange
         string storeService = this._sut.ConfiguredStoreService;
-        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "development", "AdvancedSystems-CA.pfx");
+        string path = Path.Combine(Assets.ProjectRoot, "development", "AdvancedSystems-CA.pfx");
 
         var configuration = new ConfigurationBuilder()
             .AddUserSecrets<CertificateServiceTests>()
@@ -74,6 +88,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
         {
             Assert.NotNull(certificateService);
             Assert.True(isImported.HasValue);
+            Assert.True(isImported.Value);
         });
     }
 

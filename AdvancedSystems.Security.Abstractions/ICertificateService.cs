@@ -35,8 +35,8 @@ public interface ICertificateService
     /// <param name="storeService">
     ///     <inheritdoc cref="TryImportPemCertificate(string, string, string, string, out X509Certificate2?)" path="/param[@name='storeService']"/>
     /// </param>
-    /// <param name="publicKeyPath">
-    ///     <inheritdoc cref="TryImportPemCertificate(string, string, string, string, out X509Certificate2?)" path="/param[@name='publicKeyPath']"/>
+    /// <param name="certificatePath">
+    ///     <inheritdoc cref="TryImportPemCertificate(string, string, string, string, out X509Certificate2?)" path="/param[@name='certificatePath']"/>
     /// </param>
     /// <param name="privateKeyPath">
     ///     <inheritdoc cref="TryImportPemCertificate(string, string, string, string, out X509Certificate2?)" path="/param[@name='privateKeyPath']"/>
@@ -50,7 +50,7 @@ public interface ICertificateService
     /// <remarks>
     ///     <inheritdoc cref="TryImportPemCertificate(string, string, string, string, out X509Certificate2?)" path="/remarks"/>
     /// </remarks>
-    bool TryImportPemCertificate(string storeService, string publicKeyPath, string privateKeyPath, out X509Certificate2? certificate);
+    bool TryImportPemCertificate(string storeService, string certificatePath, string privateKeyPath, out X509Certificate2? certificate);
 
     /// <summary>
     ///     Tries to import a PEM certificate file into a certificate store.
@@ -58,14 +58,14 @@ public interface ICertificateService
     /// <param name="storeService">
     ///     The name of the keyed <seealso cref="ICertificateStore"/> service to use.
     /// </param>
-    /// <param name="publicKeyPath">
-    ///     The file path to the PEM file containing the public key or certificate.
+    /// <param name="certificatePath">
+    ///     The file path to the PEM certificate.
     /// </param>
     /// <param name="privateKeyPath">
-    ///      The file path to the PEM file containing the private key associated with the public key.
+    ///      The file path to the PKCS#8 (encrypted) private key associated with the specified certificate.
     /// </param>
     /// <param name="password">
-    ///     The password required to decrypt the private key in the PEM file.
+    ///     The password required to decrypt the private key (if specified).
     /// </param>
     /// <param name="certificate">
     ///     An output parameter that will contain the imported <see cref="X509Certificate2"/> instance if the operation succeeds;
@@ -77,7 +77,7 @@ public interface ICertificateService
     /// <remarks>
     ///     See also: <seealso href="https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail"/>.
     /// </remarks>
-    bool TryImportPemCertificate(string storeService, string publicKeyPath, string privateKeyPath, string password, out X509Certificate2? certificate);
+    bool TryImportPemCertificate(string storeService, string certificatePath, string privateKeyPath, string password, out X509Certificate2? certificate);
 
     /// <summary>
     ///     <inheritdoc cref="TryImportPfxCertificate(string, string, string, out X509Certificate2?)" path="/summary"/>
@@ -85,8 +85,8 @@ public interface ICertificateService
     /// <param name="storeService">
     ///     <inheritdoc cref="TryImportPfxCertificate(string, string, string, out X509Certificate2?)" path="/param[@name='storeService']"/>
     /// </param>
-    /// <param name="path">
-    ///     <inheritdoc cref="TryImportPfxCertificate(string, string, string, out X509Certificate2?)" path="/param[@name='path']"/>
+    /// <param name="certificatePath">
+    ///     <inheritdoc cref="TryImportPfxCertificate(string, string, string, out X509Certificate2?)" path="/param[@name='certificatePath']"/>
     /// </param>
     /// <param name="certificate">
     ///     <inheritdoc cref="TryImportPfxCertificate(string, string, string, out X509Certificate2?)" path="/param[@name='certificate']"/>
@@ -97,7 +97,7 @@ public interface ICertificateService
     /// <remarks>
     ///     <inheritdoc cref="TryImportPfxCertificate(string, string, string, out X509Certificate2?)" path="/remarks"/>
     /// </remarks>
-    bool TryImportPfxCertificate(string storeService, string path, out X509Certificate2? certificate);
+    bool TryImportPfxCertificate(string storeService, string certificatePath, out X509Certificate2? certificate);
 
     /// <summary>
     ///     Tries to import a PFX certificate file into a certificate store.
@@ -105,7 +105,7 @@ public interface ICertificateService
     /// <param name="storeService">
     ///     The name of the keyed <seealso cref="ICertificateStore"/> service to use.
     /// </param>
-    /// <param name="path">
+    /// <param name="certificatePath">
     ///      The file path to the PFX certificate file that needs to be imported.
     /// </param>
     /// <param name="password">
@@ -121,7 +121,7 @@ public interface ICertificateService
     /// <remarks>
     ///     See also: <seealso href="https://en.wikipedia.org/wiki/PKCS_12"/>.
     /// </remarks>
-    bool TryImportPfxCertificate(string storeService, string path, string password, out X509Certificate2? certificate);
+    bool TryImportPfxCertificate(string storeService, string certificatePath, string password, out X509Certificate2? certificate);
 
     /// <summary>
     ///     Retrieves all certificates from the certificate store.

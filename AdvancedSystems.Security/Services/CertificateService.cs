@@ -61,132 +61,76 @@ public sealed class CertificateService : ICertificateService
     }
 
     /// <inheritdoc />
-    public bool TryImportPemCertificate(string storeService, string publicKeyPath, string? privateKeyPath, [NotNullWhen(true)] out X509Certificate2? certificate)
+    public bool TryImportPemCertificate(string storeService, string certificatePath, string? privateKeyPath, [NotNullWhen(true)] out X509Certificate2? certificate)
     {
-        return this.TryImportPemCertificate(storeService, publicKeyPath, privateKeyPath, string.Empty, out certificate);
+        return this.TryImportPemCertificate(storeService, certificatePath, privateKeyPath, string.Empty, out certificate);
     }
 
     /// <inheritdoc />
-    public bool TryImportPemCertificate(string storeService, string publicKeyPath, string? privateKeyPath, string password, [NotNullWhen(true)] out X509Certificate2? certificate)
+    public bool TryImportPemCertificate(string storeService, string certificatePath, string? privateKeyPath, string password, [NotNullWhen(true)] out X509Certificate2? certificate)
     {
-        if (!File.Exists(publicKeyPath))
-        {
-            this._logger.LogError(
-                "Public key file does not exist (PublicKey=\"{PublicKey}\").",
-                publicKeyPath
-            );
-
-            certificate = null;
-            return false;
-        }
-
         try
         {
-            using var publicKey = string.IsNullOrEmpty(password)
-                ? new X509Certificate2(publicKeyPath)
-                : new X509Certificate2(publicKeyPath, password, KeyStorageFlags);
+            bool withPassword = !string.IsNullOrEmpty(password);
+
+            using var pemCertificate = withPassword
+                ? new X509Certificate2(certificatePath, password, KeyStorageFlags)
+                : new X509Certificate2(certificatePath);
 
             if (!string.IsNullOrEmpty(privateKeyPath))
             {
-                if (!File.Exists(privateKeyPath))
-                {
-                    this._logger.LogError(
-                        "Private key file does not exist (PrivateKey=\"{PrivateKey}\").",
-                        privateKeyPath
-                    );
-
-                    certificate = null;
-                    return false;
-                }
-
-                string[] privateKeyBlocks = File.ReadAllText(privateKeyPath)
-                    .Split("-", StringSplitOptions.RemoveEmptyEntries);
-
-                string header = privateKeyBlocks[0];
-
-                byte[] privateKeyBuffer = Convert.FromBase64String(privateKeyBlocks[1]);
+                string pemContent = File.ReadAllText(privateKeyPath);
                 using var privateKey = RSA.Create();
 
-                switch (header)
+                if (withPassword)
                 {
-                    case PKCS8_PRIVATE_KEY_HEADER:
-                        privateKey.ImportPkcs8PrivateKey(privateKeyBuffer, out _);
-                        break;
-                    case PKCS8_ENCRYPTED_PRIVATE_KEY_HEADER:
-                        privateKey.ImportEncryptedPkcs8PrivateKey(password, privateKeyBuffer, out _);
-                        break;
-                    case RSA_PRIVATE_KEY_HEADER:
-                        privateKey.ImportRSAPrivateKey(privateKeyBuffer, out _);
-                        break;
-                    default:
-                        this._logger.LogCritical(
-                            "Unknown header in private key: {Header} (\"{PrivateKey}\").",
-                            header,
-                            privateKeyPath
-                        );
-
-                        certificate = null;
-                        return false;
+                    privateKey.ImportFromEncryptedPem(pemContent, password);
+                }
+                else
+                {
+                    privateKey.ImportFromPem(pemContent);
                 }
 
-                certificate = publicKey.CopyWithPrivateKey(privateKey);
+                certificate = pemCertificate.CopyWithPrivateKey(privateKey);
             }
             else
             {
-                certificate = publicKey;
+                certificate = pemCertificate;
             }
 
             bool isImported = this.AddCertificate(storeService, certificate);
             return isImported;
         }
-        catch (CryptographicException)
-        {
-            if (!string.IsNullOrEmpty(privateKeyPath))
-            {
-                this._logger.LogError(
-                    "Failed to initialize public key or private key from path (PublicKey=\"{PublicKey}\",PrivateKey=\"{PrivateKey}\").",
-                    publicKeyPath,
-                    privateKeyPath
-                );
-            }
-            else
-            {
-                this._logger.LogError(
-                    "Failed to initialize public key from path (PublicKey=\"{PublicKey}\").",
-                    publicKeyPath
-                );
-            }
-
-            certificate = null;
-            return false;
-        }
-    }
-
-    /// <inheritdoc />
-    public bool TryImportPfxCertificate(string storeService, string path, [NotNullWhen(true)] out X509Certificate2? certificate)
-    {
-        return this.TryImportPfxCertificate(storeService, path, string.Empty, out certificate);
-    }
-
-    /// <inheritdoc />
-    public bool TryImportPfxCertificate(string storeService, string path, string password, [NotNullWhen(true)] out X509Certificate2? certificate)
-    {
-        if (!File.Exists(path))
+        catch (Exception exception)
         {
             this._logger.LogError(
-                "Certificate file does not exist (Path=\"{Certificate}\").",
-                path
+                "Failed to initialize public key or private key from path (PublicKey=\"{PublicKey}\",PrivateKey=\"{PrivateKey}\"): {Reason}",
+                certificatePath,
+                privateKeyPath ?? "unspecified",
+                exception.Message
             );
 
             certificate = null;
             return false;
         }
+    }
 
+    /// <inheritdoc />
+    public bool TryImportPfxCertificate(string storeService, string certificatePath, [NotNullWhen(true)] out X509Certificate2? certificate)
+    {
+        return this.TryImportPfxCertificate(storeService, certificatePath, string.Empty, out certificate);
+    }
+
+    /// <inheritdoc />
+    public bool TryImportPfxCertificate(string storeService, string certificatePath, string password, [NotNullWhen(true)] out X509Certificate2? certificate)
+    {
         try
         {
-            certificate = string.IsNullOrEmpty(password)
-                ? new X509Certificate2(path)
-                : new X509Certificate2(path, password, KeyStorageFlags);
+            bool withPassword = !string.IsNullOrEmpty(password);
+
+            certificate = withPassword
+                ? new X509Certificate2(certificatePath, password, KeyStorageFlags)
+                : new X509Certificate2(certificatePath);
 
             bool isImported = this.AddCertificate(storeService, certificate);
             return isImported;
@@ -195,7 +139,7 @@ public sealed class CertificateService : ICertificateService
         {
             this._logger.LogError(
                 "Failed to initialize certificate from path (Path=\"{Certificate}\").",
-                path
+                certificatePath
             );
 
             certificate = null;
@@ -284,24 +228,13 @@ public sealed class CertificateService : ICertificateService
 
     #region Helpers
 
-    private const string PKCS8_PRIVATE_KEY_HEADER = "BEGIN PRIVATE KEY";
-
-    private const string PKCS8_ENCRYPTED_PRIVATE_KEY_HEADER = "BEGIN ENCRYPTED PRIVATE KEY";
-
-    private const string RSA_PRIVATE_KEY_HEADER = "BEGIN RSA PRIVATE KEY";
-
     private static X509KeyStorageFlags KeyStorageFlags
     {
         get
         {
-            var keyStorageFlags = X509KeyStorageFlags.DefaultKeySet;
-
-            if (OperatingSystem.IsMacOS())
-            {
-                keyStorageFlags = X509KeyStorageFlags.Exportable;
-            }
-
-            return keyStorageFlags;
+            return OperatingSystem.IsMacOS()
+                ? X509KeyStorageFlags.Exportable
+                : X509KeyStorageFlags.DefaultKeySet;
         }
     }
 

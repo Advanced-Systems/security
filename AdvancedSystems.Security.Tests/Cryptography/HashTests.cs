@@ -197,14 +197,14 @@ public sealed class HashTests
         byte[] salt = CryptoRandomProvider.GetBytes(saltSize).ToArray();
 
         // Act
-        bool isSuccessful = HashProvider.TryComputePBKDF2(hashFunction, password, salt, hashSize, iterations, out byte[] hash);
+        bool isSuccessful = HashProvider.TryComputePBKDF2(hashFunction, password, salt, hashSize, iterations, out byte[]? hash);
 
         // Assert
         Assert.Multiple(() =>
         {
             Assert.True(isSuccessful);
             Assert.Equal(saltSize, salt.Length);
-            Assert.Equal(hashSize, hash.Length);
+            Assert.Equal(hashSize, hash?.Length);
         });
     }
 
@@ -233,7 +233,7 @@ public sealed class HashTests
         byte[] salt = CryptoRandomProvider.GetBytes(saltSize).ToArray();
 
         // Act
-        bool isSuccessful = HashProvider.TryComputePBKDF2(hashFunction, password, salt, hashSize, iterations, out byte[] hash);
+        bool isSuccessful = HashProvider.TryComputePBKDF2(hashFunction, password, salt, hashSize, iterations, out byte[]? hash);
 
         // Assert
         Assert.Multiple(() =>
