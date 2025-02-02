@@ -104,9 +104,7 @@ public sealed class CertificateService : ICertificateService
         catch (Exception exception)
         {
             this._logger.LogError(
-                "Failed to initialize public key or private key from path (PublicKey=\"{PublicKey}\",PrivateKey=\"{PrivateKey}\"): {Reason}",
-                certificatePath,
-                privateKeyPath ?? "unspecified",
+                "Failed to initialize public key or private key from path: {Reason}.",
                 exception.Message
             );
 
@@ -135,11 +133,11 @@ public sealed class CertificateService : ICertificateService
             bool isImported = this.AddCertificate(storeService, certificate);
             return isImported;
         }
-        catch (CryptographicException)
+        catch (CryptographicException exception)
         {
             this._logger.LogError(
-                "Failed to initialize certificate from path (Path=\"{Certificate}\").",
-                certificatePath
+                "Failed to initialize certificate from path: {Reason}.",
+                exception.Message
             );
 
             certificate = null;
