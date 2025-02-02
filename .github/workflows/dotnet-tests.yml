@@ -51,7 +51,7 @@ jobs:
         $AppSettings = Get-Content '.\AdvancedSystems.Security.Tests\appsettings.json' -Raw | ConvertFrom-Json
         $Name = $AppSettings.CertificateStore.Name
         $Location = $AppSettings.CertificateStore.Location
-        Import-Certificate -FilePath .\development\AdvancedSystems-Password.pem -CertStoreLocation "Cert:\$Location\$Name"
+        Import-Certificate -FilePath .\development\AdvancedSystems-PasswordCertificate.pem -CertStoreLocation "Cert:\$Location\$Name"
       shell: powershell
 
     - name: Import Password Certificate (Ubuntu)
@@ -60,7 +60,7 @@ jobs:
         appSettings='./AdvancedSystems.Security.Tests/appsettings.json'
         name=$(jq -r '.CertificateStore.Name' $appSettings)
         location=$(jq -r '.CertificateStore.Location' $appSettings)
-        dotnet certificate-tool add --file ./development/AdvancedSystems-Password.pem --store-name $name --store-location $location
+        dotnet certificate-tool add --file ./development/AdvancedSystems-PasswordCertificate.pem --store-name $name --store-location $location
 
     - name: Import Password Certificate (MacOS)
       if: runner.os == 'macOS'
@@ -68,7 +68,7 @@ jobs:
         appSettings='./AdvancedSystems.Security.Tests/appsettings.json'
         name=$(jq -r '.CertificateStore.Name' $appSettings)
         location=$(jq -r '.CertificateStore.Location' $appSettings)
-        dotnet certificate-tool add --file ./development/AdvancedSystems-Password.pem --store-name $name --store-location $location
+        dotnet certificate-tool add --file ./development/AdvancedSystems-PasswordCertificate.pem --store-name $name --store-location $location
 
     - name: Configure DotNet User Secrets
       run: |
