@@ -4,7 +4,7 @@ using AdvancedSystems.Security.Services;
 
 namespace AdvancedSystems.Security.Tests.Fixtures;
 
-public class CertificateStoreFixture
+public sealed class CertificateStoreFixture
 {
     public CertificateStoreFixture()
     {

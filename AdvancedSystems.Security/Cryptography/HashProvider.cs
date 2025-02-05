@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.Extensions;
 
 namespace AdvancedSystems.Security.Cryptography;
 
@@ -27,20 +25,5 @@ public static class HashProvider
             HashFunction.SHA3_512 => SHA3_512.HashData(buffer),
             _ => throw new NotImplementedException($"The hash function {hashFunction} is not implemented."),
         };
-    }
-
-    /// <inheritdoc cref="IHashService.TryComputePBKDF2(HashFunction, byte[], byte[], int, int, out byte[])"/>
-    public static bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, [NotNullWhen(true)] out byte[]? pbkdf2)
-    {
-        try
-        {
-            pbkdf2 = Rfc2898DeriveBytes.Pbkdf2(password, salt, iterations, hashFunction.ToHashAlgorithmName(), hashSize);
-            return true;
-        }
-        catch (Exception)
-        {
-            pbkdf2 = null;
-            return false;
-        }
     }
 }

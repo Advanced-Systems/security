@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-using AdvancedSystems.Security.Abstractions;
+﻿using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Extensions;
 
@@ -34,12 +32,6 @@ public sealed class HashService : IHashService
         }
 
         return HashProvider.Compute(hashFunction, buffer);
-    }
-
-    /// <inheritdoc />
-    public bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, [NotNullWhen(true)] out byte[]? pbkdf2)
-    {
-        return HashProvider.TryComputePBKDF2(hashFunction, password, salt, hashSize, iterations, out pbkdf2);
     }
 
     #endregion

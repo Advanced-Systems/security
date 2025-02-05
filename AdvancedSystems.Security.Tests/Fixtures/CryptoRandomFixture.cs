@@ -3,7 +3,7 @@ using AdvancedSystems.Security.Services;
 
 namespace AdvancedSystems.Security.Tests.Fixtures;
 
-public class CryptoRandomFixture
+public sealed class CryptoRandomFixture
 {
     public CryptoRandomFixture()
     {

@@ -14,10 +14,10 @@ namespace AdvancedSystems.Security.DependencyInjection;
 
 public static partial class ServiceCollectionExtensions
 {
-    #region CryptoRandom
+    #region CertificateService
 
     /// <summary>
-    ///     Adds the default implementation of <seealso cref="ICryptoRandomService"/> to <paramref name="services"/>.
+    ///     Adds the default implementation of <seealso cref="ICertificateService"/> to <paramref name="services"/>.
     /// </summary>
     /// <param name="services">
     ///     The service collection containing the service.
@@ -25,47 +25,10 @@ public static partial class ServiceCollectionExtensions
     /// <returns>
     ///     The value of <paramref name="services"/>.
     /// </returns>
-    public static IServiceCollection AddCryptoRandomService(this IServiceCollection services)
+    public static IServiceCollection AddCertificateService(this IServiceCollection services)
     {
-        services.TryAdd(ServiceDescriptor.Scoped<ICryptoRandomService, CryptoRandomService>());
-        return services;
-    }
+        services.TryAdd(ServiceDescriptor.Scoped<ICertificateService, CertificateService>());
 
-    #endregion
-
-    #region HashService
-
-    /// <summary>
-    ///     Adds the default implementation of <seealso cref="IHashService"/> to <paramref name="services"/>.
-    /// </summary>
-    /// <param name="services">
-    ///     The service collection containing the service.
-    /// </param>
-    /// <returns>
-    ///     The value of <paramref name="services"/>.
-    /// </returns>
-    public static IServiceCollection AddHashService(this IServiceCollection services)
-    {
-        services.TryAdd(ServiceDescriptor.Scoped<IHashService, HashService>());
-        return services;
-    }
-
-    #endregion
-
-    #region HMACService
-
-    /// <summary>
-    ///     Adds the default implementation of <seealso cref="IHMACService"/> to <paramref name="services"/>.
-    /// </summary>
-    /// <param name="services">
-    ///     The service collection containing the service.
-    /// </param>
-    /// <returns>
-    ///     The value of <paramref name="services"/>.
-    /// </returns>
-    public static IServiceCollection AddHMACService(this IServiceCollection services)
-    {
-        services.TryAdd(ServiceDescriptor.Scoped<IHMACService, HMACService>());
         return services;
     }
 
@@ -132,10 +95,10 @@ public static partial class ServiceCollectionExtensions
 
     #endregion
 
-    #region CertificateService
+    #region CryptoRandomService
 
     /// <summary>
-    ///     Adds the default implementation of <seealso cref="ICertificateService"/> to <paramref name="services"/>.
+    ///     Adds the default implementation of <seealso cref="ICryptoRandomService"/> to <paramref name="services"/>.
     /// </summary>
     /// <param name="services">
     ///     The service collection containing the service.
@@ -143,10 +106,66 @@ public static partial class ServiceCollectionExtensions
     /// <returns>
     ///     The value of <paramref name="services"/>.
     /// </returns>
-    public static IServiceCollection AddCertificateService(this IServiceCollection services)
+    public static IServiceCollection AddCryptoRandomService(this IServiceCollection services)
     {
-        services.TryAdd(ServiceDescriptor.Scoped<ICertificateService, CertificateService>());
+        services.TryAdd(ServiceDescriptor.Scoped<ICryptoRandomService, CryptoRandomService>());
+        return services;
+    }
 
+    #endregion
+
+    #region HashService
+
+    /// <summary>
+    ///     Adds the default implementation of <seealso cref="IHashService"/> to <paramref name="services"/>.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
+    public static IServiceCollection AddHashService(this IServiceCollection services)
+    {
+        services.TryAdd(ServiceDescriptor.Scoped<IHashService, HashService>());
+        return services;
+    }
+
+    #endregion
+
+    #region HMACService
+
+    /// <summary>
+    ///     Adds the default implementation of <seealso cref="IHMACService"/> to <paramref name="services"/>.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
+    public static IServiceCollection AddHMACService(this IServiceCollection services)
+    {
+        services.TryAdd(ServiceDescriptor.Scoped<IHMACService, HMACService>());
+        return services;
+    }
+
+    #endregion
+
+    #region KDFService
+
+    /// <summary>
+    ///     Adds the default implementation of <seealso cref="IKDFService"/> to <paramref name="services"/>.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
+    public static IServiceCollection AddKDFService(this IServiceCollection services)
+    {
+        services.TryAdd(ServiceDescriptor.Scoped<IKDFService, KDFService>());
         return services;
     }
 
