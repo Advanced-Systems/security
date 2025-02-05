@@ -3,14 +3,18 @@ using System.Runtime.InteropServices;
 
 namespace AdvancedSystems.Security.Interop;
 
-internal static partial class Libsodium
+internal partial class Libsodium
 {
-    [DllImport(NativeLibrary.LIBSODIUM, CallingConvention = CallingConvention.Cdecl)]
-    internal static extern int sodium_library_version_major();
+    #region version.c
 
-    [DllImport(NativeLibrary.LIBSODIUM, CallingConvention = CallingConvention.Cdecl)]
-    internal static extern int sodium_library_version_minor();
+    [LibraryImport(NativeLibrary.LIBSODIUM, EntryPoint = "sodium_library_version_major")]
+    internal static partial int SodiumLibraryVersionMajor();
 
-    [DllImport(NativeLibrary.LIBSODIUM, CallingConvention = CallingConvention.Cdecl)]
-    internal static extern IntPtr sodium_version_string();
+    [LibraryImport(NativeLibrary.LIBSODIUM, EntryPoint = "sodium_library_version_minor")]
+    internal static partial int SodiumLibraryVersionMinor();
+
+    [LibraryImport(NativeLibrary.LIBSODIUM, EntryPoint = "sodium_version_string")]
+    internal static partial IntPtr SodiumVersionString();
+
+    #endregion
 }
