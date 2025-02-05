@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -23,11 +23,13 @@ public sealed class CertificateService : ICertificateService
 {
     private readonly ILogger<CertificateService> _logger;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IFileSystem _fileSystem;
 
-    public CertificateService(ILogger<CertificateService> logger, IServiceProvider serviceProvider)
+    public CertificateService(ILogger<CertificateService> logger, IServiceProvider serviceProvider, IFileSystem fileSystem)
     {
         this._logger = logger;
         this._serviceProvider = serviceProvider;
+        this._fileSystem = fileSystem;
     }
 
     #region Methods
@@ -79,7 +81,7 @@ public sealed class CertificateService : ICertificateService
 
             if (!string.IsNullOrEmpty(privateKeyPath))
             {
-                string pemContent = File.ReadAllText(privateKeyPath);
+                string pemContent = this._fileSystem.File.ReadAllText(privateKeyPath);
                 using var privateKey = RSA.Create();
 
                 if (withPassword)

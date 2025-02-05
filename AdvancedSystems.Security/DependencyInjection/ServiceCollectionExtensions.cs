@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Abstractions;
 
 using AdvancedSystems.Core.DependencyInjection;
 using AdvancedSystems.Security.Abstractions;
@@ -27,6 +28,7 @@ public static partial class ServiceCollectionExtensions
     /// </returns>
     public static IServiceCollection AddCertificateService(this IServiceCollection services)
     {
+        services.TryAdd(ServiceDescriptor.Singleton<IFileSystem, FileSystem>());
         services.TryAdd(ServiceDescriptor.Scoped<ICertificateService, CertificateService>());
 
         return services;
