@@ -5,7 +5,9 @@ using AdvancedSystems.Security.Cryptography;
 
 namespace AdvancedSystems.Security.Services;
 
-/// <inheritdoc cref="ICryptoRandomService" />
+/// <summary>
+///     Represents a service for performing cryptographically secure numerical operations.
+/// </summary>
 public sealed class CryptoRandomService : ICryptoRandomService
 {
     public CryptoRandomService()

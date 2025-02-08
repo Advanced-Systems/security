@@ -1,22 +1,23 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-using AdvancedSystems.Security.Common;
+using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Cryptography;
+using AdvancedSystems.Security.Extensions;
 
 using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Cryptography;
 
 /// <summary>
-///     Tests the public methods in <seealso cref="Hash"/>.
+///     Tests the public methods in <seealso cref="HashProvider"/>.
 /// </summary>
 public sealed class HashTests
 {
     #region Tests
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.MD5"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.MD5"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -32,14 +33,14 @@ public sealed class HashTests
     [InlineData("Hello, World!", "ZajifYh5KDgxtmS9i38K1A==", Format.Base64)]
     [InlineData("The quick brown fox jumps over the lazy dog", "9e107d9d372bb6826bd81d3542a419d6", Format.Hex)]
     [InlineData("The quick brown fox jumps over the lazy dog", "nhB9nTcrtoJr2B01QqQZ1g==", Format.Base64)]
-    public void TestMd5Hash(string input, string expected, Format format)
+    public void TestMD5Hash(string input, string expected, Format format)
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.MD5);
+        byte[] hash = HashProvider.Compute(HashFunction.MD5, buffer);
         string md5 = hash.ToString(format);
 
         // Assert
@@ -47,7 +48,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA1"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.SHA1"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -70,7 +71,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA1);
+        byte[] hash = HashProvider.Compute(HashFunction.SHA1, buffer);
         string sha1 = hash.ToString(format);
 
         // Assert
@@ -78,7 +79,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA256"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.SHA256"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -101,7 +102,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA256);
+        byte[] hash = HashProvider.Compute(HashFunction.SHA256, buffer);
         string sha256 = hash.ToString(format);
 
         // Assert
@@ -109,7 +110,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA384"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.SHA384"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -132,7 +133,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA384);
+        byte[] hash = HashProvider.Compute(HashFunction.SHA384, buffer);
         string sha384 = hash.ToString(format);
 
         // Assert
@@ -140,7 +141,7 @@ public sealed class HashTests
     }
 
     /// <summary>
-    ///     Tests that the computed <seealso cref="HashAlgorithmName.SHA512"/> hash returns a well-formatted string.
+    ///     Tests that the computed <seealso cref="HashFunction.SHA512"/> hash returns a well-formatted string.
     /// </summary>
     /// <param name="input">
     ///     The input to compute the hash code for.
@@ -163,7 +164,7 @@ public sealed class HashTests
         byte[] buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = Hash.Compute(buffer, HashAlgorithmName.SHA512);
+        byte[] hash = HashProvider.Compute(HashFunction.SHA512, buffer);
         string sha512 = hash.ToString(format);
 
         // Assert

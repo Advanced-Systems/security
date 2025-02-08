@@ -2,6 +2,9 @@
 
 namespace AdvancedSystems.Security.Abstractions;
 
+/// <summary>
+///     Represents a contract for performing cryptographically secure numerical operations.
+/// </summary>
 public interface ICryptoRandomService
 {
     #region Methods

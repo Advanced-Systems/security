@@ -1,4 +1,4 @@
-﻿namespace AdvancedSystems.Security.Common;
+﻿namespace AdvancedSystems.Security.Cryptography;
 
 /// <summary>
 ///     Describes string formatting options for byte arrays.

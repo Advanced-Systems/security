@@ -1,10 +1,8 @@
 ﻿using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.DependencyInjection;
-using AdvancedSystems.Security.Options;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -24,26 +22,26 @@ public sealed class ServiceCollectionExtensionsTests
     #region AddCertificateService Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection from configuration options.
+    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection.
     /// </summary>
     [Fact]
     public async Task TestAddCertificateService_FromOptions()
     {
         // Arrange
+        string storeService = "my/CurrentUser";
+
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
                 .UseTestServer()
                 .ConfigureServices(services =>
                 {
-                    services.AddCertificateService(options =>
+                    services.AddCertificateStore(storeService, options =>
                     {
-                        options.Thumbprint = "123456789";
-                        options.Store = new CertificateStoreOptions
-                        {
-                            Location = StoreLocation.CurrentUser,
-                            Name = StoreName.My,
-                        };
+                        options.Location = StoreLocation.CurrentUser;
+                        options.Name = StoreName.My;
                     });
+
+                    services.AddCertificateService();
                 })
             .Configure(app =>
             {
@@ -53,53 +51,9 @@ public sealed class ServiceCollectionExtensionsTests
 
         // Act
         var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetConfiguredCertificate();
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.NotNull(certificateService);
-            Assert.Null(certificate);
-        });
-
-        await hostBuilder.StopAsync();
-    }
-
-    /// <summary>
-    ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection from configuration sections.
-    /// </summary>
-    [Fact]
-    public async Task TestAddCertificateService_FromAppSettings()
-    {
-        // Arrange
-        using var hostBuilder = await new HostBuilder()
-            .ConfigureWebHost(builder => builder
-                .UseTestServer()
-                .ConfigureAppConfiguration(config =>
-                {
-                    config.AddJsonFile("appsettings.json", optional: false);
-                })
-                .ConfigureServices((context, services) =>
-                {
-                    services.AddCertificateService(context.Configuration.GetSection(Sections.CERTIFICATE));
-                })
-            .Configure(app =>
-            {
-
-            }))
-            .StartAsync();
-
-        // Act
-        var certificateService = hostBuilder.Services.GetService<ICertificateService>();
-        var certificate = certificateService?.GetConfiguredCertificate();
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.NotNull(certificateService);
-            Assert.Null(certificate);
-        });
-
+        Assert.NotNull(certificateService);
         await hostBuilder.StopAsync();
     }
 
@@ -114,12 +68,14 @@ public sealed class ServiceCollectionExtensionsTests
     public async Task TestAddCertificateStore_FromOptions()
     {
         // Arrange
+        string storeService = "my/CurrentUser";
+
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
             .UseTestServer()
             .ConfigureServices(services =>
             {
-                services.AddCertificateStore(options =>
+                services.AddCertificateStore(storeService, options =>
                 {
                     options.Name = StoreName.My;
                     options.Location = StoreLocation.CurrentUser;
@@ -132,7 +88,7 @@ public sealed class ServiceCollectionExtensionsTests
             .StartAsync();
 
         // Act
-        var certificateStore = hostBuilder.Services.GetService<ICertificateStore>();
+        var certificateStore = hostBuilder.Services.GetKeyedService<ICertificateStore>(storeService);
 
         // Assert
         Assert.NotNull(certificateStore);
@@ -146,6 +102,8 @@ public sealed class ServiceCollectionExtensionsTests
     public async Task TestAddCertificateStore_FromAppSettings()
     {
         // Arrange
+        string storeService = "my/CurrentUser";
+
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
             .UseTestServer()
@@ -155,7 +113,8 @@ public sealed class ServiceCollectionExtensionsTests
             })
             .ConfigureServices((context, services) =>
             {
-                services.AddCertificateStore(context.Configuration.GetSection($"{Sections.CERTIFICATE}:{Sections.STORE}"));
+                var storeSettings = context.Configuration.GetSection(Sections.CERTIFICATE_STORE);
+                services.AddCertificateStore(storeService, storeSettings);
             })
             .Configure(app =>
             {
@@ -164,7 +123,7 @@ public sealed class ServiceCollectionExtensionsTests
             .StartAsync();
 
         // Act
-        var certificateStore = hostBuilder.Services.GetService<ICertificateStore>();
+        var certificateStore = hostBuilder.Services.GetKeyedService<ICertificateStore>(storeService);
 
         // Assert
         Assert.NotNull(certificateStore);
@@ -229,20 +188,77 @@ public sealed class ServiceCollectionExtensionsTests
                 }))
                 .StartAsync();
 
-        string input = "The quick brown fox jumps over the lazy dog";
-        byte[] buffer = Encoding.UTF8.GetBytes(input);
-
         // Act
         var hashService = hostBuilder.Services.GetService<IHashService>();
-        string? sha256 = hashService?.GetSHA256Hash(buffer);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.NotNull(hashService);
-            Assert.Equal("d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592", sha256);
-        });
+        Assert.NotNull(hashService);
+        await hostBuilder.StopAsync();
+    }
 
+    #endregion
+
+    #region AddKDFService Tests
+
+    /// <summary>
+    ///     Tests that <seealso cref="IKDFService"/> can be initialized through dependency injection.
+    /// </summary>
+    [Fact]
+    public async Task TestAddKDFService()
+    {
+        // Arrange
+        using var hostBuilder = await new HostBuilder()
+            .ConfigureWebHost(builder => builder
+                .UseTestServer()
+                .ConfigureServices(services =>
+                {
+                    services.AddKDFService();
+                })
+                .Configure(app =>
+                {
+
+                }))
+                .StartAsync();
+
+        // Act
+        var kdfService = hostBuilder.Services.GetService<IKDFService>();
+
+        // Assert
+        Assert.NotNull(kdfService);
+        await hostBuilder.StopAsync();
+    }
+
+    #endregion
+
+    #region AddHMACService Tests
+
+    /// <summary>
+    ///     Tests that <seealso cref="IHMACService"/> can be initialized through dependency injection.
+    /// </summary>
+    [Fact]
+    public async Task TestAddHMACService()
+    {
+        // Arrange
+        using var hostBuilder = await new HostBuilder()
+            .ConfigureWebHost(builder =>
+            {
+                builder.UseTestServer();
+                builder.ConfigureServices(services =>
+                {
+                    services.AddHMACService();
+                });
+                builder.Configure(app =>
+                {
+
+                });
+            })
+            .StartAsync();
+
+        // Act
+        var cryptoRandomService = hostBuilder.Services.GetService<IHMACService>();
+
+        // Assert
+        Assert.NotNull(cryptoRandomService);
         await hostBuilder.StopAsync();
     }
 

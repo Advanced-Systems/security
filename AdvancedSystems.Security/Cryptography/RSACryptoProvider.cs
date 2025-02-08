@@ -7,6 +7,9 @@ using AdvancedSystems.Core.Extensions;
 
 namespace AdvancedSystems.Security.Cryptography;
 
+/// <summary>
+///     Represents a class for performing RSA-based asymmetric operations.
+/// </summary>
 public sealed class RSACryptoProvider
 {
     private static readonly HashAlgorithmName DEFAULT_HASH_ALGORITHM_NAME = HashAlgorithmName.SHA256;
@@ -47,27 +50,6 @@ public sealed class RSACryptoProvider
     #endregion
 
     #region Public Methods
-
-    public bool IsValidMessage(string message, RSAEncryptionPadding? padding, Encoding? encoding = null)
-    {
-        using RSA? publicKey = this.Certificate.GetRSAPublicKey();
-        ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
-
-        encoding ??= this.Encoding;
-        int messageSize = encoding.GetByteCount(message);
-        decimal keySize = Math.Floor(publicKey.KeySize / 8M);
-
-        if (padding is null)
-        {
-            decimal limit = keySize - 11;
-            return messageSize <= limit;
-        }
-
-        using var hashAlgorithm = Hash.Create(padding.OaepHashAlgorithm);
-        decimal hashSize = Math.Ceiling(hashAlgorithm.HashSize / 8M);
-        decimal limitPadded = keySize - (2 * hashSize) - 2;
-        return messageSize <= limitPadded;
-    }
 
     public string Encrypt(string message, Encoding? encoding = null)
     {

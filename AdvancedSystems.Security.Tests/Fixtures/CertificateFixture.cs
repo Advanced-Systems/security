@@ -1,58 +1,57 @@
-﻿using System;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Threading.Tasks;
 
-using AdvancedSystems.Security.Abstractions;
-using AdvancedSystems.Security.Options;
-using AdvancedSystems.Security.Services;
+using AdvancedSystems.Security.DependencyInjection;
 
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-using Moq;
+using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Fixtures;
 
-public class CertificateFixture
+public sealed class CertificateFixture : IAsyncLifetime
 {
-    public CertificateFixture()
-    {
-        this.Logger = new Mock<ILogger<CertificateService>>();
-        this.Options = new Mock<IOptions<CertificateOptions>>();
-        this.Store = new Mock<ICertificateStore>();
-        this.CertificateService = new CertificateService(this.Logger.Object, this.Options.Object, this.Store.Object);
-    }
-
     #region Properties
 
-    public Mock<ILogger<CertificateService>> Logger { get; private set; }
+    public string ConfiguredStoreService { get; } = "my/CurrentUser";
 
-    public ICertificateService CertificateService { get; private set; }
-
-    public Mock<IOptions<CertificateOptions>> Options { get; private set; }
-
-    public Mock<ICertificateStore> Store { get; private set; }
+    public IHost? Host { get; private set; }
 
     #endregion
 
-    #region Helper Methods
+    #region Methods
 
-    public static X509Certificate2 CreateCertificate(string subjectName)
+    public async Task InitializeAsync()
     {
-        using var ecdsa = ECDsa.Create();
-        var request = new CertificateRequest(subjectName, ecdsa, HashAlgorithmName.SHA256);
-        var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddHours(1));
-        return certificate;
+        this.Host = await new HostBuilder()
+            .ConfigureWebHost(builder => builder
+            .UseTestServer()
+            .ConfigureAppConfiguration(config =>
+            {
+                config.AddJsonFile("appsettings.json", optional: false);
+            })
+            .ConfigureServices((context, services) =>
+            {
+                var storeSettings = context.Configuration.GetSection(Sections.CERTIFICATE_STORE);
+                services.AddCertificateStore(this.ConfiguredStoreService, storeSettings);
+                services.AddCertificateService();
+            })
+            .Configure(app =>
+            {
+
+            }))
+            .StartAsync();
     }
 
-    public static X509Certificate2Collection CreateCertificateCollection(int length)
+    public async Task DisposeAsync()
     {
-        var certificates = Enumerable.Range(0, length)
-            .Select(_ => CreateCertificate("O=AdvancedSystems"))
-            .ToArray();
+        if (this.Host is null) return;
 
-        return new X509Certificate2Collection(certificates);
+        await this.Host.StopAsync();
     }
 
     #endregion

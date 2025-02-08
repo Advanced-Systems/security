@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Abstractions;
 
 using AdvancedSystems.Core.DependencyInjection;
 using AdvancedSystems.Security.Abstractions;
@@ -14,7 +15,89 @@ namespace AdvancedSystems.Security.DependencyInjection;
 
 public static partial class ServiceCollectionExtensions
 {
-    #region CryptoRandom
+    #region CertificateService
+
+    /// <summary>
+    ///     Adds the default implementation of <seealso cref="ICertificateService"/> to <paramref name="services"/>.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
+    public static IServiceCollection AddCertificateService(this IServiceCollection services)
+    {
+        services.TryAdd(ServiceDescriptor.Singleton<IFileSystem, FileSystem>());
+        services.TryAdd(ServiceDescriptor.Scoped<ICertificateService, CertificateService>());
+
+        return services;
+    }
+
+    #endregion
+
+    #region CertificateStore
+
+    private static IServiceCollection AddCertificateStore(this IServiceCollection services, string key)
+    {
+        services.TryAdd(ServiceDescriptor.KeyedSingleton<ICertificateStore>(key, (serviceProvider, _) =>
+        {
+            var options = serviceProvider.GetRequiredService<IOptions<CertificateStoreOptions>>().Value;
+            return new CertificateStore(options.Name, options.Location);
+        }));
+
+        return services;
+    }
+
+    /// <summary>
+    ///     Adds the default implementation of <seealso cref="ICertificateStore"/> to <paramref name="services"/>.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <param name="key">
+    ///     Name of the keyed <seealso cref="ICertificateStore"/> service.
+    /// </param>
+    /// <param name="setupAction">
+    ///     An action used to configure <seealso cref="CertificateStoreOptions"/>.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
+    public static IServiceCollection AddCertificateStore(this IServiceCollection services, string key, Action<CertificateStoreOptions> setupAction)
+    {
+        services.AddOptions()
+            .Configure(setupAction);
+
+        services.AddCertificateStore(key);
+        return services;
+    }
+
+    /// <summary>
+    ///     Adds the default implementation of <seealso cref="ICertificateStore"/> to <paramref name="services"/>.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <param name="key">
+    ///     Name of the keyed <seealso cref="ICertificateStore"/> service.
+    /// </param>
+    /// <param name="configurationSection">
+    ///     A configuration section targeting <seealso cref="CertificateStoreOptions"/>.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
+    public static IServiceCollection AddCertificateStore(this IServiceCollection services, string key, IConfigurationSection configurationSection)
+    {
+        services.TryAddOptions<CertificateStoreOptions>(configurationSection);
+        services.AddCertificateStore(key);
+        return services;
+    }
+
+    #endregion
+
+    #region CryptoRandomService
 
     /// <summary>
     ///     Adds the default implementation of <seealso cref="ICryptoRandomService"/> to <paramref name="services"/>.
@@ -52,114 +135,39 @@ public static partial class ServiceCollectionExtensions
 
     #endregion
 
-    #region CertificateStore
-
-    private static void AddCertificateStore<TOptions>(this IServiceCollection services) where TOptions : class
-    {
-        services.TryAdd(ServiceDescriptor.Singleton<ICertificateStore>(serviceProvider =>
-        {
-            var options = serviceProvider.GetRequiredService<IOptions<TOptions>>().Value switch
-            {
-                CertificateOptions certificateOptions => new { certificateOptions.Store.Name, certificateOptions.Store.Location },
-                CertificateStoreOptions storeOptions => new { storeOptions.Name, storeOptions.Location },
-                _ => throw new NotImplementedException()
-            };
-
-            return new CertificateStore(options.Name, options.Location);
-        }));
-    }
+    #region HMACService
 
     /// <summary>
-    ///     Adds the default implementation of <seealso cref="ICertificateStore"/> to <paramref name="services"/>.
+    ///     Adds the default implementation of <seealso cref="IHMACService"/> to <paramref name="services"/>.
     /// </summary>
     /// <param name="services">
     ///     The service collection containing the service.
     /// </param>
-    /// <param name="setupAction">
-    ///     An action used to configure <seealso cref="CertificateStoreOptions"/>.
-    /// </param>
     /// <returns>
     ///     The value of <paramref name="services"/>.
     /// </returns>
-    public static IServiceCollection AddCertificateStore(this IServiceCollection services, Action<CertificateStoreOptions> setupAction)
+    public static IServiceCollection AddHMACService(this IServiceCollection services)
     {
-        services.AddOptions()
-            .Configure(setupAction);
-
-        services.AddCertificateStore<CertificateStoreOptions>();
-        return services;
-    }
-
-    /// <summary>
-    ///     Adds the default implementation of <seealso cref="ICertificateStore"/> to <paramref name="services"/>.
-    /// </summary>
-    /// <param name="services">
-    ///     The service collection containing the service.
-    /// </param>
-    /// <param name="configurationSection">
-    ///     A configuration section targeting <seealso cref="CertificateStoreOptions"/>.
-    /// </param>
-    /// <returns>
-    ///     The value of <paramref name="services"/>.
-    /// </returns>
-    public static IServiceCollection AddCertificateStore(this IServiceCollection services, IConfigurationSection configurationSection)
-    {
-        services.TryAddOptions<CertificateStoreOptions>(configurationSection);
-        services.AddCertificateStore<CertificateStoreOptions>();
+        services.TryAdd(ServiceDescriptor.Scoped<IHMACService, HMACService>());
         return services;
     }
 
     #endregion
 
-    #region CertificateService
-
-    private static void AddCertificateService(this IServiceCollection services)
-    {
-        services.TryAdd(ServiceDescriptor.Scoped<ICertificateService, CertificateService>());
-    }
+    #region KDFService
 
     /// <summary>
-    ///     Adds the default implementation of <seealso cref="ICertificateService"/> to <paramref name="services"/>.
+    ///     Adds the default implementation of <seealso cref="IKDFService"/> to <paramref name="services"/>.
     /// </summary>
     /// <param name="services">
     ///     The service collection containing the service.
     /// </param>
-    /// <param name="setupAction">
-    ///     An action used to configure <seealso cref="CertificateOptions"/>.
-    /// </param>
     /// <returns>
     ///     The value of <paramref name="services"/>.
     /// </returns>
-    public static IServiceCollection AddCertificateService(this IServiceCollection services, Action<CertificateOptions> setupAction)
+    public static IServiceCollection AddKDFService(this IServiceCollection services)
     {
-        services.AddOptions()
-            .Configure(setupAction);
-
-        services.AddCertificateStore<CertificateOptions>();
-        services.AddCertificateService();
-
-        return services;
-    }
-
-    /// <summary>
-    ///     Adds the default implementation of <seealso cref="ICertificateService"/> to <paramref name="services"/>.
-    /// </summary>
-    /// <param name="services">
-    ///     The service collection containing the service.
-    /// </param>
-    /// <param name="configurationSection">
-    ///     A configuration section targeting <seealso cref="CertificateOptions"/>. NOTE: This configuration requires a nested
-    ///     <seealso cref="Sections.STORE"/> section within the previous section.
-    /// </param>
-    /// <returns>
-    ///     The value of <paramref name="services"/>.
-    /// </returns>
-    public static IServiceCollection AddCertificateService(this IServiceCollection services, IConfigurationSection configurationSection)
-    {
-        services.TryAddOptions<CertificateOptions>(configurationSection);
-        services.AddCertificateStore(configurationSection.GetRequiredSection(Sections.STORE));
-        services.AddCertificateService();
-
+        services.TryAdd(ServiceDescriptor.Scoped<IKDFService, KDFService>());
         return services;
     }
 
@@ -186,6 +194,8 @@ public static partial class ServiceCollectionExtensions
     /// </returns>
     public static IServiceCollection AddRSACryptoService(this IServiceCollection services, Action<RSACryptoOptions> setupAction)
     {
+        services.AddRSACryptoService();
+
         throw new NotImplementedException();
     }
 
@@ -203,6 +213,8 @@ public static partial class ServiceCollectionExtensions
     /// </returns>
     public static IServiceCollection AddRSACryptoService(this IServiceCollection services, IConfigurationSection configurationSection)
     {
+        services.AddRSACryptoService();
+
         throw new NotImplementedException();
     }
 

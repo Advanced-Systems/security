@@ -52,7 +52,7 @@ public sealed record DistinguishedName
     public string? OrganizationalUnit { get; init; }
 
     /// <summary>
-    ///     Gets or sets the <inheritdoc cref="RDN.S" path="/summary"/>..
+    ///     Gets or sets the <inheritdoc cref="RDN.S" path="/summary"/>.
     /// </summary>
     /// <remarks>
     ///     <inheritdoc cref="RDN.S" path="/remarks"/>

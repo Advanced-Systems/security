@@ -7,7 +7,7 @@ using Moq;
 
 namespace AdvancedSystems.Security.Tests.Fixtures;
 
-public class HashServiceFixture
+public sealed class HashServiceFixture
 {
     public HashServiceFixture()
     {

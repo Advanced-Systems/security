@@ -8,17 +8,12 @@ namespace AdvancedSystems.Security.DependencyInjection;
 public static partial class Sections
 {
     /// <summary>
-    ///     Key used to bind the <seealso cref="CertificateOptions"/> configuration section.
-    /// </summary>
-    public const string CERTIFICATE = "Certificate";
-
-    /// <summary>
     ///     Key used to bind the <seealso cref="RSACryptoOptions"/> configuration section.
     /// </summary>
     public const string RSA = "RSA";
 
     /// <summary>
-    ///     Key used to bind the <seealso cref="STORE"/> configuration section.
+    ///     Key used to bind the <seealso cref="CertificateStoreOptions"/> configuration section.
     /// </summary>
-    public const string STORE = "Store";
+    public const string CERTIFICATE_STORE = "CertificateStore";
 }
