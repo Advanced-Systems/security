@@ -3,9 +3,9 @@ using AdvancedSystems.Security.Services;
 
 namespace AdvancedSystems.Security.Tests.Fixtures;
 
-public sealed class HMACFixture
+public sealed class HMACServiceFixture
 {
-    public HMACFixture()
+    public HMACServiceFixture()
     {
         this.HMACService = new HMACService();
     }

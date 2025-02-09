@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Cryptography;
@@ -15,13 +14,14 @@ namespace AdvancedSystems.Security.Services;
 /// <summary>
 ///     Represents a service for performing RSA-based asymmetric operations.
 /// </summary>
-public sealed class RSACryptoService
+public sealed class RSACryptoService : IRSACryptoService
 {
+    private bool _isDisposed = false;
+
     private readonly ILogger<RSACryptoService> _logger;
     private readonly ICertificateService _certificateService;
     private readonly RSACryptoOptions _rsaOptions;
 
-    private bool _disposed = false;
     private readonly X509Certificate2 _certificate;
     private readonly RSACryptoProvider _provider;
 
@@ -32,14 +32,13 @@ public sealed class RSACryptoService
         this._rsaOptions = rsaOptions.Value;
 
         this._certificate = this._certificateService.GetCertificate("default", this._rsaOptions.Thumbprint, validOnly: true)
-            ?? throw new ArgumentNullException();
+            ?? throw new ArgumentNullException(nameof(rsaOptions));
 
         this._provider = new RSACryptoProvider(
             this._certificate,
-            this._rsaOptions.HashAlgorithmName,
+            this._rsaOptions.HashFunction,
             this._rsaOptions.EncryptionPadding,
-            this._rsaOptions.SignaturePadding,
-            this._rsaOptions.Encoding
+            this._rsaOptions.SignaturePadding
          );
     }
 
@@ -55,11 +54,11 @@ public sealed class RSACryptoService
     }
 
     /// <inheritdoc />
-    public HashAlgorithmName HashAlgorithmName
+    public HashFunction HashFunction
     {
         get
         {
-            return this._provider.HashAlgorithmName;
+            return this._provider.HashFunction;
         }
     }
 
@@ -81,15 +80,6 @@ public sealed class RSACryptoService
         }
     }
 
-    /// <inheritdoc />
-    public Encoding Encoding
-    {
-        get
-        {
-            return this._provider.Encoding;
-        }
-    }
-
     #endregion
 
     #region Methods
@@ -102,37 +92,42 @@ public sealed class RSACryptoService
         GC.SuppressFinalize(this);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose(bool disposing)
     {
-        if (this._disposed || !disposing) return;
+        if (this._isDisposed) return;
 
-        this._certificate.Dispose();
-        this._disposed = true;
+        if (disposing)
+        {
+            this.Certificate.Dispose();
+            this._provider.Dispose();
+        }
+
+        this._isDisposed = true;
     }
 
     /// <inheritdoc />
-    public string Encrypt(string message, Encoding? encoding = null)
+    public byte[] Encrypt(byte[] buffer)
     {
-        return this._provider.Encrypt(message, encoding);
+        return this._provider.Encrypt(buffer);
     }
 
     /// <inheritdoc />
-    public string Decrypt(string cipher, Encoding? encoding = null)
+    public byte[] Decrypt(byte[] cipher)
     {
-        return this._provider.Decrypt(cipher, encoding);
+        return this._provider.Decrypt(cipher);
     }
 
     /// <inheritdoc />
-    public string SignData(string data, Encoding? encoding = null)
+    public byte[] SignData(byte[] data)
     {
-        return this._provider.SignData(data, encoding);
+        return this._provider.SignData(data);
     }
 
     /// <inheritdoc />
-    public bool VerifyData(string data, string signature, Encoding? encoding = null)
+    public bool VerifyData(byte[] data, byte[] signature)
     {
-        return this._provider.VerifyData(data, signature, encoding);
+        return this._provider.VerifyData(data, signature);
     }
 
     #endregion

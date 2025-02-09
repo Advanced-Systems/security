@@ -12,12 +12,12 @@ namespace AdvancedSystems.Security.Tests.Services;
 /// <summary>
 ///     Tests the public methods in <seealso cref="IHMACService"/>.
 /// </summary>
-public sealed class HMACServiceTests : IClassFixture<HMACFixture>, IClassFixture<CryptoRandomFixture>
+public sealed class HMACServiceTests : IClassFixture<HMACServiceFixture>, IClassFixture<CryptoRandomServiceFixture>
 {
     private readonly IHMACService _sut;
     private readonly ICryptoRandomService _cryptoRandomService;
 
-    public HMACServiceTests(HMACFixture fixture, CryptoRandomFixture cryptoRandomFixture)
+    public HMACServiceTests(HMACServiceFixture fixture, CryptoRandomServiceFixture cryptoRandomFixture)
     {
         this._sut = fixture.HMACService;
         this._cryptoRandomService = cryptoRandomFixture.CryptoRandomService;

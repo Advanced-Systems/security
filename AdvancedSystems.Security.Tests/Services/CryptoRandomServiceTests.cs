@@ -14,11 +14,11 @@ namespace AdvancedSystems.Security.Tests.Services;
 /// <remarks>
 ///     These methods are more exhaustively tested by the underlying provider class.
 /// </remarks>
-public sealed class CryptoRandomServiceTests : IClassFixture<CryptoRandomFixture>
+public sealed class CryptoRandomServiceTests : IClassFixture<CryptoRandomServiceFixture>
 {
-    private readonly CryptoRandomFixture _sut;
+    private readonly CryptoRandomServiceFixture _sut;
 
-    public CryptoRandomServiceTests(CryptoRandomFixture fixture)
+    public CryptoRandomServiceTests(CryptoRandomServiceFixture fixture)
     {
         this._sut = fixture;
     }

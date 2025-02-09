@@ -18,11 +18,11 @@ namespace AdvancedSystems.Security.Tests.Services;
 /// <summary>
 ///     Tests the public methods in <seealso cref="ICertificateService"/>.
 /// </summary>
-public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
+public sealed class CertificateServiceTests : IClassFixture<HostFixture>
 {
-    private readonly CertificateFixture _sut;
+    private readonly HostFixture _sut;
 
-    public CertificateServiceTests(CertificateFixture certificateFixture)
+    public CertificateServiceTests(HostFixture certificateFixture)
     {
         this._sut = certificateFixture;
     }
@@ -123,7 +123,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
     {
         // Arrange
         string storeService = this._sut.ConfiguredStoreService;
-        string thumbprint = "2BFC1C18AC1A99E4284D07F1D2F0312C8EAB33FC";
+        string thumbprint = Certificates.PasswordCertificateThumbprint;
 
         // Act
         var certificateService = this._sut.Host?.Services.GetService<ICertificateService>();
@@ -148,7 +148,7 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
     {
         // Arrange
         string storeService = this._sut.ConfiguredStoreService;
-        var certificate1 = CreateSelfSignedCertificate("O=AdvancedSystems");
+        var certificate1 = Certificates.CreateSelfSignedCertificate("O=AdvancedSystems");
         string thumbprint = certificate1.Thumbprint;
 
         // Act
@@ -165,19 +165,6 @@ public sealed class CertificateServiceTests : IClassFixture<CertificateFixture>
             Assert.NotNull(certificate2);
             Assert.True(isRemoved);
         });
-    }
-
-    #endregion
-
-    #region Helpers
-
-    private static X509Certificate2 CreateSelfSignedCertificate(string subject)
-    {
-        using var csdsa = ECDsa.Create();
-        var request = new CertificateRequest(subject, csdsa, HashAlgorithmName.SHA256);
-        var validFrom = DateTimeOffset.UtcNow;
-        X509Certificate2 certificate = request.CreateSelfSigned(validFrom, validFrom.AddHours(1));
-        return certificate;
     }
 
     #endregion
