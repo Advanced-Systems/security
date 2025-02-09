@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
-using System.Text;
+
+using AdvancedSystems.Security.Abstractions;
 
 namespace AdvancedSystems.Security.Options;
 
 public sealed record RSACryptoOptions
 {
     [Required]
-    public required HashAlgorithmName HashAlgorithmName { get; set; }
+    public required HashFunction HashFunction { get; set; }
 
     [Required]
     public required RSAEncryptionPadding EncryptionPadding { get; set; }
@@ -16,8 +17,7 @@ public sealed record RSACryptoOptions
     public required RSASignaturePadding SignaturePadding { get; set; }
 
     [Required]
-    public required Encoding Encoding { get; set; }
-
-    [Required]
     public required string Thumbprint { get; set; }
+
+    public bool RequireValidCertificate { get; set; } = true;
 }

@@ -1,112 +1,109 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
-using AdvancedSystems.Core.Extensions;
+using AdvancedSystems.Security.Abstractions;
+using AdvancedSystems.Security.Extensions;
 
 namespace AdvancedSystems.Security.Cryptography;
 
 /// <summary>
 ///     Represents a class for performing RSA-based asymmetric operations.
 /// </summary>
-public sealed class RSACryptoProvider
+public sealed class RSACryptoProvider : IDisposable
 {
-    private static readonly HashAlgorithmName DEFAULT_HASH_ALGORITHM_NAME = HashAlgorithmName.SHA256;
+    private bool _isDisposed = false;
+
+    private static readonly HashFunction DEFAULT_HASH_FUNCTION = HashFunction.SHA256;
     private static readonly RSAEncryptionPadding DEFAULT_RSA_ENCRYPTION_PADDING = RSAEncryptionPadding.OaepSHA256;
     private static readonly RSASignaturePadding DEFAULT_RSA_SIGNATURE_PADDING = RSASignaturePadding.Pss;
-    private static readonly Encoding DEFAULT_ENCODING = Encoding.UTF8;
 
-    public RSACryptoProvider(X509Certificate2 certificate, HashAlgorithmName hashAlgorithm, RSAEncryptionPadding encryptionPadding, RSASignaturePadding signaturePadding, Encoding encoding)
+    public RSACryptoProvider(X509Certificate2 certificate, HashFunction hashFunction, RSAEncryptionPadding encryptionPadding, RSASignaturePadding signaturePadding)
     {
         this.Certificate = certificate;
-        this.HashAlgorithmName = hashAlgorithm;
+        this.HashFunction = hashFunction;
         this.EncryptionPadding = encryptionPadding;
         this.SignaturePadding = signaturePadding;
-        this.Encoding = encoding;
     }
 
     public RSACryptoProvider(X509Certificate2 certificate)
     {
         this.Certificate = certificate;
-        this.HashAlgorithmName = RSACryptoProvider.DEFAULT_HASH_ALGORITHM_NAME;
-        this.EncryptionPadding = RSACryptoProvider.DEFAULT_RSA_ENCRYPTION_PADDING;
-        this.SignaturePadding = RSACryptoProvider.DEFAULT_RSA_SIGNATURE_PADDING;
-        this.Encoding = RSACryptoProvider.DEFAULT_ENCODING;
+        this.HashFunction = DEFAULT_HASH_FUNCTION;
+        this.EncryptionPadding = DEFAULT_RSA_ENCRYPTION_PADDING;
+        this.SignaturePadding = DEFAULT_RSA_SIGNATURE_PADDING;
     }
 
     #region Properties
 
     public X509Certificate2 Certificate { get; private set; }
 
-    public HashAlgorithmName HashAlgorithmName { get; set; }
+    public HashFunction HashFunction { get; set; }
 
     public RSAEncryptionPadding EncryptionPadding { get; set; }
 
     public RSASignaturePadding SignaturePadding { get; set; }
 
-    public Encoding Encoding { get; set; }
-
     #endregion
 
     #region Public Methods
 
-    public string Encrypt(string message, Encoding? encoding = null)
+    public void Dispose()
     {
-        encoding ??= this.Encoding;
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
+    public void Dispose(bool disposing)
+    {
+        if (this._isDisposed) return;
+
+        if (disposing && this.Certificate is not null)
+        {
+            this.Certificate.Dispose();
+        }
+
+        this._isDisposed = true;
+    }
+
+    public byte[] Encrypt(byte[] buffer)
+    {
         using RSA? publicKey = this.Certificate.GetRSAPublicKey();
         ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
 
-        byte[] buffer = encoding.GetBytes(message);
         byte[] cipher = publicKey.Encrypt(buffer, this.EncryptionPadding);
-        return Convert.ToBase64String(cipher);
+        return cipher;
     }
 
-    public string Decrypt(string cipher, Encoding? encoding = null)
+    public byte[] Decrypt(byte[] cipher)
     {
         if (!this.Certificate.HasPrivateKey)
         {
             throw new CryptographicException($"Certificate with thumbprint '{this.Certificate.Thumbprint}' has no private key.");
         }
 
-        encoding ??= this.Encoding;
-
         using RSA? privateKey = this.Certificate.GetRSAPrivateKey();
         ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
 
-        byte[] buffer = Convert.FromBase64String(cipher);
-        byte[] source = privateKey.Decrypt(buffer, this.EncryptionPadding);
-        return encoding.GetString(source);
+        byte[] source = privateKey.Decrypt(cipher, this.EncryptionPadding);
+        return source;
     }
 
-    public string SignData(string data, Encoding? encoding = null)
+    public byte[] SignData(byte[] data)
     {
-        if (data.IsNullOrEmpty())
-        {
-            throw new ArgumentNullException(nameof(data));
-        }
-
         using RSA? privateKey = this.Certificate.GetRSAPrivateKey();
         ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
 
-        encoding ??= this.Encoding;
-        byte[] buffer = encoding.GetBytes(data);
-
-        byte[] signature = privateKey.SignData(buffer, this.HashAlgorithmName, this.SignaturePadding);
-        return Convert.ToBase64String(signature);
+        byte[] signature = privateKey.SignData(data, this.HashFunction.ToHashAlgorithmName(), this.SignaturePadding);
+        return signature;
     }
 
-    public bool VerifyData(string data, string signature, Encoding? encoding = null)
+    public bool VerifyData(byte[] data, byte[] signature)
     {
         using RSA? publicKey = this.Certificate.GetRSAPublicKey();
         ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
 
-        encoding ??= this.Encoding;
-        byte[] buffer = encoding.GetBytes(data);
-        byte[] signedBuffer = Convert.FromBase64String(signature);
-
-        bool isVerified = publicKey.VerifyData(buffer, signedBuffer, this.HashAlgorithmName, this.SignaturePadding);
+        bool isVerified = publicKey.VerifyData(data, signature, this.HashFunction.ToHashAlgorithmName(), this.SignaturePadding);
         return isVerified;
     }
 

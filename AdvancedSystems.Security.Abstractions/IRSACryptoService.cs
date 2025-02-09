@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 namespace AdvancedSystems.Security.Abstractions;
 
@@ -14,13 +13,11 @@ public interface IRSACryptoService : IDisposable
 
     X509Certificate2 Certificate { get; }
 
-    HashAlgorithmName HashAlgorithmName { get; }
+    HashFunction HashFunction { get; }
 
     RSAEncryptionPadding EncryptionPadding { get; }
 
     RSASignaturePadding SignaturePadding { get; }
-
-    Encoding Encoding { get; }
 
     #endregion
 

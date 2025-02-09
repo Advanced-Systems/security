@@ -177,7 +177,9 @@ public static partial class ServiceCollectionExtensions
 
     private static IServiceCollection AddRSACryptoService(this IServiceCollection services)
     {
-        throw new NotImplementedException();
+        services.TryAdd(ServiceDescriptor.Singleton<IRSACryptoService, RSACryptoService>());
+
+        return services;
     }
 
     /// <summary>

@@ -15,11 +15,11 @@ namespace AdvancedSystems.Security.Tests.Extensions;
 /// <summary>
 ///     Tests the public methods in <seealso cref="CertificateExtensions"/>.
 /// </summary>
-public sealed class CertificateExtensionsTests : IClassFixture<CertificateFixture>
+public sealed class CertificateExtensionsTests : IClassFixture<HostFixture>
 {
-    private readonly CertificateFixture _certificateFixture;
+    private readonly HostFixture _certificateFixture;
 
-    public CertificateExtensionsTests(CertificateFixture certificateFixture)
+    public CertificateExtensionsTests(HostFixture certificateFixture)
     {
         this._certificateFixture = certificateFixture;
     }
