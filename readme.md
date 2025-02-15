@@ -34,21 +34,17 @@ for debugging .NET assemblies.
 Configure local user secrets for the test suite (optional):
 
 ```powershell
-$Password = Read-Host -Prompt "AdvancedSystems-CA.pfx Password"
-dotnet user-secrets set CertificatePassword $Password --project ./AdvancedSystems.Tests
+$Password = Read-Host "Password" -MaskInput
+make install password=$Password
 ```
 
 Run test suite:
 
 ```powershell
-dotnet test ./AdvancedSystems.Core.Tests --configuration Release
+make test configuration=Release
 ```
 
-In addition to unit testing, this project also uses stryker for mutation testing, which is setup to be installed with
-
-```powershell
-dotnet tool restore --configfile nuget.config
-```
+In addition to unit testing, this project also uses stryker for mutation testing, which is set up to be installed with
 
 Run stryker locally:
 
@@ -56,8 +52,8 @@ Run stryker locally:
 dotnet stryker
 ```
 
-Build and serve documentation locally (`http://localhost:8080`):
+Build and serve documentation locally:
 
 ```powershell
-docfx ./docs/docfx.json --serve
+make documentation serve=true
 ```
