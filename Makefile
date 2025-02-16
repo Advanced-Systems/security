@@ -30,6 +30,9 @@ build:
 test: build
 	dotnet test $(TEST_PROJECT) --configuration $(configuration) --verbosity normal
 
+lint:
+	dotnet format
+
 documentation:
 	dotnet tool restore --configfile nuget.config
 
