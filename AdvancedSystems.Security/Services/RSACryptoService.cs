@@ -17,41 +17,32 @@ namespace AdvancedSystems.Security.Services;
 public sealed class RSACryptoService : IRSACryptoService
 {
     private bool _isDisposed = false;
-
     private readonly ILogger<RSACryptoService> _logger;
-    private readonly ICertificateService _certificateService;
-    private readonly RSACryptoOptions _rsaOptions;
-
-    private readonly X509Certificate2 _certificate;
     private readonly RSACryptoProvider _provider;
 
     public RSACryptoService(ILogger<RSACryptoService> logger, ICertificateService certificateService, IOptions<RSACryptoOptions> rsaOptions)
     {
         this._logger = logger;
-        this._certificateService = certificateService;
-        this._rsaOptions = rsaOptions.Value;
+        RSACryptoOptions rsaOptions1 = rsaOptions.Value;
 
-        this._certificate = this._certificateService.GetCertificate("default", this._rsaOptions.Thumbprint, validOnly: true)
+        this.Certificate = certificateService.GetCertificate("default", rsaOptions1.Thumbprint, validOnly: true)
             ?? throw new ArgumentNullException(nameof(rsaOptions));
 
-        this._provider = new RSACryptoProvider(
-            this._certificate,
-            this._rsaOptions.HashFunction,
-            this._rsaOptions.EncryptionPadding,
-            this._rsaOptions.SignaturePadding
-         );
+        this._provider = new RSACryptoProvider(this.Certificate);
+        this._provider.HashFunction = rsaOptions1.HashFunction;
+        this._provider.EncryptionPadding = rsaOptions1.EncryptionPadding;
+        this._provider.SignaturePadding = rsaOptions1.SignaturePadding;
+    }
+
+    ~RSACryptoService()
+    {
+        this.Dispose(false);
     }
 
     #region Properties
 
     /// <inheritdoc />
-    public X509Certificate2 Certificate
-    {
-        get
-        {
-            return this._certificate;
-        }
-    }
+    public X509Certificate2 Certificate { get; }
 
     /// <inheritdoc />
     public HashFunction HashFunction
@@ -85,15 +76,13 @@ public sealed class RSACryptoService : IRSACryptoService
     #region Methods
 
     /// <inheritdoc />
-
     public void Dispose()
     {
         this.Dispose(true);
         GC.SuppressFinalize(this);
     }
 
-    /// <inheritdoc cref="IDisposable.Dispose" />
-    public void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (this._isDisposed) return;
 

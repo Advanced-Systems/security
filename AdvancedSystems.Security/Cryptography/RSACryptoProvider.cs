@@ -14,35 +14,25 @@ public sealed class RSACryptoProvider : IDisposable
 {
     private bool _isDisposed = false;
 
-    private static readonly HashFunction DEFAULT_HASH_FUNCTION = HashFunction.SHA256;
-    private static readonly RSAEncryptionPadding DEFAULT_RSA_ENCRYPTION_PADDING = RSAEncryptionPadding.OaepSHA256;
-    private static readonly RSASignaturePadding DEFAULT_RSA_SIGNATURE_PADDING = RSASignaturePadding.Pss;
-
-    public RSACryptoProvider(X509Certificate2 certificate, HashFunction hashFunction, RSAEncryptionPadding encryptionPadding, RSASignaturePadding signaturePadding)
-    {
-        this.Certificate = certificate;
-        this.HashFunction = hashFunction;
-        this.EncryptionPadding = encryptionPadding;
-        this.SignaturePadding = signaturePadding;
-    }
-
     public RSACryptoProvider(X509Certificate2 certificate)
     {
         this.Certificate = certificate;
-        this.HashFunction = DEFAULT_HASH_FUNCTION;
-        this.EncryptionPadding = DEFAULT_RSA_ENCRYPTION_PADDING;
-        this.SignaturePadding = DEFAULT_RSA_SIGNATURE_PADDING;
+    }
+
+    ~RSACryptoProvider()
+    {
+        this.Dispose(false);
     }
 
     #region Properties
 
     public X509Certificate2 Certificate { get; private set; }
 
-    public HashFunction HashFunction { get; set; }
+    public HashFunction HashFunction { get; set; } = HashFunction.SHA256;
 
-    public RSAEncryptionPadding EncryptionPadding { get; set; }
+    public RSAEncryptionPadding EncryptionPadding { get; set; } = RSAEncryptionPadding.OaepSHA256;
 
-    public RSASignaturePadding SignaturePadding { get; set; }
+    public RSASignaturePadding SignaturePadding { get; set; } = RSASignaturePadding.Pss;
 
     #endregion
 
@@ -54,11 +44,11 @@ public sealed class RSACryptoProvider : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (this._isDisposed) return;
 
-        if (disposing && this.Certificate is not null)
+        if (disposing)
         {
             this.Certificate.Dispose();
         }
@@ -66,15 +56,17 @@ public sealed class RSACryptoProvider : IDisposable
         this._isDisposed = true;
     }
 
-    public byte[] Encrypt(byte[] buffer)
+    /// <inheritdoc cref="IRSACryptoService.Encrypt(byte[])" />
+    public byte[] Encrypt(byte[] data)
     {
         using RSA? publicKey = this.Certificate.GetRSAPublicKey();
         ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
 
-        byte[] cipher = publicKey.Encrypt(buffer, this.EncryptionPadding);
+        byte[] cipher = publicKey.Encrypt(data, this.EncryptionPadding);
         return cipher;
     }
 
+    /// <inheritdoc cref="IRSACryptoService.Decrypt(byte[])" />
     public byte[] Decrypt(byte[] cipher)
     {
         if (!this.Certificate.HasPrivateKey)
@@ -89,6 +81,7 @@ public sealed class RSACryptoProvider : IDisposable
         return source;
     }
 
+    /// <inheritdoc cref="IRSACryptoService.SignData(byte[])" />
     public byte[] SignData(byte[] data)
     {
         using RSA? privateKey = this.Certificate.GetRSAPrivateKey();
@@ -98,6 +91,7 @@ public sealed class RSACryptoProvider : IDisposable
         return signature;
     }
 
+    /// <inheritdoc cref="IRSACryptoService.VerifyData(byte[], byte[])" />
     public bool VerifyData(byte[] data, byte[] signature)
     {
         using RSA? publicKey = this.Certificate.GetRSAPublicKey();

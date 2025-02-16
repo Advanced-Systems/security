@@ -23,8 +23,26 @@ public interface IRSACryptoService : IDisposable
 
     #region Methods
 
-    byte[] Encrypt(byte[] message);
+    /// <summary>
+    ///     Encrypts the input <paramref name="data"/>.
+    /// </summary>
+    /// <param name="data">
+    ///     The data to encrypt.
+    /// </param>
+    /// <returns>
+    ///     The encrypted data.
+    /// </returns>
+    byte[] Encrypt(byte[] data);
 
+    /// <summary>
+    ///     Decrypts the <paramref name="cipher"/>.
+    /// </summary>
+    /// <param name="cipher">
+    ///     The data to decrypt.
+    /// </param>
+    /// <returns>
+    ///     The decrypted data.
+    /// </returns>
     byte[] Decrypt(byte[] cipher);
 
     byte[] SignData(byte[] data);

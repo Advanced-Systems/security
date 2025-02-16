@@ -45,5 +45,28 @@ public sealed class RSACryptoProviderTests : IClassFixture<RSACryptoProviderFixt
         });
     }
 
+    /// <summary>
+    ///     Tests that <seealso cref="RSACryptoProvider"/> signs and verifies an array of bytes
+    ///     correctly by using a pre-configured certificate.
+    /// </summary>
+    [Fact]
+    public void TestSigningVerification_Roundtrip()
+    {
+        // Arrange
+        string message = "Hello, World!";
+        byte[] buffer = message.GetBytes(Format.String);
+
+        // Act
+        byte[] signature = this._sut.RSACryptoProvider.SignData(buffer);
+        bool verified = this._sut.RSACryptoProvider.VerifyData(buffer, signature);
+
+        // Assert
+        Assert.Multiple((() =>
+        {
+            Assert.NotEmpty(signature);
+            Assert.True(verified);
+        }));
+    }
+
     #endregion
 }
