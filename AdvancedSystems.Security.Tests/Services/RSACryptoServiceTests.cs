@@ -25,6 +25,7 @@ public sealed class RSACryptoServiceTests : IClassFixture<HostFixture>
 {
     private readonly HostFixture _certificateFixture;
     private readonly Mock<ILogger<RSACryptoService>> _logger = new();
+    private readonly Mock<ICertificateService> _certificateService = new();
     private readonly RSACryptoService _sut;
 
     public RSACryptoServiceTests(HostFixture certificateFixture)
@@ -38,17 +39,22 @@ public sealed class RSACryptoServiceTests : IClassFixture<HostFixture>
             SignaturePadding = RSASignaturePadding.Pss,
             Thumbprint = Certificates.PasswordCertificateThumbprint,
             StoreService = this._certificateFixture.ConfiguredStoreService,
-            ValidOnly = false,
         };
 
         ICertificateService certificateService = this._certificateFixture.Host?.Services.GetService<ICertificateService>()
             ?? throw new InvalidOperationException($"Failed to retrieve {nameof(ICertificateService)} from DI container.");
 
+        // NOTE: Use invalid certificates for testing purposes only
+        this._certificateService.Setup(x => x.GetCertificate(rsaOptions.StoreService, rsaOptions.Thumbprint, true))
+            .Returns(certificateService.GetCertificate(rsaOptions.StoreService, rsaOptions.Thumbprint, false));
+
         this._sut = new RSACryptoService(
             this._logger.Object,
-            certificateService,
+            this._certificateService.Object,
             Microsoft.Extensions.Options.Options.Create(rsaOptions)
         );
+
+        this._certificateService.VerifyAll();
     }
 
     #region Tests

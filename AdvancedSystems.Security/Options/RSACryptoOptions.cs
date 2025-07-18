@@ -38,16 +38,6 @@ public sealed record RSACryptoOptions
     /// <summary>
     ///     <inheritdoc cref="ICertificateService.GetCertificate(string, string, bool)" path="/param[@name='storeService']"/>
     /// </summary>
+    [Required]
     public required string StoreService { get; set; }
-
-    /// <summary>
-    ///     <inheritdoc cref="ICertificateService.GetCertificate(string, string, bool)" path="/param[@name='validOnly']"/>
-    /// </summary>
-    public bool ValidOnly { get; set; } = true;
-
-    /// <summary>
-    ///     Set this value to <see langword="true"/> to allow only valid certificates to be
-    ///     used for the encryption and decryption; otherwise, <see langword="false"/>.
-    /// </summary>
-    public bool RequireValidCertificate { get; set; } = true;
 }

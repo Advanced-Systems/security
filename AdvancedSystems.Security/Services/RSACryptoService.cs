@@ -26,7 +26,7 @@ public sealed class RSACryptoService : RSACryptoContract, IDisposable
         this._logger = logger;
         RSACryptoOptions rsaOptions = options.Value;
 
-        this.Certificate = certificateService.GetCertificate(rsaOptions.StoreService, rsaOptions.Thumbprint, rsaOptions.ValidOnly)
+        this.Certificate = certificateService.GetCertificate(rsaOptions.StoreService, rsaOptions.Thumbprint, validOnly: true)
             ?? throw new CertificateNotFoundException($"Failed to retrieve certificate with options {nameof(RSACryptoOptions.StoreService)}=\"{rsaOptions.StoreService}\" and {nameof(RSACryptoOptions.Thumbprint)}=\"{rsaOptions.Thumbprint}\".");
 
         this._provider = new RSACryptoProvider(this.Certificate)
@@ -108,24 +108,32 @@ public sealed class RSACryptoService : RSACryptoContract, IDisposable
     /// <inheritdoc />
     public override byte[] Encrypt(byte[] buffer)
     {
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
         return this._provider.Encrypt(buffer);
     }
 
     /// <inheritdoc />
     public override byte[] Decrypt(byte[] cipher)
     {
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
         return this._provider.Decrypt(cipher);
     }
 
     /// <inheritdoc />
     public override byte[] SignData(byte[] data)
     {
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
         return this._provider.SignData(data);
     }
 
     /// <inheritdoc />
     public override bool VerifyData(byte[] data, byte[] signature)
     {
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
         return this._provider.VerifyData(data, signature);
     }
 
