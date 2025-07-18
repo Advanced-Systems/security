@@ -21,12 +21,16 @@ public sealed class RSACryptoProvider : RSACryptoContract, IDisposable
 
     #region Properties
 
+    /// <inheritdoc cref="RSACryptoContract.Certificate" />
     public override X509Certificate2 Certificate { get; }
 
+    /// <inheritdoc cref="RSACryptoContract.HashFunction" />
     public override HashFunction HashFunction { get; set; } = HashFunction.SHA256;
 
+    /// <inheritdoc cref="RSACryptoContract.EncryptionPadding" />
     public override RSAEncryptionPadding EncryptionPadding { get; set; } = RSAEncryptionPadding.OaepSHA256;
 
+    /// <inheritdoc cref="RSACryptoContract.SignaturePadding" />
     public override RSASignaturePadding SignaturePadding { get; set; } = RSASignaturePadding.Pss;
 
     #endregion

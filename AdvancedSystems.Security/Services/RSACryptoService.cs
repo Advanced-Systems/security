@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 using AdvancedSystems.Security.Abstractions;
+using AdvancedSystems.Security.Abstractions.Exceptions;
 using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Options;
 
@@ -20,19 +21,19 @@ public sealed class RSACryptoService : RSACryptoContract, IDisposable
     private readonly ILogger<RSACryptoService> _logger;
     private readonly RSACryptoProvider _provider;
 
-    public RSACryptoService(ILogger<RSACryptoService> logger, ICertificateService certificateService, IOptions<RSACryptoOptions> rsaOptions)
+    public RSACryptoService(ILogger<RSACryptoService> logger, ICertificateService certificateService, IOptions<RSACryptoOptions> options)
     {
         this._logger = logger;
-        RSACryptoOptions rsaOptions1 = rsaOptions.Value;
+        RSACryptoOptions rsaOptions = options.Value;
 
-        this.Certificate = certificateService.GetCertificate("default", rsaOptions1.Thumbprint, validOnly: true)
-            ?? throw new ArgumentNullException(nameof(rsaOptions));
+        this.Certificate = certificateService.GetCertificate(rsaOptions.StoreService, rsaOptions.Thumbprint, rsaOptions.ValidOnly)
+            ?? throw new CertificateNotFoundException($"Failed to retrieve certificate with options {nameof(RSACryptoOptions.StoreService)}=\"{rsaOptions.StoreService}\" and {nameof(RSACryptoOptions.Thumbprint)}=\"{rsaOptions.Thumbprint}\".");
 
         this._provider = new RSACryptoProvider(this.Certificate)
         {
-            HashFunction = rsaOptions1.HashFunction,
-            EncryptionPadding = rsaOptions1.EncryptionPadding,
-            SignaturePadding = rsaOptions1.SignaturePadding
+            HashFunction = rsaOptions.HashFunction,
+            EncryptionPadding = rsaOptions.EncryptionPadding,
+            SignaturePadding = rsaOptions.SignaturePadding
         };
     }
 
