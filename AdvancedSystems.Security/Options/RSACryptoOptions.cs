@@ -6,7 +6,7 @@ using AdvancedSystems.Security.Abstractions;
 namespace AdvancedSystems.Security.Options;
 
 /// <summary>
-///     Configures options for the <seealso cref="IRSACryptoService"/>.
+///     Configures options for the <seealso cref="RSACryptoContract"/>.
 /// </summary>
 public sealed record RSACryptoOptions
 {

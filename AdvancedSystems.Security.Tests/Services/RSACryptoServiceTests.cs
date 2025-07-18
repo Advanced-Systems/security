@@ -24,7 +24,7 @@ public sealed class RSACryptoServiceTests : IClassFixture<HostFixture>
     #region Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="IRSACryptoService"/> encrypts an array of bytes correctly
+    ///     Tests that <seealso cref="RSACryptoContract"/> encrypts an array of bytes correctly
     ///     by using a pre-configured certificate.
     /// </summary>
     [Fact]

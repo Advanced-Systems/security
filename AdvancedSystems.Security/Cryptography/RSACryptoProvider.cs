@@ -10,7 +10,7 @@ namespace AdvancedSystems.Security.Cryptography;
 /// <summary>
 ///     Represents a class for performing RSA-based asymmetric operations.
 /// </summary>
-public sealed class RSACryptoProvider : IDisposable
+public sealed class RSACryptoProvider : RSACryptoContract, IDisposable
 {
     private bool _isDisposed = false;
 
@@ -19,24 +19,19 @@ public sealed class RSACryptoProvider : IDisposable
         this.Certificate = certificate;
     }
 
-    ~RSACryptoProvider()
-    {
-        this.Dispose(false);
-    }
-
     #region Properties
 
-    public X509Certificate2 Certificate { get; private set; }
+    public override X509Certificate2 Certificate { get; }
 
-    public HashFunction HashFunction { get; set; } = HashFunction.SHA256;
+    public override HashFunction HashFunction { get; set; } = HashFunction.SHA256;
 
-    public RSAEncryptionPadding EncryptionPadding { get; set; } = RSAEncryptionPadding.OaepSHA256;
+    public override RSAEncryptionPadding EncryptionPadding { get; set; } = RSAEncryptionPadding.OaepSHA256;
 
-    public RSASignaturePadding SignaturePadding { get; set; } = RSASignaturePadding.Pss;
+    public override RSASignaturePadding SignaturePadding { get; set; } = RSASignaturePadding.Pss;
 
     #endregion
 
-    #region Public Methods
+    #region Methods
 
     public void Dispose()
     {
@@ -56,46 +51,59 @@ public sealed class RSACryptoProvider : IDisposable
         this._isDisposed = true;
     }
 
-    /// <inheritdoc cref="IRSACryptoService.Encrypt(byte[])" />
-    public byte[] Encrypt(byte[] data)
+    /// <inheritdoc cref="RSACryptoContract.Encrypt(byte[])" />
+    public override byte[] Encrypt(byte[] data)
     {
-        using RSA? publicKey = this.Certificate.GetRSAPublicKey();
-        ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
+        using RSA publicKey = this.Certificate.GetRSAPublicKey()
+            ?? throw new CryptographicException("Public Key is null.");
 
         byte[] cipher = publicKey.Encrypt(data, this.EncryptionPadding);
         return cipher;
     }
 
-    /// <inheritdoc cref="IRSACryptoService.Decrypt(byte[])" />
-    public byte[] Decrypt(byte[] cipher)
+    /// <inheritdoc cref="RSACryptoContract.Decrypt(byte[])" />
+    public override byte[] Decrypt(byte[] cipher)
     {
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
         if (!this.Certificate.HasPrivateKey)
         {
-            throw new CryptographicException($"Certificate with thumbprint '{this.Certificate.Thumbprint}' has no private key.");
+            throw new CryptographicException($"Certificate with thumbprint \"{this.Certificate.Thumbprint}\" has no private key.");
         }
 
-        using RSA? privateKey = this.Certificate.GetRSAPrivateKey();
-        ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
+        using RSA privateKey = this.Certificate.GetRSAPrivateKey()
+            ?? throw new CryptographicException("Private Key is null.");
 
         byte[] source = privateKey.Decrypt(cipher, this.EncryptionPadding);
         return source;
     }
 
-    /// <inheritdoc cref="IRSACryptoService.SignData(byte[])" />
-    public byte[] SignData(byte[] data)
+    /// <inheritdoc cref="RSACryptoContract.SignData(byte[])" />
+    public override byte[] SignData(byte[] data)
     {
-        using RSA? privateKey = this.Certificate.GetRSAPrivateKey();
-        ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
+        if (!this.Certificate.HasPrivateKey)
+        {
+            throw new CryptographicException($"Certificate with thumbprint \"{this.Certificate.Thumbprint}\" has no private key.");
+        }
+
+        using RSA privateKey = this.Certificate.GetRSAPrivateKey()
+            ?? throw new CryptographicException("Private Key is null.");
 
         byte[] signature = privateKey.SignData(data, this.HashFunction.ToHashAlgorithmName(), this.SignaturePadding);
         return signature;
     }
 
-    /// <inheritdoc cref="IRSACryptoService.VerifyData(byte[], byte[])" />
-    public bool VerifyData(byte[] data, byte[] signature)
+    /// <inheritdoc cref="RSACryptoContract.VerifyData(byte[], byte[])" />
+    public override bool VerifyData(byte[] data, byte[] signature)
     {
-        using RSA? publicKey = this.Certificate.GetRSAPublicKey();
-        ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
+        using RSA publicKey = this.Certificate.GetRSAPublicKey()
+            ?? throw new CryptographicException("Public Key is null.");
 
         bool isVerified = publicKey.VerifyData(data, signature, this.HashFunction.ToHashAlgorithmName(), this.SignaturePadding);
         return isVerified;

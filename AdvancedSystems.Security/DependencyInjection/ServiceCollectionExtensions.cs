@@ -177,13 +177,13 @@ public static partial class ServiceCollectionExtensions
 
     private static IServiceCollection AddRSACryptoService(this IServiceCollection services)
     {
-        services.TryAdd(ServiceDescriptor.Singleton<IRSACryptoService, RSACryptoService>());
+        services.TryAdd(ServiceDescriptor.Transient<RSACryptoContract, RSACryptoService>());
 
         return services;
     }
 
     /// <summary>
-    ///     Adds the default implementation of <seealso cref="IRSACryptoService"/> to <paramref name="services"/>.
+    ///     Adds the default implementation of <seealso cref="RSACryptoContract"/> to <paramref name="services"/>.
     /// </summary>
     /// <param name="services">
     ///     The service collection containing the service.
@@ -202,7 +202,7 @@ public static partial class ServiceCollectionExtensions
     }
 
     /// <summary>
-    ///     Adds the default implementation of <seealso cref="IRSACryptoService"/> to <paramref name="services"/>.
+    ///     Adds the default implementation of <seealso cref="RSACryptoContract"/> to <paramref name="services"/>.
     /// </summary>
     /// <param name="services">
     ///     The service collection containing the service.

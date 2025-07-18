@@ -14,7 +14,7 @@ namespace AdvancedSystems.Security.Services;
 /// <summary>
 ///     Represents a service for performing RSA-based asymmetric operations.
 /// </summary>
-public sealed class RSACryptoService : IRSACryptoService
+public sealed class RSACryptoService : RSACryptoContract, IDisposable
 {
     private bool _isDisposed = false;
     private readonly ILogger<RSACryptoService> _logger;
@@ -28,46 +28,55 @@ public sealed class RSACryptoService : IRSACryptoService
         this.Certificate = certificateService.GetCertificate("default", rsaOptions1.Thumbprint, validOnly: true)
             ?? throw new ArgumentNullException(nameof(rsaOptions));
 
-        this._provider = new RSACryptoProvider(this.Certificate);
-        this._provider.HashFunction = rsaOptions1.HashFunction;
-        this._provider.EncryptionPadding = rsaOptions1.EncryptionPadding;
-        this._provider.SignaturePadding = rsaOptions1.SignaturePadding;
-    }
-
-    ~RSACryptoService()
-    {
-        this.Dispose(false);
+        this._provider = new RSACryptoProvider(this.Certificate)
+        {
+            HashFunction = rsaOptions1.HashFunction,
+            EncryptionPadding = rsaOptions1.EncryptionPadding,
+            SignaturePadding = rsaOptions1.SignaturePadding
+        };
     }
 
     #region Properties
 
     /// <inheritdoc />
-    public X509Certificate2 Certificate { get; }
+    public override X509Certificate2 Certificate { get; }
 
     /// <inheritdoc />
-    public HashFunction HashFunction
+    public override HashFunction HashFunction
     {
         get
         {
             return this._provider.HashFunction;
         }
+        set
+        {
+            this._provider.HashFunction = value;
+        }
     }
 
     /// <inheritdoc />
-    public RSAEncryptionPadding EncryptionPadding
+    public override RSAEncryptionPadding EncryptionPadding
     {
         get
         {
             return this._provider.EncryptionPadding;
         }
+        set
+        {
+            this._provider.EncryptionPadding = value;
+        }
     }
 
     /// <inheritdoc />
-    public RSASignaturePadding SignaturePadding
+    public override RSASignaturePadding SignaturePadding
     {
         get
         {
             return this._provider.SignaturePadding;
+        }
+        set
+        {
+            this._provider.SignaturePadding = value;
         }
     }
 
@@ -96,25 +105,25 @@ public sealed class RSACryptoService : IRSACryptoService
     }
 
     /// <inheritdoc />
-    public byte[] Encrypt(byte[] buffer)
+    public override byte[] Encrypt(byte[] buffer)
     {
         return this._provider.Encrypt(buffer);
     }
 
     /// <inheritdoc />
-    public byte[] Decrypt(byte[] cipher)
+    public override byte[] Decrypt(byte[] cipher)
     {
         return this._provider.Decrypt(cipher);
     }
 
     /// <inheritdoc />
-    public byte[] SignData(byte[] data)
+    public override byte[] SignData(byte[] data)
     {
         return this._provider.SignData(data);
     }
 
     /// <inheritdoc />
-    public bool VerifyData(byte[] data, byte[] signature)
+    public override bool VerifyData(byte[] data, byte[] signature)
     {
         return this._provider.VerifyData(data, signature);
     }
