@@ -7,7 +7,6 @@ using AdvancedSystems.Security.Abstractions.Exceptions;
 using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Options;
 
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace AdvancedSystems.Security.Services;
@@ -18,12 +17,10 @@ namespace AdvancedSystems.Security.Services;
 public sealed class RSACryptoService : RSACryptoContract, IDisposable
 {
     private bool _isDisposed = false;
-    private readonly ILogger<RSACryptoService> _logger;
     private readonly RSACryptoProvider _provider;
 
-    public RSACryptoService(ILogger<RSACryptoService> logger, ICertificateService certificateService, IOptions<RSACryptoOptions> options)
+    public RSACryptoService(ICertificateService certificateService, IOptions<RSACryptoOptions> options)
     {
-        this._logger = logger;
         RSACryptoOptions rsaOptions = options.Value;
 
         this.Certificate = certificateService.GetCertificate(rsaOptions.StoreService, rsaOptions.Thumbprint, validOnly: true)

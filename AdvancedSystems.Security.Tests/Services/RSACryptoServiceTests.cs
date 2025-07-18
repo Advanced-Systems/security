@@ -10,7 +10,6 @@ using AdvancedSystems.Security.Tests.Fixtures;
 using AdvancedSystems.Security.Tests.Helpers;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 using Moq;
 
@@ -24,7 +23,6 @@ namespace AdvancedSystems.Security.Tests.Services;
 public sealed class RSACryptoServiceTests : IClassFixture<HostFixture>
 {
     private readonly HostFixture _certificateFixture;
-    private readonly Mock<ILogger<RSACryptoService>> _logger = new();
     private readonly Mock<ICertificateService> _certificateService = new();
     private readonly RSACryptoService _sut;
 
@@ -49,7 +47,6 @@ public sealed class RSACryptoServiceTests : IClassFixture<HostFixture>
             .Returns(certificateService.GetCertificate(rsaOptions.StoreService, rsaOptions.Thumbprint, false));
 
         this._sut = new RSACryptoService(
-            this._logger.Object,
             this._certificateService.Object,
             Microsoft.Extensions.Options.Options.Create(rsaOptions)
         );
