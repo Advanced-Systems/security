@@ -37,6 +37,7 @@ public sealed class RSACryptoProvider : RSACryptoContract, IDisposable
 
     #region Methods
 
+    /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()
     {
         this.Dispose(true);
@@ -55,20 +56,20 @@ public sealed class RSACryptoProvider : RSACryptoContract, IDisposable
         this._isDisposed = true;
     }
 
-    /// <inheritdoc cref="RSACryptoContract.Encrypt(byte[])" />
-    public override byte[] Encrypt(byte[] data)
+    /// <inheritdoc cref="RSACryptoContract.Encrypt(Span{byte})" />
+    public override Span<byte> Encrypt(Span<byte> data)
     {
         ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
 
         using RSA publicKey = this.Certificate.GetRSAPublicKey()
             ?? throw new CryptographicException("Public Key is null.");
 
-        byte[] cipher = publicKey.Encrypt(data, this.EncryptionPadding);
+        Span<byte> cipher = publicKey.Encrypt(data, this.EncryptionPadding);
         return cipher;
     }
 
-    /// <inheritdoc cref="RSACryptoContract.Decrypt(byte[])" />
-    public override byte[] Decrypt(byte[] cipher)
+    /// <inheritdoc cref="RSACryptoContract.Decrypt(Span{byte})" />
+    public override Span<byte> Decrypt(Span<byte> cipher)
     {
         ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
 
@@ -80,12 +81,12 @@ public sealed class RSACryptoProvider : RSACryptoContract, IDisposable
         using RSA privateKey = this.Certificate.GetRSAPrivateKey()
             ?? throw new CryptographicException("Private Key is null.");
 
-        byte[] source = privateKey.Decrypt(cipher, this.EncryptionPadding);
+        Span<byte> source = privateKey.Decrypt(cipher, this.EncryptionPadding);
         return source;
     }
 
-    /// <inheritdoc cref="RSACryptoContract.SignData(byte[])" />
-    public override byte[] SignData(byte[] data)
+    /// <inheritdoc cref="RSACryptoContract.SignData(Span{byte})" />
+    public override Span<byte> SignData(Span<byte> data)
     {
         ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
 
@@ -97,12 +98,12 @@ public sealed class RSACryptoProvider : RSACryptoContract, IDisposable
         using RSA privateKey = this.Certificate.GetRSAPrivateKey()
             ?? throw new CryptographicException("Private Key is null.");
 
-        byte[] signature = privateKey.SignData(data, this.HashFunction.ToHashAlgorithmName(), this.SignaturePadding);
+        Span<byte> signature = privateKey.SignData(data, this.HashFunction.ToHashAlgorithmName(), this.SignaturePadding);
         return signature;
     }
 
-    /// <inheritdoc cref="RSACryptoContract.VerifyData(byte[], byte[])" />
-    public override bool VerifyData(byte[] data, byte[] signature)
+    /// <inheritdoc cref="RSACryptoContract.VerifyData(Span{byte}, Span{byte})" />
+    public override bool VerifyData(Span<byte> data, Span<byte> signature)
     {
         ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
 

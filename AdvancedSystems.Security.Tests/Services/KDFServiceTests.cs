@@ -1,4 +1,6 @@
-﻿using AdvancedSystems.Security.Abstractions;
+﻿using System;
+
+using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Extensions;
 using AdvancedSystems.Security.Tests.Fixtures;
@@ -22,7 +24,7 @@ public sealed class KDFServiceTests : IClassFixture<KDFServiceFixture>
     #region Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="IKDFService.TryComputePBKDF2(HashFunction, byte[], byte[], int, int, out byte[])"/>
+    ///     Tests that <seealso cref="IKDFService.TryComputePBKDF2(HashFunction, Span{byte}, Span{byte}, int, int, out byte[])"/>
     ///     returns a non-empty hash with success state <see langword="true"/>.
     /// </summary>
     [Fact]
@@ -32,8 +34,8 @@ public sealed class KDFServiceTests : IClassFixture<KDFServiceFixture>
         var sha256 = HashFunction.SHA256;
         int iterations = 30_000;
         int saltSize = 128;
-        byte[] password = "REDACTED".GetBytes(Format.String);
-        byte[] salt = CryptoRandomProvider.GetBytes(saltSize).ToArray();
+        Span<byte> password = "REDACTED".GetBytes(Format.String);
+        Span<byte> salt = CryptoRandomProvider.GetBytes(saltSize).ToArray();
 
         // Act
         bool success = this._sut.TryComputePBKDF2(sha256, password, salt, sha256.GetSize(), iterations, out byte[]? pbkdf2);

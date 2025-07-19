@@ -11,7 +11,7 @@ namespace AdvancedSystems.Security.Extensions;
 /// </summary>
 public static class CoreExtensions
 {
-    public static string ToString(this byte[] array, Format format)
+    public static string ToString(this Span<byte> array, Format format)
     {
         return format switch
         {
@@ -22,7 +22,7 @@ public static class CoreExtensions
         };
     }
 
-    public static byte[] GetBytes(this string @string, Format format)
+    public static Span<byte> GetBytes(this string @string, Format format)
     {
         return format switch
         {

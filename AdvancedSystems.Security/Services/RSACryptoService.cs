@@ -36,10 +36,10 @@ public sealed class RSACryptoService : RSACryptoContract, IDisposable
 
     #region Properties
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="RSACryptoContract.Certificate" />
     public override X509Certificate2 Certificate { get; }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="RSACryptoContract.HashFunction" />
     public override HashFunction HashFunction
     {
         get
@@ -52,7 +52,7 @@ public sealed class RSACryptoService : RSACryptoContract, IDisposable
         }
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="RSACryptoContract.EncryptionPadding" />
     public override RSAEncryptionPadding EncryptionPadding
     {
         get
@@ -65,7 +65,7 @@ public sealed class RSACryptoService : RSACryptoContract, IDisposable
         }
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="RSACryptoContract.SignaturePadding" />
     public override RSASignaturePadding SignaturePadding
     {
         get
@@ -82,7 +82,7 @@ public sealed class RSACryptoService : RSACryptoContract, IDisposable
 
     #region Methods
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()
     {
         this.Dispose(true);
@@ -102,32 +102,32 @@ public sealed class RSACryptoService : RSACryptoContract, IDisposable
         this._isDisposed = true;
     }
 
-    /// <inheritdoc />
-    public override byte[] Encrypt(byte[] buffer)
+    /// <inheritdoc cref="RSACryptoContract.Encrypt(Span{byte})" />
+    public override Span<byte> Encrypt(Span<byte> buffer)
     {
         ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
 
         return this._provider.Encrypt(buffer);
     }
 
-    /// <inheritdoc />
-    public override byte[] Decrypt(byte[] cipher)
+    /// <inheritdoc cref="RSACryptoContract.Decrypt(Span{byte})" />
+    public override Span<byte> Decrypt(Span<byte> cipher)
     {
         ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
 
         return this._provider.Decrypt(cipher);
     }
 
-    /// <inheritdoc />
-    public override byte[] SignData(byte[] data)
+    /// <inheritdoc cref="RSACryptoContract.SignData(Span{byte})" />
+    public override Span<byte> SignData(Span<byte> data)
     {
         ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
 
         return this._provider.SignData(data);
     }
 
-    /// <inheritdoc />
-    public override bool VerifyData(byte[] data, byte[] signature)
+    /// <inheritdoc cref="RSACryptoContract.VerifyData(Span{byte}, Span{byte})" />
+    public override bool VerifyData(Span<byte> data, Span<byte> signature)
     {
         ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
 

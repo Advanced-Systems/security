@@ -10,8 +10,8 @@ namespace AdvancedSystems.Security.Cryptography;
 /// </summary>
 public static class HashProvider
 {
-    /// <inheritdoc cref="IHashService.Compute(HashFunction, byte[])"/>
-    public static byte[] Compute(HashFunction hashFunction, byte[] buffer)
+    /// <inheritdoc cref="IHashService.Compute(HashFunction, Span{byte})"/>
+    public static Span<byte> Compute(HashFunction hashFunction, Span<byte> buffer)
     {
         return hashFunction switch
         {

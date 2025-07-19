@@ -160,7 +160,7 @@ public sealed class CertificateService : ICertificateService
         }
         catch (ArgumentNullException)
         {
-            return Enumerable.Empty<X509Certificate2>();
+            return [];
         }
         finally
         {

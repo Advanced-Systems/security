@@ -1,4 +1,6 @@
-﻿using AdvancedSystems.Security.Cryptography;
+﻿using System;
+
+using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Extensions;
 using AdvancedSystems.Security.Tests.Fixtures;
 
@@ -29,20 +31,15 @@ public sealed class RSACryptoProviderTests : IClassFixture<RSACryptoProviderFixt
     {
         // Arrange
         string message = "Hello, World!";
-        byte[] buffer = message.GetBytes(Format.String);
+        Span<byte> buffer = message.GetBytes(Format.String);
 
         // Act
-        byte[] cipher = this._sut.RSACryptoProvider.Encrypt(buffer);
-        byte[] source = this._sut.RSACryptoProvider.Decrypt(cipher);
+        Span<byte> cipher = this._sut.RSACryptoProvider.Encrypt(buffer);
+        Span<byte> source = this._sut.RSACryptoProvider.Decrypt(cipher);
         string decryptedMessage = source.ToString(Format.String);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.NotEmpty(cipher);
-            Assert.NotEmpty(source);
-            Assert.Equal(message, decryptedMessage);
-        });
+        Assert.Equal(message, decryptedMessage);
     }
 
     /// <summary>
@@ -54,18 +51,14 @@ public sealed class RSACryptoProviderTests : IClassFixture<RSACryptoProviderFixt
     {
         // Arrange
         string message = "Hello, World!";
-        byte[] buffer = message.GetBytes(Format.String);
+        Span<byte> buffer = message.GetBytes(Format.String);
 
         // Act
-        byte[] signature = this._sut.RSACryptoProvider.SignData(buffer);
+        Span<byte> signature = this._sut.RSACryptoProvider.SignData(buffer);
         bool verified = this._sut.RSACryptoProvider.VerifyData(buffer, signature);
 
         // Assert
-        Assert.Multiple((() =>
-        {
-            Assert.NotEmpty(signature);
-            Assert.True(verified);
-        }));
+        Assert.True(verified);
     }
 
     #endregion

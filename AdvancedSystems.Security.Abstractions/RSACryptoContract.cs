@@ -42,7 +42,7 @@ public abstract class RSACryptoContract
     /// <exception cref="CryptographicException">
     ///     Raised if the public key of the specified certificate is null.
     /// </exception>
-    public abstract byte[] Encrypt(byte[] data);
+    public abstract Span<byte> Encrypt(Span<byte> data);
 
     /// <summary>
     ///     Decrypts the <paramref name="cipher"/>.
@@ -59,7 +59,7 @@ public abstract class RSACryptoContract
     /// <exception cref="CryptographicException">
     ///     Raised if the private key of the specified certificate is null.
     /// </exception>
-    public abstract byte[] Decrypt(byte[] cipher);
+    public abstract Span<byte> Decrypt(Span<byte> cipher);
 
     /// <summary>
     ///     Computes the hash value of the specified data and signs it.
@@ -76,7 +76,7 @@ public abstract class RSACryptoContract
     /// <exception cref="CryptographicException">
     ///     Raised if the private key of the specified certificate is null.
     /// </exception>
-    public abstract byte[] SignData(byte[] data);
+    public abstract Span<byte> SignData(Span<byte> data);
 
     /// <summary>
     ///     Verifies that a digital signature is valid by calculating the
@@ -98,7 +98,7 @@ public abstract class RSACryptoContract
     /// <exception cref="CryptographicException">
     ///     Raised if the public key of the specified certificate is null.
     /// </exception>
-    public abstract bool VerifyData(byte[] data, byte[] signature);
+    public abstract bool VerifyData(Span<byte> data, Span<byte> signature);
 
     #endregion
 }

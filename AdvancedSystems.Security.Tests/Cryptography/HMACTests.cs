@@ -44,11 +44,11 @@ public sealed class HMACTests
     public void TestHMAC_Value(HashFunction hashFunction, string text, string expectedMac)
     {
         // Arrange
-        byte[] key = "secret".GetBytes(Format.String);
-        byte[] buffer = text.GetBytes(Format.String);
+        Span<byte> key = "secret".GetBytes(Format.String);
+        Span<byte> buffer = text.GetBytes(Format.String);
 
         // Act
-        byte[] actualMac = HMACProvider.Compute(hashFunction, key, buffer);
+        Span<byte> actualMac = HMACProvider.Compute(hashFunction, key, buffer);
 
         // Assert
         Assert.Equal(expectedMac.GetBytes(Format.Hex), actualMac);
@@ -79,7 +79,7 @@ public sealed class HMACTests
     {
         // Arrange
         int keySize = 32;
-        byte[] buffer = text.GetBytes(Format.String);
+        Span<byte> buffer = text.GetBytes(Format.String);
         int expectedMacSize = hashFunction.GetSize();
 
         // Act

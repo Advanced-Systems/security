@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 
 using AdvancedSystems.Security.Abstractions;
@@ -37,10 +38,10 @@ public sealed class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
-        byte[] buffer = encoding.GetBytes(input);
+        Span<byte> buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(HashFunction.MD5, buffer);
+        Span<byte> hash = HashProvider.Compute(HashFunction.MD5, buffer);
         string md5 = hash.ToString(format);
 
         // Assert
@@ -68,10 +69,10 @@ public sealed class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
-        byte[] buffer = encoding.GetBytes(input);
+        Span<byte> buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(HashFunction.SHA1, buffer);
+        Span<byte> hash = HashProvider.Compute(HashFunction.SHA1, buffer);
         string sha1 = hash.ToString(format);
 
         // Assert
@@ -99,10 +100,10 @@ public sealed class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
-        byte[] buffer = encoding.GetBytes(input);
+        Span<byte> buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(HashFunction.SHA256, buffer);
+        Span<byte> hash = HashProvider.Compute(HashFunction.SHA256, buffer);
         string sha256 = hash.ToString(format);
 
         // Assert
@@ -130,10 +131,10 @@ public sealed class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
-        byte[] buffer = encoding.GetBytes(input);
+        Span<byte> buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(HashFunction.SHA384, buffer);
+        Span<byte> hash = HashProvider.Compute(HashFunction.SHA384, buffer);
         string sha384 = hash.ToString(format);
 
         // Assert
@@ -161,10 +162,10 @@ public sealed class HashTests
     {
         // Arrange
         Encoding encoding = Encoding.UTF8;
-        byte[] buffer = encoding.GetBytes(input);
+        Span<byte> buffer = encoding.GetBytes(input);
 
         // Act
-        byte[] hash = HashProvider.Compute(HashFunction.SHA512, buffer);
+        Span<byte> hash = HashProvider.Compute(HashFunction.SHA512, buffer);
         string sha512 = hash.ToString(format);
 
         // Assert

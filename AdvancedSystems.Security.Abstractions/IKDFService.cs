@@ -1,4 +1,6 @@
-﻿namespace AdvancedSystems.Security.Abstractions;
+﻿using System;
+
+namespace AdvancedSystems.Security.Abstractions;
 
 /// <summary>
 ///     Represents a contract employing for key derivation functions.
@@ -51,7 +53,7 @@ public interface IKDFService
     ///     </list>
     ///     Additionally, some platforms may support SHA3-equivalent hash functions.
     /// </remarks>
-    bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, out byte[]? pbkdf2);
+    bool TryComputePBKDF2(HashFunction hashFunction, Span<byte> password, Span<byte> salt, int hashSize, int iterations, out byte[]? pbkdf2);
 
     #endregion
 }

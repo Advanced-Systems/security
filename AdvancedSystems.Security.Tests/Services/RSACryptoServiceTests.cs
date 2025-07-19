@@ -65,20 +65,15 @@ public sealed class RSACryptoServiceTests : IClassFixture<HostFixture>
     {
         // Arrange
         string message = "Hello, World!";
-        byte[] buffer = message.GetBytes(Format.String);
+        Span<byte> buffer = message.GetBytes(Format.String);
 
         // Act
-        byte[] cipher = this._sut.Encrypt(buffer);
-        byte[] source = this._sut.Decrypt(cipher);
+        Span<byte> cipher = this._sut.Encrypt(buffer);
+        Span<byte> source = this._sut.Decrypt(cipher);
         string decryptedMessage = source.ToString(Format.String);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.NotEmpty(cipher);
-            Assert.NotEmpty(source);
-            Assert.Equal(message, decryptedMessage);
-        });
+        Assert.Multiple(() => Assert.Equal(message, decryptedMessage));
     }
 
     #endregion

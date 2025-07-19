@@ -35,13 +35,13 @@ public sealed class HMACServiceTests : IClassFixture<HMACServiceFixture>, IClass
         // Arrange
         var sha256 = HashFunction.SHA256;
         Span<byte> key = this._cryptoRandomService.GetBytes(32);
-        byte[] data = "Hello, World".GetBytes(Format.String);
+        Span<byte> data = "Hello, World".GetBytes(Format.String);
 
         // Act
-        byte[] mac = this._sut.Compute(sha256, key, data);
+        Span<byte> mac = this._sut.Compute(sha256, key, data);
 
         // Assert
-        Assert.NotEmpty(mac);
+        Assert.NotEmpty(mac.ToArray());
     }
 
     #endregion
