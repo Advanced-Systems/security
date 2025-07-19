@@ -1,8 +1,10 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.DependencyInjection;
+using AdvancedSystems.Security.Options;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -24,23 +26,20 @@ public sealed class ServiceCollectionExtensionsTests
     /// <summary>
     ///     Tests that <seealso cref="ICertificateService"/> can be initialized through dependency injection.
     /// </summary>
+    /// <remarks>
+    ///     Although of little practical value, this test verifies that <seealso cref="ICertificateService"/>
+    ///     can be registered without having a strong dependency on <seealso cref="ICertificateStore"/> during
+    ///     the initialization phase.
+    /// </remarks>
     [Fact]
     public async Task TestAddCertificateService_FromOptions()
     {
         // Arrange
-        string storeService = "my/CurrentUser";
-
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
                 .UseTestServer()
                 .ConfigureServices(services =>
                 {
-                    services.AddCertificateStore(storeService, options =>
-                    {
-                        options.Location = StoreLocation.CurrentUser;
-                        options.Name = StoreName.My;
-                    });
-
                     services.AddCertificateService();
                 })
             .Configure(app =>
@@ -62,7 +61,8 @@ public sealed class ServiceCollectionExtensionsTests
     #region AddCertificateStore Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateStore"/> can be initialized through dependency injection from configuration options.
+    ///     Tests that <seealso cref="ICertificateStore"/> can be initialized through dependency injection
+    ///     from configuration options.
     /// </summary>
     [Fact]
     public async Task TestAddCertificateStore_FromOptions()
@@ -96,24 +96,34 @@ public sealed class ServiceCollectionExtensionsTests
     }
 
     /// <summary>
-    ///     Tests that <seealso cref="ICertificateStore"/> can be initialized through dependency injection from configuration sections.
+    ///     Tests that <seealso cref="ICertificateStore"/> can be initialized through dependency injection
+    ///     from configuration sections.
     /// </summary>
     [Fact]
     public async Task TestAddCertificateStore_FromAppSettings()
     {
         // Arrange
-        string storeService = "my/CurrentUser";
+        string section = Sections.CERTIFICATE_STORE;
+        string storeService = "MyStoreService";
+        string storeLocation = "CurrentUser";
+        string storeName = "My";
+
+        var appSettings = new Dictionary<string, string?>
+        {
+            { $"{section}:{nameof(CertificateStoreOptions.Location)}", storeLocation },
+            { $"{section}:{nameof(CertificateStoreOptions.Name)}", storeName },
+        };
+
+        var configurationRoot = new ConfigurationBuilder()
+            .AddInMemoryCollection(appSettings)
+            .Build();
 
         using var hostBuilder = await new HostBuilder()
             .ConfigureWebHost(builder => builder
             .UseTestServer()
-            .ConfigureAppConfiguration(config =>
-            {
-                config.AddJsonFile("appsettings.json", optional: false);
-            })
             .ConfigureServices((context, services) =>
             {
-                var storeSettings = context.Configuration.GetSection(Sections.CERTIFICATE_STORE);
+                var storeSettings = configurationRoot.GetRequiredSection(section);
                 services.AddCertificateStore(storeService, storeSettings);
             })
             .Configure(app =>
