@@ -11,7 +11,7 @@ namespace AdvancedSystems.Security.Extensions;
 ///     Defines functions for interacting with X.509 certificates.
 /// </summary>
 /// <seealso href="https://datatracker.ietf.org/doc/rfc5280/"/>
-public static partial class CertificateExtensions
+public static class CertificateExtensions
 {
     /// <summary>
     ///     Attempts to parse the specified distinguished name (DN) string into a <see cref="DistinguishedName"/> object.

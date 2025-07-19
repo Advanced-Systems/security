@@ -1,23 +1,43 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
-using System.Text;
+
+using AdvancedSystems.Security.Abstractions;
 
 namespace AdvancedSystems.Security.Options;
 
+/// <summary>
+///     Configures options for the <seealso cref="RSACryptoContract"/>.
+/// </summary>
 public sealed record RSACryptoOptions
 {
+    /// <summary>
+    ///     <inheritdoc cref="Abstractions.HashFunction"/>
+    /// </summary>
     [Required]
-    public required HashAlgorithmName HashAlgorithmName { get; set; }
+    [EnumDataType(typeof(HashFunction))]
+    public required HashFunction HashFunction { get; set; }
 
+    /// <summary>
+    ///     <inheritdoc cref="RSAEncryptionPadding"/>
+    /// </summary>
     [Required]
     public required RSAEncryptionPadding EncryptionPadding { get; set; }
 
+    /// <summary>
+    ///     <inheritdoc cref="RSASignaturePadding"/>
+    /// </summary>
     [Required]
     public required RSASignaturePadding SignaturePadding { get; set; }
 
-    [Required]
-    public required Encoding Encoding { get; set; }
-
+    /// <summary>
+    ///     The string representing the thumbprint of the encryption certificate to retrieve.
+    /// </summary>
     [Required]
     public required string Thumbprint { get; set; }
+
+    /// <summary>
+    ///     <inheritdoc cref="ICertificateService.GetCertificate(string, string, bool)" path="/param[@name='storeService']"/>
+    /// </summary>
+    [Required]
+    public required string StoreService { get; set; }
 }

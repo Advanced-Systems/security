@@ -28,7 +28,7 @@ public interface IHashService
     /// <exception cref="NotImplementedException">
     ///     Raised if the specified <paramref name="hashFunction"/> is not implemented.
     /// </exception>
-    byte[] Compute(HashFunction hashFunction, byte[] buffer);
+    Span<byte> Compute(HashFunction hashFunction, Span<byte> buffer);
 
     #endregion
 }

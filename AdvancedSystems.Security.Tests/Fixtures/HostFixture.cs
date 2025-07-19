@@ -13,7 +13,7 @@ using Xunit;
 
 namespace AdvancedSystems.Security.Tests.Fixtures;
 
-public sealed class CertificateFixture : IAsyncLifetime
+public sealed class HostFixture : IAsyncLifetime
 {
     #region Properties
 

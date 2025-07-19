@@ -12,7 +12,7 @@ namespace AdvancedSystems.Security.Cryptography;
 /// </summary>
 public static class KDFProvider
 {
-    /// <inheritdoc cref="IKDFService.TryComputePBKDF2(HashFunction, byte[], byte[], int, int, out byte[])"/>
+    /// <inheritdoc cref="IKDFService.TryComputePBKDF2(HashFunction, Span{byte}, Span{byte}, int, int, out byte[])"/>
     public static bool TryComputePBKDF2(HashFunction hashFunction, byte[] password, byte[] salt, int hashSize, int iterations, [NotNullWhen(true)] out byte[]? pbkdf2)
     {
         try

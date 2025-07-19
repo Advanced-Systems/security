@@ -3,9 +3,9 @@ using AdvancedSystems.Security.Services;
 
 namespace AdvancedSystems.Security.Tests.Fixtures;
 
-public sealed class CryptoRandomFixture
+public sealed class CryptoRandomServiceFixture
 {
-    public CryptoRandomFixture()
+    public CryptoRandomServiceFixture()
     {
         this.CryptoRandomService = new CryptoRandomService();
     }

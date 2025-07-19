@@ -34,8 +34,10 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - run: dotnet tool update -g docfx
-    - run: docfx docs/docfx.json
+    - name: Build Documentation
+      run: >
+        dotnet tool restore --configfile nuget.config
+        dotnet docfx docs/docfx.json
 
     - name: Upload Artifact
       uses: actions/upload-pages-artifact@v3.0.1

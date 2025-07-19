@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 using AdvancedSystems.Security.Abstractions;
+using AdvancedSystems.Security.Abstractions.Exceptions;
 using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Options;
 
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace AdvancedSystems.Security.Services;
@@ -15,78 +14,67 @@ namespace AdvancedSystems.Security.Services;
 /// <summary>
 ///     Represents a service for performing RSA-based asymmetric operations.
 /// </summary>
-public sealed class RSACryptoService
+public sealed class RSACryptoService : RSACryptoContract, IDisposable
 {
-    private readonly ILogger<RSACryptoService> _logger;
-    private readonly ICertificateService _certificateService;
-    private readonly RSACryptoOptions _rsaOptions;
-
-    private bool _disposed = false;
-    private readonly X509Certificate2 _certificate;
+    private bool _isDisposed = false;
     private readonly RSACryptoProvider _provider;
 
-    public RSACryptoService(ILogger<RSACryptoService> logger, ICertificateService certificateService, IOptions<RSACryptoOptions> rsaOptions)
+    public RSACryptoService(ICertificateService certificateService, IOptions<RSACryptoOptions> options)
     {
-        this._logger = logger;
-        this._certificateService = certificateService;
-        this._rsaOptions = rsaOptions.Value;
+        RSACryptoOptions rsaOptions = options.Value;
 
-        this._certificate = this._certificateService.GetCertificate("default", this._rsaOptions.Thumbprint, validOnly: true)
-            ?? throw new ArgumentNullException();
+        this.Certificate = certificateService.GetCertificate(rsaOptions.StoreService, rsaOptions.Thumbprint, validOnly: true)
+            ?? throw new CertificateNotFoundException($"Failed to retrieve certificate with options {nameof(RSACryptoOptions.StoreService)}=\"{rsaOptions.StoreService}\" and {nameof(RSACryptoOptions.Thumbprint)}=\"{rsaOptions.Thumbprint}\".");
 
-        this._provider = new RSACryptoProvider(
-            this._certificate,
-            this._rsaOptions.HashAlgorithmName,
-            this._rsaOptions.EncryptionPadding,
-            this._rsaOptions.SignaturePadding,
-            this._rsaOptions.Encoding
-         );
+        this._provider = new RSACryptoProvider(this.Certificate)
+        {
+            HashFunction = rsaOptions.HashFunction,
+            EncryptionPadding = rsaOptions.EncryptionPadding,
+            SignaturePadding = rsaOptions.SignaturePadding
+        };
     }
 
     #region Properties
 
-    /// <inheritdoc />
-    public X509Certificate2 Certificate
+    /// <inheritdoc cref="RSACryptoContract.Certificate" />
+    public override X509Certificate2 Certificate { get; }
+
+    /// <inheritdoc cref="RSACryptoContract.HashFunction" />
+    public override HashFunction HashFunction
     {
         get
         {
-            return this._certificate;
+            return this._provider.HashFunction;
         }
-    }
-
-    /// <inheritdoc />
-    public HashAlgorithmName HashAlgorithmName
-    {
-        get
+        set
         {
-            return this._provider.HashAlgorithmName;
+            this._provider.HashFunction = value;
         }
     }
 
-    /// <inheritdoc />
-    public RSAEncryptionPadding EncryptionPadding
+    /// <inheritdoc cref="RSACryptoContract.EncryptionPadding" />
+    public override RSAEncryptionPadding EncryptionPadding
     {
         get
         {
             return this._provider.EncryptionPadding;
         }
+        set
+        {
+            this._provider.EncryptionPadding = value;
+        }
     }
 
-    /// <inheritdoc />
-    public RSASignaturePadding SignaturePadding
+    /// <inheritdoc cref="RSACryptoContract.SignaturePadding" />
+    public override RSASignaturePadding SignaturePadding
     {
         get
         {
             return this._provider.SignaturePadding;
         }
-    }
-
-    /// <inheritdoc />
-    public Encoding Encoding
-    {
-        get
+        set
         {
-            return this._provider.Encoding;
+            this._provider.SignaturePadding = value;
         }
     }
 
@@ -94,45 +82,56 @@ public sealed class RSACryptoService
 
     #region Methods
 
-    /// <inheritdoc />
-
+    /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()
     {
         this.Dispose(true);
         GC.SuppressFinalize(this);
     }
 
-    /// <inheritdoc />
-    public void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
-        if (this._disposed || !disposing) return;
+        if (this._isDisposed) return;
 
-        this._certificate.Dispose();
-        this._disposed = true;
+        if (disposing)
+        {
+            this.Certificate.Dispose();
+            this._provider.Dispose();
+        }
+
+        this._isDisposed = true;
     }
 
-    /// <inheritdoc />
-    public string Encrypt(string message, Encoding? encoding = null)
+    /// <inheritdoc cref="RSACryptoContract.Encrypt(Span{byte})" />
+    public override Span<byte> Encrypt(Span<byte> buffer)
     {
-        return this._provider.Encrypt(message, encoding);
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
+        return this._provider.Encrypt(buffer);
     }
 
-    /// <inheritdoc />
-    public string Decrypt(string cipher, Encoding? encoding = null)
+    /// <inheritdoc cref="RSACryptoContract.Decrypt(Span{byte})" />
+    public override Span<byte> Decrypt(Span<byte> cipher)
     {
-        return this._provider.Decrypt(cipher, encoding);
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
+        return this._provider.Decrypt(cipher);
     }
 
-    /// <inheritdoc />
-    public string SignData(string data, Encoding? encoding = null)
+    /// <inheritdoc cref="RSACryptoContract.SignData(Span{byte})" />
+    public override Span<byte> SignData(Span<byte> data)
     {
-        return this._provider.SignData(data, encoding);
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
+        return this._provider.SignData(data);
     }
 
-    /// <inheritdoc />
-    public bool VerifyData(string data, string signature, Encoding? encoding = null)
+    /// <inheritdoc cref="RSACryptoContract.VerifyData(Span{byte}, Span{byte})" />
+    public override bool VerifyData(Span<byte> data, Span<byte> signature)
     {
-        return this._provider.VerifyData(data, signature, encoding);
+        ObjectDisposedException.ThrowIf(this._isDisposed, nameof(this.Certificate));
+
+        return this._provider.VerifyData(data, signature);
     }
 
     #endregion

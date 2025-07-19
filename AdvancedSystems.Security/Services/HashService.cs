@@ -1,4 +1,6 @@
-﻿using AdvancedSystems.Security.Abstractions;
+﻿using System;
+
+using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Extensions;
 
@@ -21,7 +23,7 @@ public sealed class HashService : IHashService
     #region Methods
 
     /// <inheritdoc />
-    public byte[] Compute(HashFunction hashFunction, byte[] buffer)
+    public Span<byte> Compute(HashFunction hashFunction, Span<byte> buffer)
     {
         if (hashFunction is HashFunction.MD5 or HashFunction.SHA1)
         {

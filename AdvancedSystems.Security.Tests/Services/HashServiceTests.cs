@@ -32,7 +32,7 @@ public sealed class HashServiceTests : IClassFixture<HashServiceFixture>
     #region Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="IHashService.Compute(HashFunction, byte[])"/> returns the expected hash,
+    ///     Tests that <seealso cref="IHashService.Compute(HashFunction, Span{byte})"/> returns the expected hash,
     ///     and that the log warning message is called on <seealso cref="HashFunction.MD5"/> or <seealso cref="HashFunction.SHA1"/>.
     /// </summary>
     /// <param name="input"></param>
