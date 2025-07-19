@@ -18,7 +18,8 @@ using Xunit;
 namespace AdvancedSystems.Security.Tests.Services;
 
 /// <summary>
-///     Tests the public methods in <seealso cref="RSACryptoService"/>.
+///     Tests the default implementation of <seealso cref="RSACryptoContract"/>
+///     as a service class (<seealso cref="RSACryptoService"/>).
 /// </summary>
 public sealed class RSACryptoServiceTests : IClassFixture<HostFixture>
 {
@@ -57,7 +58,7 @@ public sealed class RSACryptoServiceTests : IClassFixture<HostFixture>
     #region Tests
 
     /// <summary>
-    ///     Tests that <seealso cref="RSACryptoContract"/> encrypts an array of bytes correctly
+    ///     Tests that <seealso cref="RSACryptoService"/> encrypts an array of bytes correctly
     ///     by using a pre-configured certificate.
     /// </summary>
     [Fact]
@@ -73,7 +74,26 @@ public sealed class RSACryptoServiceTests : IClassFixture<HostFixture>
         string decryptedMessage = source.ToString(Format.String);
 
         // Assert
-        Assert.Multiple(() => Assert.Equal(message, decryptedMessage));
+        Assert.Equal(message, decryptedMessage);
+    }
+
+    /// <summary>
+    ///     Tests that <seealso cref="RSACryptoService"/> signs and verifies an array of bytes
+    ///     correctly by using a pre-configured certificate.
+    /// </summary>
+    [Fact]
+    public void TestSigningVerification_Roundtrip()
+    {
+        // Arrange
+        string message = "Hello, World!";
+        Span<byte> buffer = message.GetBytes(Format.String);
+
+        // Act
+        Span<byte> signature = this._sut.SignData(buffer);
+        bool verified = this._sut.VerifyData(buffer, signature);
+
+        // Assert
+        Assert.True(verified);
     }
 
     #endregion

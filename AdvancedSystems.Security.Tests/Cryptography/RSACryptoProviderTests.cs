@@ -1,5 +1,6 @@
 ﻿using System;
 
+using AdvancedSystems.Security.Abstractions;
 using AdvancedSystems.Security.Cryptography;
 using AdvancedSystems.Security.Extensions;
 using AdvancedSystems.Security.Tests.Fixtures;
@@ -9,7 +10,8 @@ using Xunit;
 namespace AdvancedSystems.Security.Tests.Cryptography;
 
 /// <summary>
-///     Tests the public methods in <seealso cref="RSACryptoProvider"/>.
+///     Tests the default implementation of <seealso cref="RSACryptoContract"/>
+///     as a provider class (<seealso cref="RSACryptoProvider"/>).
 /// </summary>
 public sealed class RSACryptoProviderTests : IClassFixture<RSACryptoProviderFixture>
 {
